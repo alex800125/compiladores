@@ -43,6 +43,8 @@ public class Janela extends JFrame
     String [] colunasPilha = {"Endere�o", "Valor"};
 
 
+
+
     protected MeuJPanel pnlTabela = new MeuJPanel ();
     protected MeuJPanel pnlEntrada = new MeuJPanel ();
     //protected MeuJPanel pnlSaida = new MeuJPanel ();
