@@ -238,24 +238,63 @@ public class Janela extends JFrame
     {
           public void actionPerformed (ActionEvent e)    
           {
+        	  int posicao = 0;
+        	  Object[][] dadosInstrucoes = {{"START"}};
         	  JFileChooser fileChooser = new JFileChooser();
         	  int returnValue = fileChooser.showOpenDialog(null);
         	  if (returnValue == JFileChooser.APPROVE_OPTION)
         	  {
+        		  
         		  File selectedFile = fileChooser.getSelectedFile();
         		  //System.out.println(selectedFile.getName());
-                  
-                  
-
-
-
-
-
-                  
+        		  
+        		  try{
+        			  // Open the file that is the first 
+        			  // command line parameter
+        			  FileInputStream fstream = new FileInputStream(selectedFile);
+        			  // Get the object of DataInputStream
+        			  DataInputStream in = new DataInputStream(fstream);
+        			  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        			  String strLine;
+        			  //Read File Line By Line
+        			  while ((strLine = br.readLine()) != null)   {
+        			  // Print the content on the console
+        			  System.out.println (strLine);
+        			  String[] words = strLine.split(" ");
+        			  
+        			  /*
+        			  switch (words)
+        			  {
+    		    	  case 'START': //nome da linha
+    		    		  break;
+    		    	  case 'S': //Start
+    		    		  break;
+	    		  			
+	    		  			
+		    		  default:
+		    			  break;
+    		    	  }
+    		    	  */
+        			  
+        			  Object [][] dadosInstrucoes1 = { 
+      						{strLine}
+      					}; //colocar codigo aquui
+        					 //colocar codigo aquui
+        			  dadosInstrucoes =  dadosInstrucoes1;
+        			  }
+        			  
+        			  //Close the input stream
+        			  in.close();
+        			    }catch (Exception e1){//Catch exception if any
+        			  System.err.println("Error: " + e1.getMessage());
+        			  }
+        		  
         		  //TABELAInstrucoes
-        		    Object [][] dadosInstrucoes = { 
+        		    /*
+        		     * Object [][] dadosInstrucoes = { 
     						{"*l*","*i*","*a1*","*a2*","*c*"}
     					}; //colocar codigo aquui
+    					*/
         		    
         		    tabelaInstrucoes = new JTable(dadosInstrucoes, colunasInstrucoes);
         	        barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
