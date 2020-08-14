@@ -19,7 +19,7 @@ public class Janela extends JFrame
                       btnExecutar  = new JButton ("Executar"),//Executa
                       btnApagar  = new JButton ("Apagar"),//apagar escritas
                       btnDeBug  = new JButton ("DeBug"),//Escrever debug
-                      btnContinuar  = new JButton ("Continuar"),//proxima instrução
+                      btnContinuar  = new JButton ("Continuar"),//proxima instruï¿½ï¿½o
                       btnSair    = new JButton ("Sair");
 
     //protected MeuJPanel pnlDesenho = new MeuJPanel ();
@@ -39,8 +39,8 @@ public class Janela extends JFrame
     protected JTable tabelaPilha;
     protected JScrollPane barraRolagemPilha;
 
-    String [] colunasInstrucoes = {"Linha", "Instrução", "Atributo #1", "Atributo #2", "Comentario"};
-    String [] colunasPilha = {"Endereço", "Valor"};
+    String [] colunasInstrucoes = {"Linha", "Instruï¿½ï¿½o", "Atributo #1", "Atributo #2", "Comentario"};
+    String [] colunasPilha = {"Endereï¿½o", "Valor"};
 
 
     protected MeuJPanel pnlTabela = new MeuJPanel ();
@@ -53,7 +53,7 @@ public class Janela extends JFrame
     
     public Janela ()
     {
-        super("Construção Compiladores");
+        super("Construï¿½ï¿½o Compiladores");
 
        
         try
@@ -64,7 +64,7 @@ public class Janela extends JFrame
         catch (IOException e)
         {
             JOptionPane.showMessageDialog (null,
-                                           "Arquivo abrir.jpg não foi encontrado",
+                                           "Arquivo abrir.jpg nï¿½o foi encontrado",
                                            "Arquivo de imagem ausente",
                                            JOptionPane.WARNING_MESSAGE);
         }
@@ -76,7 +76,7 @@ public class Janela extends JFrame
         catch (IOException e)
         {
             JOptionPane.showMessageDialog (null,
-                                           "Arquivo Executar.jpg não foi encontrado",
+                                           "Arquivo Executar.jpg nï¿½o foi encontrado",
                                            "Arquivo de imagem ausente",
                                            JOptionPane.WARNING_MESSAGE);
         }
@@ -90,7 +90,7 @@ public class Janela extends JFrame
         catch (IOException e)
         {
             JOptionPane.showMessageDialog (null,
-                                           "Arquivo Executar.jpg não foi encontrado",
+                                           "Arquivo Executar.jpg nï¿½o foi encontrado",
                                            "Arquivo de imagem ausente",
                                            JOptionPane.WARNING_MESSAGE);
         }
@@ -104,7 +104,7 @@ public class Janela extends JFrame
         catch (IOException e)
         {
             JOptionPane.showMessageDialog (null,
-                                           "Arquivo DeBug.jpg não foi encontrado",
+                                           "Arquivo DeBug.jpg nï¿½o foi encontrado",
                                            "Arquivo de imagem ausente",
                                            JOptionPane.WARNING_MESSAGE);
         }
@@ -118,7 +118,7 @@ public class Janela extends JFrame
         catch (IOException e)
         {
             JOptionPane.showMessageDialog (null,
-                                           "Arquivo Continuar.jpg não foi encontrado",
+                                           "Arquivo Continuar.jpg nï¿½o foi encontrado",
                                            "Arquivo de imagem ausente",
                                            JOptionPane.WARNING_MESSAGE);
         }
@@ -131,7 +131,7 @@ public class Janela extends JFrame
         catch (IOException e)
         {
             JOptionPane.showMessageDialog (null,
-                                           "Arquivo sair.jpg não foi encontrado",
+                                           "Arquivo sair.jpg nï¿½o foi encontrado",
                                            "Arquivo de imagem ausente",
                                            JOptionPane.WARNING_MESSAGE);
         }
@@ -208,7 +208,7 @@ public class Janela extends JFrame
         
         public void mousePressed (MouseEvent e)
         {
-           //interação com mouse pressed
+           //interaï¿½ï¿½o com mouse pressed
         }
         
         public void mouseReleased (MouseEvent e)
@@ -244,7 +244,14 @@ public class Janela extends JFrame
         	  {
         		  File selectedFile = fileChooser.getSelectedFile();
         		  //System.out.println(selectedFile.getName());
-        		  
+                  
+                  
+
+
+
+
+
+                  
         		  //TABELAInstrucoes
         		    Object [][] dadosInstrucoes = { 
     						{"*l*","*i*","*a1*","*a2*","*c*"}
@@ -323,7 +330,7 @@ public class Janela extends JFrame
         	  	
 		        //getContentPane().add(pnlEntrada);
               
-              statusBar1.setText("Mensagem: Execução Passo a Passo");
+              statusBar1.setText("Mensagem: Execuï¿½ï¿½o Passo a Passo");
           }
     }
     protected class Continuar implements ActionListener
