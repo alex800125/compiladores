@@ -39,6 +39,23 @@ public class Janela extends JFrame {
 
 	String[] colunasInstrucoes = { "Linha", "Instruaao", "Atributo #1", "Atributo #2", "Comentario" };
 	String[] colunasPilha = { "Endereco", "Valor" };
+	protected enum Liguagem {
+    	LDC, LDV,
+    	ADD, SUB, MULT, DIVI, INV,
+    	AND, OR, NEG,
+    	CME, CMA, CEQ, CDIF, CMEQ, CMAG,
+    	START, HLT,
+    	STR,
+    	JMP, JMPF,
+    	NULL,
+    	RD,
+    	PRN,
+    	ALLOC,
+    	DALLOC,
+    	CALL,
+    	RETURN;
+
+    }
 
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlEntrada = new MeuJPanel();
@@ -194,54 +211,84 @@ public class Janela extends JFrame {
 
 	protected class Abrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int posicao = 0;
-			Object[][] dadosInstrucoes = { { "START" } };
-			JFileChooser fileChooser = new JFileChooser();
-			int returnValue = fileChooser.showOpenDialog(null);
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
+			int posicao = 0, linha = 0;
+        	  
+        	  String part1, part2, part3, part4, part5;
+        	  part1 = part2 = part3 = part4 = part5 = null;
+        	  Object [][] dadosInstrucoes = { 
+						{"*l*","*i*","*a1*","*a2*","*c*"}
+					}; //colocar codigo aquui
+        	  JFileChooser fileChooser = new JFileChooser();
+        	  int returnValue = fileChooser.showOpenDialog(null);
+        	  if (returnValue == JFileChooser.APPROVE_OPTION)
+        	  {
+        		  
+        		  File selectedFile = fileChooser.getSelectedFile();
+        		  //System.out.println(selectedFile.getName());
+        		  
+        		  try{
+        			  
+        			  // Open the file that is the first 
+        			  // command line parameter
+        			  FileInputStream fstream = new FileInputStream(selectedFile);
+        			  // Get the object of DataInputStream
+        			  DataInputStream in = new DataInputStream(fstream);
+        			  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        			  String strLine;
+        			  //Read File Line By Line
+        			  
+					  while ((strLine = br.readLine()) != null)
+					    {
+        				  linha++;
+        				  posicao = 0;
+        				  // Print the content on the console
+        				  // System.out.println (strLine);
+        				  part1 = String.valueOf(strLine.charAt(posicao));
+        				  posicao++;
+        				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
+							{ //part1
+								part1+=strLine.charAt(posicao); //char by char
+								posicao++;
+							}
+							posicao++;
+							part2 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
+        				  posicao++;
+        				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
+							{ 	//possivel conflito != ou <= posicao
+								part2+=strLine.charAt(posicao); //char by char
+								posicao++;
+							}
+							
+							//part1 seria Nome da Linha ou Instrução
+							//part2 seria
+							//part3 seria Atributo1
+							//part4 seria Atributo2
+							//part5 seria Comentarios
+							System.out.println (part1);
+							System.out.println (part2);
+							
+        				  
+							switch (part1)
+							{
+							case "START" : System.out.println (Liguagem.START);
+							Object [][] dadosInstrucoes1 = {
+									{ String.valueOf(linha),part1,part2,part3,part4, part5}
+															};
+							dadosInstrucoes =  dadosInstrucoes1; //teria que achar algo do tipo
+																	//dadosInstrucoes +=  dadosInstrucoes1;
+								break;
 
-				File selectedFile = fileChooser.getSelectedFile();
-				// System.out.println(selectedFile.getName());
-
-				try {
-					// Open the file that is the first
-					// command line parameter
-					FileInputStream fstream = new FileInputStream(selectedFile);
-					// Get the object of DataInputStream
-					DataInputStream in = new DataInputStream(fstream);
-					BufferedReader br = new BufferedReader(new InputStreamReader(in));
-					String strLine;
-					// Read File Line By Line
-					while ((strLine = br.readLine()) != null) {
-						// Print the content on the console
-						System.out.println(strLine);
-						String[] words = strLine.split(" ");
-
-						/*
-						 * switch (words) { case 'START': //nome da linha break; case 'S': //Start
-						 * break;
-						 * 
-						 * 
-						 * default: break; }
-						 */
-
-						Object[][] dadosInstrucoes1 = { { strLine } }; // colocar codigo aquui
-																		// colocar codigo aquui
-						dadosInstrucoes = dadosInstrucoes1;
-					}
-
-					// Close the input stream
-					in.close();
-				} catch (Exception e1) {// Catch exception if any
-					System.err.println("Error: " + e1.getMessage());
-				}
-
-				// TABELAInstrucoes
-				/*
-				 * Object [][] dadosInstrucoes = { {"*l*","*i*","*a1*","*a2*","*c*"} };
-				 * //colocar codigo aquui
-				 */
-
+							default:
+								break;
+							}
+        			 	 }
+        			  
+        			  //Close the input stream
+        			  in.close();
+        			    }catch (Exception e1){//Catch exception if any
+        			  System.err.println("Error: " + e1.getMessage());
+					  }
+					  
 				tabelaInstrucoes = new JTable(dadosInstrucoes, colunasInstrucoes);
 				barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
 				tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
