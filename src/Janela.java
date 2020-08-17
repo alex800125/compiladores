@@ -243,42 +243,150 @@ public class Janela extends JFrame {
         				  posicao = 0;
         				  // Print the content on the console
         				  // System.out.println (strLine);
-        				  part1 = String.valueOf(strLine.charAt(posicao));
-        				  posicao++;
+        				  if(strLine.length() != posicao) //Ler uma linha vazia, e para seguir lyt da logica
+	      				  	{
+        					  part1 = String.valueOf(strLine.charAt(posicao));
+            				  posicao++;
+	      				  	}
         				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
 							{ //part1
 								part1+=strLine.charAt(posicao); //char by char
 								posicao++;
 							}
-							posicao++;
-							part2 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
-        				  posicao++;
+        				  
+        				  if(strLine.length() != posicao)
+        				  	{
+        				  		posicao++;
+    							part2 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
+    							posicao++;
+        				  	}
         				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
 							{ 	//possivel conflito != ou <= posicao
 								part2+=strLine.charAt(posicao); //char by char
 								posicao++;
 							}
+        				  
+        				  if(strLine.length() != posicao)
+	      				  	{
+	      				  		posicao++;
+	  							part3 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
+	  							posicao++;
+	      				  	}
+	      				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
+							{ 	//possivel conflito != ou <= posicao
+								part3+=strLine.charAt(posicao); //char by char
+								posicao++;
+							}
+	      				  
+	      				  if(strLine.length() != posicao)
+	      				  	{
+	      				  		posicao++;
+	      				  		part4 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
+	  							posicao++;
+	      				  	}
+	      				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
+		      				{ 	//possivel conflito != ou <= posicao
+		      					part4+=strLine.charAt(posicao); //char by char
+								posicao++;
+		      				}
+	      				  
+	      				  if(strLine.length() != posicao)
+	      				  	{
+	      				  		posicao++;
+	      				  		part5 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
+	  							posicao++;
+	      				  	}
+	      				  while(strLine.length() != posicao) //aqui teremos o comentario entao pegamos a sting toda dele sem contar os espa�os
+		      				{ 	//possivel conflito != ou <= posicao
+		      					part5+=strLine.charAt(posicao); //char by char
+								posicao++;
+		      				}
 							
 							//part1 seria Nome da Linha ou Instrução
 							//part2 seria
 							//part3 seria Atributo1
 							//part4 seria Atributo2
 							//part5 seria Comentarios
-							System.out.println (part1);
-							System.out.println (part2);
-							
-        				  
+							System.out.print (part1+" ");
+							System.out.print (part2+" ");
+							System.out.print (part3+" ");
+							System.out.print (part4+" ");
+							System.out.print (part5+" ");
+							System.out.print ("\n");
+							//String [][] dadosInstrucoes1;
+							String[] LINHA;
 							switch (part1)
+
 							{
-							case "START" : System.out.println (Liguagem.START);
-							Object [][] dadosInstrucoes1 = {
-									{ String.valueOf(linha),part1,part2,part3,part4, part5}
-															};
-							dadosInstrucoes =  dadosInstrucoes1; //teria que achar algo do tipo
-																	//dadosInstrucoes +=  dadosInstrucoes1;
+							case "LDC" : 
+								Object [][] dadosInstrucoesLDC = {{String.valueOf(linha),part1,part2,part3,part4+part5}};
+
+								dadosInstrucoes =  dadosInstrucoesLDC; //teria que achar algo do tipo
+																//dadosInstrucoes +=  dadosInstrucoes1;
+								break;
+							case "LDV" : 
+
+									break;
+							case "ADD" :
+								break;
+							case "SUB" :
+								break;
+							case "MULT" :
+								break;
+							case "DIVI" :
+								break;
+							case "INV" :
+								break;
+							case "AND" :
+								break;
+							case "OR" :
+								break;
+							case "NEG" :
+								break;
+							case "CME" :
+								break;
+							case "CMA" :
+								break;
+							case "CEQ" :
+								break;
+							case "CDIF" :
+								break;
+							case "CMEQ" :
+								break;
+							case "CMAG" :
+								break;
+							case "STR" :
+								break;
+							case "HLT" :
+								break;
+							case "JMP" :
+								break;
+							case "JMPF" :
+								break;
+							case "NULL" :
+								break;
+							case "RD" :
+								break;
+							case "PRN" :
+								break;
+							case "ALLOC" :
+								break;
+							case "DALLOC" :
+								break;
+							case "CALL" :
+								break;
+							case "RETURN" :
 								break;
 
+							
+									
+
 							default:
+								String [][] dadosInstrucoesD = {{part1,part2,part3,part4,part5}};
+								
+								
+								dadosInstrucoes =  dadosInstrucoesD; //teria que achar algo do tipo
+																//dadosInstrucoes +=  dadosInstrucoes1;
 								break;
 							}
         			 	 }
