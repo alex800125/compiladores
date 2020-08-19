@@ -39,24 +39,16 @@ public class Janela extends JFrame {
 
 	String[] colunasInstrucoes = { "Linha", "Instruaao", "Atributo #1", "Atributo #2", "Comentario" };
 	String[] colunasPilha = { "Endereco", "Valor" };
+
 	protected enum Liguagem {
-    	LDC, LDV,
-    	ADD, SUB, MULT, DIVI, INV,
-    	AND, OR, NEG,
-    	CME, CMA, CEQ, CDIF, CMEQ, CMAG,
-    	START, HLT,
-    	STR,
-    	JMP, JMPF,
-    	NULL,
-    	RD,
-    	PRN,
-    	ALLOC,
-    	DALLOC,
-    	CALL,
-    	RETURN;
+		LDC, LDV, ADD, SUB, MULT, DIVI, INV, AND, OR, NEG, CME, CMA, CEQ, CDIF, CMEQ, CMAG, START, HLT, STR, JMP, JMPF,
+		NULL, RD, PRN, ALLOC, DALLOC, CALL, RETURN;
 
-    }
-
+	}
+	Vector<String> rowOne = new Vector<String>();
+	Vector<Vector> rowData = new Vector<Vector>();
+	Vector<String> columnNames = new Vector<String>();
+	
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlEntrada = new MeuJPanel();
 	// protected MeuJPanel pnlSaida = new MeuJPanel ();
@@ -212,192 +204,216 @@ public class Janela extends JFrame {
 	protected class Abrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			int posicao = 0, linha = 0;
-        	  
-        	  String part1, part2, part3, part4, part5;
-        	  part1 = part2 = part3 = part4 = part5 = null;
-        	  Object [][] dadosInstrucoes = { 
-						{"*l*","*i*","*a1*","*a2*","*c*"}
-					}; //colocar codigo aquui
-        	  JFileChooser fileChooser = new JFileChooser();
-        	  int returnValue = fileChooser.showOpenDialog(null);
-        	  if (returnValue == JFileChooser.APPROVE_OPTION)
-        	  {
-        		  
-        		  File selectedFile = fileChooser.getSelectedFile();
-        		  //System.out.println(selectedFile.getName());
-        		  
-        		  try{
-        			  
-        			  // Open the file that is the first 
-        			  // command line parameter
-        			  FileInputStream fstream = new FileInputStream(selectedFile);
-        			  // Get the object of DataInputStream
-        			  DataInputStream in = new DataInputStream(fstream);
-        			  BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        			  String strLine;
-        			  //Read File Line By Line
-        			  
-					  while ((strLine = br.readLine()) != null)
-					    {
-        				  linha++;
-        				  posicao = 0;
-        				  // Print the content on the console
-        				  // System.out.println (strLine);
-        				  if(strLine.length() != posicao) //Ler uma linha vazia, e para seguir lyt da logica
-	      				  	{
-        					  part1 = String.valueOf(strLine.charAt(posicao));
-            				  posicao++;
-	      				  	}
-        				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
-							{ //part1
-								part1+=strLine.charAt(posicao); //char by char
-								posicao++;
-							}
-        				  
-        				  if(strLine.length() != posicao)
-        				  	{
-        				  		posicao++;
-    							part2 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
-    							posicao++;
-        				  	}
-        				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
-							{ 	//possivel conflito != ou <= posicao
-								part2+=strLine.charAt(posicao); //char by char
-								posicao++;
-							}
-        				  
-        				  if(strLine.length() != posicao)
-	      				  	{
-	      				  		posicao++;
-	  							part3 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
-	  							posicao++;
-	      				  	}
-	      				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
-							{ 	//possivel conflito != ou <= posicao
-								part3+=strLine.charAt(posicao); //char by char
-								posicao++;
-							}
-	      				  
-	      				  if(strLine.length() != posicao)
-	      				  	{
-	      				  		posicao++;
-	      				  		part4 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
-	  							posicao++;
-	      				  	}
-	      				  while(strLine.length() != posicao && strLine.charAt(posicao) != ' ') //um possivel uso do{}while(strLine.length() != posicao) pode ser mais util
-		      				{ 	//possivel conflito != ou <= posicao
-		      					part4+=strLine.charAt(posicao); //char by char
-								posicao++;
-		      				}
-	      				  
-	      				  if(strLine.length() != posicao)
-	      				  	{
-	      				  		posicao++;
-	      				  		part5 = String.valueOf(strLine.charAt(posicao)); //ultrapassando vallor strLine logica talvez errada ou somente ajusto de posicao
-	  							posicao++;
-	      				  	}
-	      				  while(strLine.length() != posicao) //aqui teremos o comentario entao pegamos a sting toda dele sem contar os espa�os
-		      				{ 	//possivel conflito != ou <= posicao
-		      					part5+=strLine.charAt(posicao); //char by char
-								posicao++;
-		      				}
-							
-							//part1 seria Nome da Linha ou Instrução
-							//part2 seria
-							//part3 seria Atributo1
-							//part4 seria Atributo2
-							//part5 seria Comentarios
-							System.out.print (part1+" ");
-							System.out.print (part2+" ");
-							System.out.print (part3+" ");
-							System.out.print (part4+" ");
-							System.out.print (part5+" ");
-							System.out.print ("\n");
-							//String [][] dadosInstrucoes1;
-							String[] LINHA;
-							switch (part1)
 
-							{
-							case "LDC" : 
-								Object [][] dadosInstrucoesLDC = {{String.valueOf(linha),part1,part2,part3,part4+part5}};
+			String part1, part2, part3, part4, part5;
+			part1 = part2 = part3 = part4 = part5 = null;
+			Object[][] dadosInstrucoes = { { "*l*", "*i*", "*a1*", "*a2*", "*c*" } }; // colocar codigo aquui
+			JFileChooser fileChooser = new JFileChooser();
+			int returnValue = fileChooser.showOpenDialog(null);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
 
-								dadosInstrucoes =  dadosInstrucoesLDC; //teria que achar algo do tipo
-																//dadosInstrucoes +=  dadosInstrucoes1;
-								break;
-							case "LDV" : 
+				File selectedFile = fileChooser.getSelectedFile();
+				// System.out.println(selectedFile.getName());
 
-									break;
-							case "ADD" :
-								break;
-							case "SUB" :
-								break;
-							case "MULT" :
-								break;
-							case "DIVI" :
-								break;
-							case "INV" :
-								break;
-							case "AND" :
-								break;
-							case "OR" :
-								break;
-							case "NEG" :
-								break;
-							case "CME" :
-								break;
-							case "CMA" :
-								break;
-							case "CEQ" :
-								break;
-							case "CDIF" :
-								break;
-							case "CMEQ" :
-								break;
-							case "CMAG" :
-								break;
-							case "STR" :
-								break;
-							case "HLT" :
-								break;
-							case "JMP" :
-								break;
-							case "JMPF" :
-								break;
-							case "NULL" :
-								break;
-							case "RD" :
-								break;
-							case "PRN" :
-								break;
-							case "ALLOC" :
-								break;
-							case "DALLOC" :
-								break;
-							case "CALL" :
-								break;
-							case "RETURN" :
-								break;
+				try {
 
-							
-									
+					// Open the file that is the first
+					// command line parameter
+					FileInputStream fstream = new FileInputStream(selectedFile);
+					// Get the object of DataInputStream
+					DataInputStream in = new DataInputStream(fstream);
+					BufferedReader br = new BufferedReader(new InputStreamReader(in));
+					String strLine;
+					// Read File Line By Line
 
-							default:
-								String [][] dadosInstrucoesD = {{part1,part2,part3,part4,part5}};
-								
-								
-								dadosInstrucoes =  dadosInstrucoesD; //teria que achar algo do tipo
-																//dadosInstrucoes +=  dadosInstrucoes1;
-								break;
-							}
-        			 	 }
-        			  
-        			  //Close the input stream
-        			  in.close();
-        			    }catch (Exception e1){//Catch exception if any
-        			  System.err.println("Error: " + e1.getMessage());
-					  }
-					  
-				tabelaInstrucoes = new JTable(dadosInstrucoes, colunasInstrucoes);
+					while ((strLine = br.readLine()) != null) {
+						linha++;
+						posicao = 0;
+						// Print the content on the console
+						// System.out.println (strLine);
+						if (strLine.length() != posicao) // Ler uma linha vazia, e para seguir lyt da logica
+						{
+							part1 = String.valueOf(strLine.charAt(posicao));
+							posicao++;
+						}
+						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
+																								// do{}while(strLine.length()
+																								// != posicao) pode ser
+																								// mais util
+						{ // part1
+							part1 += strLine.charAt(posicao); // char by char
+							posicao++;
+						}
+
+						if (strLine.length() != posicao) {
+							posicao++;
+							part2 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
+																				// talvez errada ou somente ajusto de
+																				// posicao
+							posicao++;
+						}
+						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
+																								// do{}while(strLine.length()
+																								// != posicao) pode ser
+																								// mais util
+						{ // possivel conflito != ou <= posicao
+							part2 += strLine.charAt(posicao); // char by char
+							posicao++;
+						}
+
+						if (strLine.length() != posicao) {
+							posicao++;
+							part3 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
+																				// talvez errada ou somente ajusto de
+																				// posicao
+							posicao++;
+						}
+						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
+																								// do{}while(strLine.length()
+																								// != posicao) pode ser
+																								// mais util
+						{ // possivel conflito != ou <= posicao
+							part3 += strLine.charAt(posicao); // char by char
+							posicao++;
+						}
+
+						if (strLine.length() != posicao) {
+							posicao++;
+							part4 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
+																				// talvez errada ou somente ajusto de
+																				// posicao
+							posicao++;
+						}
+						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
+																								// do{}while(strLine.length()
+																								// != posicao) pode ser
+																								// mais util
+						{ // possivel conflito != ou <= posicao
+							part4 += strLine.charAt(posicao); // char by char
+							posicao++;
+						}
+
+						if (strLine.length() != posicao) {
+							posicao++;
+							part5 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
+																				// talvez errada ou somente ajusto de
+																				// posicao
+							posicao++;
+						}
+						while (strLine.length() != posicao) // aqui teremos o comentario entao pegamos a sting toda dele
+															// sem contar os espa�os
+						{ // possivel conflito != ou <= posicao
+							part5 += strLine.charAt(posicao); // char by char
+							posicao++;
+						}
+
+						// part1 seria Nome da Linha ou Instrução
+						// part2 seria
+						// part3 seria Atributo1
+						// part4 seria Atributo2
+						// part5 seria Comentarios
+						System.out.print(part1 + " ");
+						System.out.print(part2 + " ");
+						System.out.print(part3 + " ");
+						System.out.print(part4 + " ");
+						System.out.print(part5 + " ");
+						System.out.print("\n");
+						// String [][] dadosInstrucoes1;
+						String[] LINHA;
+						
+						rowOne.add(part1);
+						rowOne.add(part2);
+						rowOne.add(part3);
+						rowOne.add(part4);
+						rowOne.add(part5);
+						//rowData.add(linha,rowOne);
+						rowData.addElement(rowOne);
+			
+						
+
+						
+						
+						switch (part1)
+
+						{
+						case "LDC":
+							break;
+						case "LDV":
+							break;
+						case "ADD":
+							break;
+						case "SUB":
+							break;
+						case "MULT":
+							break;
+						case "DIVI":
+							break;
+						case "INV":
+							break;
+						case "AND":
+							break;
+						case "OR":
+							break;
+						case "NEG":
+							break;
+						case "CME":
+							break;
+						case "CMA":
+							break;
+						case "CEQ":
+							break;
+						case "CDIF":
+							break;
+						case "CMEQ":
+							break;
+						case "CMAG":
+							break;
+						case "STR":
+							break;
+						case "HLT":
+							break;
+						case "JMP":
+							break;
+						case "JMPF":
+							break;
+						case "NULL":
+							break;
+						case "RD":
+							break;
+						case "PRN":
+							break;
+						case "ALLOC":
+							break;
+						case "DALLOC":
+							break;
+						case "CALL":
+							break;
+						case "RETURN":
+							break;
+
+						default:
+							String[][] dadosInstrucoesD = { { part1, part2, part3, part4, part5 } };
+
+							dadosInstrucoes = dadosInstrucoesD; // teria que achar algo do tipo
+							// dadosInstrucoes += dadosInstrucoes1;
+							break;
+						}
+					}
+
+					// Close the input stream
+					in.close();
+				} catch (Exception e1) {// Catch exception if any
+					System.err.println("Error: " + e1.getMessage());
+				}
+
+				columnNames.addElement("Linha");
+			    columnNames.addElement("Instruaao");
+			    columnNames.addElement("Atributo #1");
+			    columnNames.addElement("Atributo #2");
+			    columnNames.addElement("Comentario");
+
+			    
+				tabelaInstrucoes = new JTable(rowData, columnNames);
 				barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
 				tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
 				tabelaInstrucoes.setFillsViewportHeight(false);
