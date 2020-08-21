@@ -29,11 +29,9 @@ public class Janela extends JFrame {
 
 	String[] colunasPilha = { "Endereco", "Valor" };
 
-	String[] Linguagem = {
-		"LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", 
-		"CMA", "CEQ", "CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", 
-		"RD", "PRN", "ALLOC", "DALLOC", "CALL", "RETURN"
-	};
+	String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", "CMA", "CEQ",
+			"CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC", "DALLOC",
+			"CALL", "RETURN" };
 
 	Vector<String> rowLinha = new Vector<String>();
 	Vector<Vector> rowData = new Vector<Vector>();
@@ -184,6 +182,8 @@ public class Janela extends JFrame {
 	protected class Abrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String[] linha;
+			String[] argumento;
+			String[] linhaComentario;
 
 			JFileChooser fileChooser = new JFileChooser();
 			int returnValue = fileChooser.showOpenDialog(null);
@@ -196,19 +196,20 @@ public class Janela extends JFrame {
 					DataInputStream in = new DataInputStream(fstream);
 					BufferedReader br = new BufferedReader(new InputStreamReader(in));
 					String strLine;
-					
 
 					while ((strLine = br.readLine()) != null) {
 						int posicao = 0;
+						int posicaoLc = 0;
 						boolean isInstruction = false;
+						String comentario = "";
 						rowLinha = new Vector<String>(); // representa cada linha da tabela
-						
+
 						linha = strLine.split(" "); // separa a linha pra cada espaco que existe
 
 						for (String l : linha) {
 							// se é o primeiro item, verifica se é uma linha ou uma instrucao
 							if (posicao == 0) {
-								for(int i = 0; i < Linguagem.length; i++){
+								for (int i = 0; i < Linguagem.length; i++) {
 									if (Linguagem[i].equals(l)) {
 										isInstruction = true;
 									}
@@ -217,18 +218,79 @@ public class Janela extends JFrame {
 								if (isInstruction) {
 									rowLinha.add("");
 									rowLinha.add(l);
+									posicao++;
 								} else {
 									rowLinha.add(l);
 								}
 							} else {
-								rowLinha.add(l);
+								if (l.contains(",")) {
+									argumento = l.split(",");
+									for (String a : argumento) {
+										rowLinha.add(a);
+									}
+									posicao++;
+								} else if (l.contains(";")) {
+									comentario = "";
+									if (posicao == 1) {
+										rowLinha.add("");
+										rowLinha.add("");
+										rowLinha.add("");
+
+										linhaComentario = strLine.split(";");
+										for (String lc : linhaComentario) {
+											if (posicaoLc != 0)
+												comentario = comentario + lc;
+											
+											posicaoLc++;
+										}
+										rowLinha.add(comentario);
+									}
+									if (posicao == 2) {
+										rowLinha.add("");
+										rowLinha.add("");
+										
+										linhaComentario = strLine.split(";");
+										for (String lc : linhaComentario) {
+											if (posicaoLc != 0)
+												comentario = comentario + lc;
+											
+											posicaoLc++;
+										}
+										rowLinha.add(comentario);
+									}
+									if (posicao == 3) {
+										rowLinha.add("");
+
+										linhaComentario = strLine.split(";");
+										for (String lc : linhaComentario) {
+											if (posicaoLc != 0)
+												comentario = comentario + lc;
+											
+											posicaoLc++;
+										}
+										rowLinha.add(comentario);
+									}
+									if (posicao == 4) {
+										linhaComentario = strLine.split(";");
+										for (String lc : linhaComentario) {
+											if (posicaoLc != 0)
+												comentario = comentario + lc;
+											
+											posicaoLc++;
+										}
+										rowLinha.add(comentario);
+									}
+								} else {
+									rowLinha.add(l);
+								}
+
 							}
 							posicao++;
 						}
-						
+
 						rowData.addElement(rowLinha); // adicionar ao Data da tabela a linha com os itens
 
-						System.out.println("Linha = " + strLine);
+						System.out.println("Linha = " + strLine + " | posicao = " + posicao);
 					}
 
 					in.close();
