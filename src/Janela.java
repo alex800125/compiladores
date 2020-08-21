@@ -21,48 +21,30 @@ public class Janela extends JFrame {
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
 			btnSair = new JButton("Sair");
 
-	// protected MeuJPanel pnlDesenho = new MeuJPanel ();
-
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
-
-	// protected boolean esperaPonto, esperaInicioReta, esperaFimReta;
-
-	// protected Color corAtual = Color.BLACK;
-	// protected Ponto p1;
-
-	// protected Vector<Figura> figuras = new Vector<Figura>();
-	// protected JPanel painelFundo;
 	protected JTable tabelaInstrucoes;
 	protected JScrollPane barraRolagemInstrucoes;
 	protected JTable tabelaPilha;
 	protected JScrollPane barraRolagemPilha;
 
-	String[] colunasInstrucoes = { "Linha", "Instruaao", "Atributo #1", "Atributo #2", "Comentario" };
 	String[] colunasPilha = { "Endereco", "Valor" };
 
-	protected enum Linguagem {
-		LDC, LDV, ADD, SUB, MULT, DIVI, INV, AND, OR, NEG, CME, CMA, CEQ, CDIF, CMEQ, CMAG, START, HLT, STR, JMP, JMPF,
-		NULL, RD, PRN, ALLOC, DALLOC, CALL, RETURN;
+	String[] Linguagem = {
+		"LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", 
+		"CMA", "CEQ", "CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", 
+		"RD", "PRN", "ALLOC", "DALLOC", "CALL", "RETURN"
+	};
 
-	}
-	Linguagem[] arrayL = Linguagem.values();
 	Vector<String> rowLinha = new Vector<String>();
-	Vector<String> rowInstrucao = new Vector<String>();
-	Vector<String> rowAtributo1 = new Vector<String>();
-	Vector<String> rowAtributo2 = new Vector<String>();
-	Vector<String> rowComentario = new Vector<String>();
 	Vector<Vector> rowData = new Vector<Vector>();
 	Vector<String> columnNames = new Vector<String>();
-	
+
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlEntrada = new MeuJPanel();
-	// protected MeuJPanel pnlSaida = new MeuJPanel ();
-	// protected MeuJPanel pnlBreakPoint = new MeuJPanel ();
 	protected MeuJPanel pnlPilha = new MeuJPanel();
-	// painelFundo = new JPanel();
 
 	public Janela() {
-		super("Construaao Compiladores");
+		super("Construcao Compiladores");
 
 		try {
 			Image btnAbrirImg = ImageIO.read(getClass().getResource("resources/abrir.jpg"));
@@ -139,24 +121,17 @@ public class Janela extends JFrame {
 		Container cntForm = this.getContentPane();
 		cntForm.setLayout(new BorderLayout());
 		cntForm.add(pnlBotoes, BorderLayout.NORTH);
-		// cntForm.add (pnlDesenho, BorderLayout.CENTER);
 		cntForm.add(pnlStatus, BorderLayout.SOUTH);
 
 		GridLayout grdTabela = new GridLayout(0, 1); // tentar arrumar setsize
 		pnlTabela.setLayout(grdTabela);
 		pnlEntrada.setLayout(grdTabela);
 
-		// pnlSaida.setLayout(grdTabela);
-		// pnlBreakPoint.setLayout(grdTabela);
 		pnlPilha.setLayout(grdTabela);
 
 		cntForm.add(pnlTabela, BorderLayout.CENTER);
 		cntForm.add(pnlEntrada, BorderLayout.WEST);
 		cntForm.add(pnlPilha, BorderLayout.EAST);
-		// cntForm.add (pnlSaida, BorderLayout.CENTER);
-		// cntForm.add (pnlBreakPoint, BorderLayout.CENTER);
-
-		// pnlTabela.setVisible(false);
 
 		this.addWindowListener(new FechamentoDeJanela());
 
@@ -208,209 +183,81 @@ public class Janela extends JFrame {
 
 	protected class Abrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int posicao = 0, nlinha = 0;
 			String[] linha;
-			Object[][] dadosInstrucoes = { { "*l*", "*i*", "*a1*", "*a2*", "*c*" } }; // 
-			
+
 			JFileChooser fileChooser = new JFileChooser();
 			int returnValue = fileChooser.showOpenDialog(null);
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
 
 				File selectedFile = fileChooser.getSelectedFile();
-				// System.out.println(selectedFile.getName());
 
 				try {
-
-					// Open the file that is the first
-					// command line parameter
 					FileInputStream fstream = new FileInputStream(selectedFile);
-					// Get the object of DataInputStream
 					DataInputStream in = new DataInputStream(fstream);
 					BufferedReader br = new BufferedReader(new InputStreamReader(in));
 					String strLine;
-					// Read File Line By Line
+					
 
-					while ((strLine = br.readLine()) != null)
-					{
-						posicao = 0;
-						nlinha++;
-						linha = strLine.split(" ");
+					while ((strLine = br.readLine()) != null) {
+						int posicao = 0;
+						boolean isInstruction = false;
+						rowLinha = new Vector<String>(); // representa cada linha da tabela
 						
-						do
-						{
-							if(linha[posicao].subSequence(0, 1).equals("#")) //comentario
-							{
-								do 
-								{
-									rowComentario.addElement(String.valueOf(linha[posicao]));
-									posicao++;
-								}while(linha.length != posicao);
-								break;
-							}
-							
-							for(int i = 0; i < arrayL.length; i++) 
-							{
-								//posicao = 1 ou posicao = 0
-								if(linha[posicao].equals(String.valueOf(arrayL[i])) ) //verifica se pertence a linguagem
-								{
-									rowInstrucao.addElement(String.valueOf(linha[posicao]));
-									if(posicao != 0)// nome da linha
-									{
-										rowLinha.addElement(String.valueOf(linha[posicao-1]));
-										
-									}
-									else //sem nome de linha
-									{
-										rowLinha.addElement(String.valueOf(nlinha));
+						linha = strLine.split(" "); // separa a linha pra cada espaco que existe
+
+						for (String l : linha) {
+							// se é o primeiro item, verifica se é uma linha ou uma instrucao
+							if (posicao == 0) {
+								for(int i = 0; i < Linguagem.length; i++){
+									if (Linguagem[i].equals(l)) {
+										isInstruction = true;
 									}
 								}
-							}
-							
-							if(linha[posicao].matches("[0-9]*"))// Atributo1
-							{
-								rowAtributo1.addElement(String.valueOf(linha[posicao]));
-								posicao++;
-								if(linha[posicao].matches("[0-9]*")) //Atributo2
-								{
-									rowAtributo2.addElement(String.valueOf(linha[posicao]));
+								// se for uma instrucao, deixa o espaco na tabela da linha em branco
+								if (isInstruction) {
+									rowLinha.add("");
+									rowLinha.add(l);
+								} else {
+									rowLinha.add(l);
 								}
-								else
-								{
-									posicao--;
-								}
+							} else {
+								rowLinha.add(l);
 							}
-							posicao++; //comentarios
-						}while(linha.length != posicao);
-
-						
-						/*
-						switch (linha[0])
-
-						{
-						case "LDC":
-							break;
-						case "LDV":
-							break;
-						case "ADD":
-							break;
-						case "SUB":
-							break;
-						case "MULT":
-							break;
-						case "DIVI":
-							break;
-						case "INV":
-							break;
-						case "AND":
-							break;
-						case "OR":
-							break;
-						case "NEG":
-							break;
-						case "CME":
-							break;
-						case "CMA":
-							break;
-						case "CEQ":
-							break;
-						case "CDIF":
-							break;
-						case "CMEQ":
-							break;
-						case "CMAG":
-							break;
-						case "START":
-							break;
-						case "STR":
-							break;
-						case "HLT":
-							break;
-						case "JMP":
-							break;
-						case "JMPF":
-							break;
-						case "NULL":
-							break;
-						case "RD":
-							break;
-						case "PRN":
-							break;
-						case "ALLOC":
-							break;
-						case "DALLOC":
-							break;
-						case "CALL":
-							break;
-						case "RETURN":
-							break;
-
-						default:
-							String[][] dadosInstrucoesD = { { "", "", "", "", "" } };
-
-							dadosInstrucoes = dadosInstrucoesD; // teria que achar algo do tipo
-							// dadosInstrucoes += dadosInstrucoes1;
-							break;
+							posicao++;
 						}
-						*/
+						
+						rowData.addElement(rowLinha); // adicionar ao Data da tabela a linha com os itens
+
+						System.out.println("Linha = " + strLine);
 					}
 
-					// Close the input stream
 					in.close();
-				} catch (Exception e1) {// Catch exception if any
+				} catch (Exception e1) { // Catch exception if any
 					System.err.println("Error: " + e1.getMessage());
 				}
 
+				// Adiciona os campos da tabela
 				columnNames.addElement("Linha");
-			    columnNames.addElement("Instruaao");
-			    columnNames.addElement("Atributo #1");
-			    columnNames.addElement("Atributo #2");
-			    columnNames.addElement("Comentario");
-			    rowData.addElement(rowLinha);
-			    rowData.addElement(rowInstrucao);
-			    rowData.addElement(rowAtributo1);
-			    rowData.addElement(rowAtributo2);
-			    rowData.addElement(rowComentario);
-			    
-			    
+				columnNames.addElement("Instrucao");
+				columnNames.addElement("Atributo #1");
+				columnNames.addElement("Atributo #2");
+				columnNames.addElement("Comentario");
+
+				// Cria a tabela e insere as colunas e os Dados previamente preenchidos
 				tabelaInstrucoes = new JTable(rowData, columnNames);
 				barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
 				tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
 				tabelaInstrucoes.setFillsViewportHeight(false);
 				pnlTabela.add(barraRolagemInstrucoes);
 
-				// TABELAPilha
-				Object[][] dadosPilha = { { "*E*", "*V*" } }; // colocar codigo aquui
+				// Tabela referente a pilha
+				Object[][] dadosPilha = { { "*E*", "*V*" } }; // colocar resultados das operações aqui
 
 				tabelaPilha = new JTable(dadosPilha, colunasPilha);
 				barraRolagemPilha = new JScrollPane(tabelaPilha);
 				tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
 				tabelaPilha.setFillsViewportHeight(false);
 				pnlPilha.add(barraRolagemPilha);
-
-				// Entrada opcional
-				JTextArea textEntrada = new JTextArea(10, 10);
-				JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
-				scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-				scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				textEntrada.setText("Entrada"); // colocar codigo aquui
-				pnlEntrada.add(scrollableTextEntrada);
-				// getContentPane().add(pnlEntrada);
-				// saida
-
-				JTextArea texSaida = new JTextArea(10, 10);
-				JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
-				scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-				scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				texSaida.setText("SAida"); // colocar codigo aquui
-				pnlEntrada.add(scrollableTextSaida);
-
-				JTextArea texBreakPoint = new JTextArea(10, 10);
-				JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
-				scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-				scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
-				pnlEntrada.add(scrollableTextBreakPoint);
-				// getContentPane().add(pnlEntrada);
 
 			}
 
