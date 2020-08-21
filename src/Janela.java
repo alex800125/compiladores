@@ -40,12 +40,17 @@ public class Janela extends JFrame {
 	String[] colunasInstrucoes = { "Linha", "Instruaao", "Atributo #1", "Atributo #2", "Comentario" };
 	String[] colunasPilha = { "Endereco", "Valor" };
 
-	protected enum Liguagem {
+	protected enum Linguagem {
 		LDC, LDV, ADD, SUB, MULT, DIVI, INV, AND, OR, NEG, CME, CMA, CEQ, CDIF, CMEQ, CMAG, START, HLT, STR, JMP, JMPF,
 		NULL, RD, PRN, ALLOC, DALLOC, CALL, RETURN;
 
 	}
-	Vector<String> rowOne = new Vector<String>();
+	Linguagem[] arrayL = Linguagem.values();
+	Vector<String> rowLinha = new Vector<String>();
+	Vector<String> rowInstrucao = new Vector<String>();
+	Vector<String> rowAtributo1 = new Vector<String>();
+	Vector<String> rowAtributo2 = new Vector<String>();
+	Vector<String> rowComentario = new Vector<String>();
 	Vector<Vector> rowData = new Vector<Vector>();
 	Vector<String> columnNames = new Vector<String>();
 	
@@ -203,11 +208,10 @@ public class Janela extends JFrame {
 
 	protected class Abrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			int posicao = 0, linha = 0;
-
-			String part1, part2, part3, part4, part5;
-			part1 = part2 = part3 = part4 = part5 = null;
-			Object[][] dadosInstrucoes = { { "*l*", "*i*", "*a1*", "*a2*", "*c*" } }; // colocar codigo aquui
+			int posicao = 0, nlinha = 0;
+			String[] linha;
+			Object[][] dadosInstrucoes = { { "*l*", "*i*", "*a1*", "*a2*", "*c*" } }; // 
+			
 			JFileChooser fileChooser = new JFileChooser();
 			int returnValue = fileChooser.showOpenDialog(null);
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -226,114 +230,61 @@ public class Janela extends JFrame {
 					String strLine;
 					// Read File Line By Line
 
-					while ((strLine = br.readLine()) != null) {
-						linha++;
+					while ((strLine = br.readLine()) != null)
+					{
 						posicao = 0;
-						// Print the content on the console
-						// System.out.println (strLine);
-						if (strLine.length() != posicao) // Ler uma linha vazia, e para seguir lyt da logica
+						nlinha++;
+						linha = strLine.split(" ");
+						
+						do
 						{
-							part1 = String.valueOf(strLine.charAt(posicao));
-							posicao++;
-						}
-						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
-																								// do{}while(strLine.length()
-																								// != posicao) pode ser
-																								// mais util
-						{ // part1
-							part1 += strLine.charAt(posicao); // char by char
-							posicao++;
-						}
-
-						if (strLine.length() != posicao) {
-							posicao++;
-							part2 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
-																				// talvez errada ou somente ajusto de
-																				// posicao
-							posicao++;
-						}
-						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
-																								// do{}while(strLine.length()
-																								// != posicao) pode ser
-																								// mais util
-						{ // possivel conflito != ou <= posicao
-							part2 += strLine.charAt(posicao); // char by char
-							posicao++;
-						}
-
-						if (strLine.length() != posicao) {
-							posicao++;
-							part3 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
-																				// talvez errada ou somente ajusto de
-																				// posicao
-							posicao++;
-						}
-						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
-																								// do{}while(strLine.length()
-																								// != posicao) pode ser
-																								// mais util
-						{ // possivel conflito != ou <= posicao
-							part3 += strLine.charAt(posicao); // char by char
-							posicao++;
-						}
-
-						if (strLine.length() != posicao) {
-							posicao++;
-							part4 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
-																				// talvez errada ou somente ajusto de
-																				// posicao
-							posicao++;
-						}
-						while (strLine.length() != posicao && strLine.charAt(posicao) != ' ') // um possivel uso
-																								// do{}while(strLine.length()
-																								// != posicao) pode ser
-																								// mais util
-						{ // possivel conflito != ou <= posicao
-							part4 += strLine.charAt(posicao); // char by char
-							posicao++;
-						}
-
-						if (strLine.length() != posicao) {
-							posicao++;
-							part5 = String.valueOf(strLine.charAt(posicao)); // ultrapassando vallor strLine logica
-																				// talvez errada ou somente ajusto de
-																				// posicao
-							posicao++;
-						}
-						while (strLine.length() != posicao) // aqui teremos o comentario entao pegamos a sting toda dele
-															// sem contar os espa�os
-						{ // possivel conflito != ou <= posicao
-							part5 += strLine.charAt(posicao); // char by char
-							posicao++;
-						}
-
-						// part1 seria Nome da Linha ou Instrução
-						// part2 seria
-						// part3 seria Atributo1
-						// part4 seria Atributo2
-						// part5 seria Comentarios
-						System.out.print(part1 + " ");
-						System.out.print(part2 + " ");
-						System.out.print(part3 + " ");
-						System.out.print(part4 + " ");
-						System.out.print(part5 + " ");
-						System.out.print("\n");
-						// String [][] dadosInstrucoes1;
-						String[] LINHA;
-						
-						rowOne.add(part1);
-						rowOne.add(part2);
-						rowOne.add(part3);
-						rowOne.add(part4);
-						rowOne.add(part5);
-						//rowData.add(linha,rowOne);
-						rowData.addElement(rowOne);
-			
-						
+							if(linha[posicao].subSequence(0, 1).equals("#")) //comentario
+							{
+								do 
+								{
+									rowComentario.addElement(String.valueOf(linha[posicao]));
+									posicao++;
+								}while(linha.length != posicao);
+								break;
+							}
+							
+							for(int i = 0; i < arrayL.length; i++) 
+							{
+								//posicao = 1 ou posicao = 0
+								if(linha[posicao].equals(String.valueOf(arrayL[i])) ) //verifica se pertence a linguagem
+								{
+									rowInstrucao.addElement(String.valueOf(linha[posicao]));
+									if(posicao != 0)// nome da linha
+									{
+										rowLinha.addElement(String.valueOf(linha[posicao-1]));
+										
+									}
+									else //sem nome de linha
+									{
+										rowLinha.addElement(String.valueOf(nlinha));
+									}
+								}
+							}
+							
+							if(linha[posicao].matches("[0-9]*"))// Atributo1
+							{
+								rowAtributo1.addElement(String.valueOf(linha[posicao]));
+								posicao++;
+								if(linha[posicao].matches("[0-9]*")) //Atributo2
+								{
+									rowAtributo2.addElement(String.valueOf(linha[posicao]));
+								}
+								else
+								{
+									posicao--;
+								}
+							}
+							posicao++; //comentarios
+						}while(linha.length != posicao);
 
 						
-						
-						switch (part1)
+						/*
+						switch (linha[0])
 
 						{
 						case "LDC":
@@ -368,6 +319,8 @@ public class Janela extends JFrame {
 							break;
 						case "CMAG":
 							break;
+						case "START":
+							break;
 						case "STR":
 							break;
 						case "HLT":
@@ -392,12 +345,13 @@ public class Janela extends JFrame {
 							break;
 
 						default:
-							String[][] dadosInstrucoesD = { { part1, part2, part3, part4, part5 } };
+							String[][] dadosInstrucoesD = { { "", "", "", "", "" } };
 
 							dadosInstrucoes = dadosInstrucoesD; // teria que achar algo do tipo
 							// dadosInstrucoes += dadosInstrucoes1;
 							break;
 						}
+						*/
 					}
 
 					// Close the input stream
@@ -411,7 +365,12 @@ public class Janela extends JFrame {
 			    columnNames.addElement("Atributo #1");
 			    columnNames.addElement("Atributo #2");
 			    columnNames.addElement("Comentario");
-
+			    rowData.addElement(rowLinha);
+			    rowData.addElement(rowInstrucao);
+			    rowData.addElement(rowAtributo1);
+			    rowData.addElement(rowAtributo2);
+			    rowData.addElement(rowComentario);
+			    
 			    
 				tabelaInstrucoes = new JTable(rowData, columnNames);
 				barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
