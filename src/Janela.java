@@ -27,16 +27,20 @@ public class Janela extends JFrame {
 	protected JTable tabelaPilha;
 	protected JScrollPane barraRolagemPilha;
 
-	String[] colunasPilha = { "Endereco", "Valor" };
+	protected String[] colunasPilha = { "Endereco", "Valor" };
 
-	String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", "CMA", "CEQ",
+	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", "CMA", "CEQ",
 			"CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC", "DALLOC",
 			"CALL", "RETURN" };
+	
+	protected int S;
+	protected int Ji;
 
-	Vector<String> rowLinha = new Vector<String>();
-	Vector<Vector> rowData = new Vector<Vector>();
-	Vector<String> columnNames = new Vector<String>();
-
+	protected Vector<String> rowLinha = new Vector<String>();
+	protected Vector<Vector> rowData = new Vector<Vector>();
+	protected Vector<String> columnNames = new Vector<String>();
+	protected Vector<Integer> M = new Vector<Integer>(); //pilha ou  logcia pdf
+	
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlEntrada = new MeuJPanel();
 	protected MeuJPanel pnlPilha = new MeuJPanel();
@@ -329,7 +333,17 @@ public class Janela extends JFrame {
 
 	protected class Executar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-
+			
+			ExecucaoCompilador EC = new ExecucaoCompilador();
+			//EC.InstrucaoLinha("LDC", S, 0, -999);
+			//EC.InstrucaoLinha("LDV", S, -999, 0);
+			/*
+			S = S+1;
+			M.add(S,0);
+			S = S+1;
+			M.add(S, M.get(S-1));
+			*/
+			System.out.println(M);
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
 	}
@@ -350,7 +364,7 @@ public class Janela extends JFrame {
 
 	protected class Continuar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-
+			S = 0;
 			statusBar1.setText("Mensagem: Pressione Continuar");
 		}
 	}
@@ -365,6 +379,214 @@ public class Janela extends JFrame {
 	protected class FechamentoDeJanela extends WindowAdapter {
 		public void windowClosing(WindowEvent e) {
 			System.exit(0);
+		}
+	}
+	protected class ExecucaoCompilador extends WindowAdapter {
+		public void InstrucaoLinha(String Instrucao, int S, int k, int n, int m, int t) 
+		{
+			int valor;
+			switch (Instrucao)
+			{
+			case "LDC":
+				S = S + 1;
+				M.add(S, (int)k);
+				break;
+			case "LDV":
+				S = S + 1;
+				valor = (int)M.get(n);
+				M.add( S, M.get(n) );
+				break;
+			case "ADD":
+				valor = (int)M.get(S-1) + (int)M.get(S) ; 
+				M.add( (S-1), (int)valor);
+				S = S - 1;
+				break;
+			case "SUB":
+				valor = (int)M.get(S-1) - (int)M.get(S) ; 
+				M.add( (S-1), (int)valor);
+				S = S - 1;
+				break;
+			case "MULT":
+				valor = (int)M.get(S-1) * (int)M.get(S) ; 
+				M.add( (S-1), (int)valor);
+				S = S - 1;
+				break;
+			case "DIVI":
+				valor = (int) M.get(S-1) / (int) M.get(S) ; 
+				M.add( (S-1), (int)valor);
+				S = S - 1;
+				break;
+			case "INV":
+				valor = (int) M.get(S) * -1; 
+				M.add(S, (int)valor);
+				break;
+			case "AND":
+				if(M.get(S-1).equals(1) && M.get(S).equals(1) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else 
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "OR":
+				if(M.get(S-1).equals(1) || M.get(S).equals(1) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else 
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "NEG":
+				valor =  1 - (int)M.get(S); 
+				M.add(S, (int)valor);
+				break;
+			case "CME":
+				if(M.get(S-1) < M.get(S) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "CMA":
+				if(M.get(S-1) > M.get(S) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "CEQ":
+				if(M.get(S-1).equals(M.get(S)) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "CDIF":
+				if(! M.get(S-1).equals(M.get(S)) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "CMEQ":
+				if(M.get(S-1) <= M.get(S) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "CMAG":
+				if(M.get(S-1) >= M.get(S) )
+				{
+					M.add( (S-1), (int)1);
+				}
+				else
+				{
+					M.add( (S-1), (int)0);
+				}
+				S = S - 1;
+				break;
+			case "START":
+				S = - 1;
+				break;
+			case "HLT":				
+				break;
+			case "STR":
+				valor = (int)M.get(S);
+				M.add(n,valor);
+				
+				S = S - 1;
+				break;
+			case "JMP":
+				Ji = t; //talvez nao seja so isso
+				//aparentemente tem algo a mais pra fazer aqui
+				break;
+			case "JMPF":
+				if( M.get(S).equals(0))
+				{
+					Ji = t;
+				}
+				else 
+				{
+					Ji = Ji + 1;
+				}
+				S = S - 1;
+				break;
+			case "NULL":
+				//nada????
+				break;
+			case "RD":
+				S = S + 1;//desemvolver interface
+				int Entrada = 1;
+				M.add(S, Entrada);
+				break;
+			case "PRN":
+				System.out.println(M.get(S));
+				//interface
+				S = S - 1;
+				break;
+			case "ALLOC":
+				
+				for(k = 0; k < n-1; k++)
+				{
+					S = S + 1;
+					valor = (int)M.get(m+k);  //pode dar problema no tamanho de M[m+k], pegar posiçao que nao exite
+					M.add(S, valor);
+				}
+
+				break;
+			case "DALLOC":
+				for(k = n-1; k  > 0; k--)
+				{
+					
+					valor = (int)M.get(S);  
+					M.add((m+k), valor);
+//aqui pode-se remover o conteudo da pilha OBRIGATORIO??
+					S = S - 1;
+				}
+				break;
+			case "CALL":
+				S = S + 1;
+				valor = Ji + 1;
+				M.add(S, valor);
+				Ji = t;
+				break;
+			case "RETURN":
+				Ji = M.get(S);
+				S = S - 1;
+				break;
+			default:
+				//seria um ComentARIO?;
+				break;
+			}
+			
+			statusBar1.setText("Executando "+ Instrucao);
 		}
 	}
 }
