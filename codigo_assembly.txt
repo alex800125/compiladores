@@ -1,37 +1,37 @@
 START
-ALLOC 0,2 var x,y
+ALLOC 0,2 ;var x,y
 JMP L1
-L2 NULL procedimento p
-ALLOC 2,1 var z
+L2 NULL ;procedimento p
+ALLOC 2,1 ;var z
 LDV 0
-STR 2 z:=x
+STR 2 ;z:=x
 LDV 0
 LDC 1
 SUB
-STR 0 x:=x-1
+STR 0 ;x:=x-1
 LDV 2
 LDC 1
 CMA
-JMPF L3 entao
-CALL L2 p
+JMPF L3 ;entao
+CALL L2 ;p
 JMP L4
-L3 NULL senao
+L3 NULL ;senao
 LDC 1
-STR 1 y:=1
+STR 1 ;y:=1
 L4 NULL
 LDV 1
 LDV 2
 MULT
-STR 1 y:=y*z
-DALLOC 2,1 fim
+STR 1 ;y:=y*z
+DALLOC 2,1 ;fim
 RETURN
 L1 NULL
 RD
-STR 0 leia(x)
-CALL L2 p
+STR 0 ;leia(x)
+CALL L2 ;p
 LDV 0
-PRN escreva(x)
+PRN ;escreva(x)
 LDV 1
-PRN
-DALLOC 0,2 fim
+PRN ;escreva(y)
+DALLOC 0,2 ;fim
 HLT
