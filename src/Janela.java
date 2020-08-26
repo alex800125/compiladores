@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.imageio.*;
 import java.io.*;
 import java.util.*;
-
+import java.util.concurrent.TimeUnit;
 import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -28,18 +28,21 @@ public class Janela extends JFrame {
 	protected JTable tabelaPilha;
 	protected JScrollPane barraRolagemPilha;
 
-	protected String[] colunasPilha = { "Endereco", "Valor" };
-
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", "CMA", "CEQ",
 			"CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC", "DALLOC",
 			"CALL", "RETURN" };
 	
+	protected int nlinha;
 	protected int S;
 	protected int Ji;
 
-	protected Vector<String> rowLinha = new Vector<String>();
-	protected Vector<Vector> rowData = new Vector<Vector>();
-	protected Vector<String> columnNames = new Vector<String>();
+	protected Vector<String> rowLinhaInstrucao = new Vector<String>();
+	protected Vector<Vector> rowDataInstrucao = new Vector<Vector>();
+	protected Vector<String> columnNamesInstrucao = new Vector<String>();
+	protected Vector<String> rowLinhaPinlha = new Vector<String>();
+	protected Vector<Vector> rowDataPilha = new Vector<Vector>();
+	protected Vector<String> columnNamesPilha = new Vector<String>();
+	
 	protected Vector<Integer> M = new Vector<Integer>(); //pilha ou  logcia pdf
 	
 	protected MeuJPanel pnlTabela = new MeuJPanel();
@@ -194,6 +197,7 @@ public class Janela extends JFrame {
 			String[] linha;
 			String[] argumento;
 			String[] linhaComentario;
+			nlinha = 0;
 
 			JFileChooser fileChooser = new JFileChooser();
 			int returnValue = fileChooser.showOpenDialog(null);
@@ -208,11 +212,12 @@ public class Janela extends JFrame {
 					String strLine;
 
 					while ((strLine = br.readLine()) != null) {
+						nlinha++;
 						int posicao = 0;
 						int posicaoLc = 0;
 						boolean isInstruction = false;
 						String comentario = "";
-						rowLinha = new Vector<String>(); // representa cada linha da tabela
+						rowLinhaInstrucao = new Vector<String>(); // representa cada linha da tabela
 
 						linha = strLine.split(" "); // separa a linha pra cada espaco que existe
 
@@ -226,25 +231,25 @@ public class Janela extends JFrame {
 								}
 								// se for uma instrucao, deixa o espaco na tabela da linha em branco
 								if (isInstruction) {
-									rowLinha.add("");
-									rowLinha.add(l);
+									rowLinhaInstrucao.add(String.valueOf(nlinha));
+									rowLinhaInstrucao.add(l);
 									posicao++;
 								} else {
-									rowLinha.add(l);
+									rowLinhaInstrucao.add(l);
 								}
 							} else {
 								if (l.contains(",")) {
 									argumento = l.split(",");
 									for (String a : argumento) {
-										rowLinha.add(a);
+										rowLinhaInstrucao.add(a);
 									}
 									posicao++;
 								} else if (l.contains(";")) {
 									comentario = "";
 									if (posicao == 1) {
-										rowLinha.add("");
-										rowLinha.add("");
-										rowLinha.add("");
+										rowLinhaInstrucao.add("");
+										rowLinhaInstrucao.add("");
+										rowLinhaInstrucao.add("");
 
 										linhaComentario = strLine.split(";");
 										for (String lc : linhaComentario) {
@@ -253,11 +258,11 @@ public class Janela extends JFrame {
 											
 											posicaoLc++;
 										}
-										rowLinha.add(comentario);
+										rowLinhaInstrucao.add(comentario);
 									}
 									if (posicao == 2) {
-										rowLinha.add("");
-										rowLinha.add("");
+										rowLinhaInstrucao.add("");
+										rowLinhaInstrucao.add("");
 										
 										linhaComentario = strLine.split(";");
 										for (String lc : linhaComentario) {
@@ -266,10 +271,10 @@ public class Janela extends JFrame {
 											
 											posicaoLc++;
 										}
-										rowLinha.add(comentario);
+										rowLinhaInstrucao.add(comentario);
 									}
 									if (posicao == 3) {
-										rowLinha.add("");
+										rowLinhaInstrucao.add("");
 
 										linhaComentario = strLine.split(";");
 										for (String lc : linhaComentario) {
@@ -278,7 +283,7 @@ public class Janela extends JFrame {
 											
 											posicaoLc++;
 										}
-										rowLinha.add(comentario);
+										rowLinhaInstrucao.add(comentario);
 									}
 									if (posicao == 4) {
 										linhaComentario = strLine.split(";");
@@ -288,17 +293,17 @@ public class Janela extends JFrame {
 											
 											posicaoLc++;
 										}
-										rowLinha.add(comentario);
+										rowLinhaInstrucao.add(comentario);
 									}
 								} else {
-									rowLinha.add(l);
+									rowLinhaInstrucao.add(l);
 								}
 
 							}
 							posicao++;
 						}
 
-						rowData.addElement(rowLinha); // adicionar ao Data da tabela a linha com os itens
+						rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os itens
 
 						System.out.println("Linha = " + strLine + " | posicao = " + posicao);
 					}
@@ -308,75 +313,89 @@ public class Janela extends JFrame {
 					System.err.println("Error: " + e1.getMessage());
 				}
 
-				// Adiciona os campos da tabela
-				columnNames.addElement("Linha");
-				columnNames.addElement("Instrucao");
-				columnNames.addElement("Atributo #1");
-				columnNames.addElement("Atributo #2");
-				columnNames.addElement("Comentario");
-
-				// Cria a tabela e insere as colunas e os Dados previamente preenchidos
-				tabelaInstrucoes = new JTable(rowData, columnNames);
-				barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
-				tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
-				tabelaInstrucoes.setFillsViewportHeight(false);
-				pnlTabela.add(barraRolagemInstrucoes);
-
-				// Tabela referente a pilha
-				Object[][] dadosPilha = { { "*E*", "*V*" } }; // colocar resultados das operações aqui
-
-				tabelaPilha = new JTable(dadosPilha, colunasPilha);
-				barraRolagemPilha = new JScrollPane(tabelaPilha);
-				tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
-				tabelaPilha.setFillsViewportHeight(false);
-				pnlPilha.add(barraRolagemPilha);
-				
-				// Entrada opcional
-				
-				JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
-				scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-				scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				textEntrada.setText("Entrada"); // colocar codigo aquui
-				pnlAmostraDados.add(scrollableTextEntrada);
-				// getContentPane().add(pnlEntrada);
-				// saida
-
-				
-				JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
-				scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-				scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				texSaida.setText("SAida"); // colocar codigo aquui
-				pnlAmostraDados.add(scrollableTextSaida);
-
-				
-				JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
-				scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-				scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-				texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
-				pnlAmostraDados.add(scrollableTextBreakPoint);
-				// getContentPane().add(pnlEntrada);
-
-			
-
+				InterfaceAbrir();
 			}
 
 			statusBar1.setText("Mensagem: Arquivo a ser aberto");
+		}
+		void InterfaceAbrir() 
+		{
+			// Adiciona os campos da tabela
+			columnNamesInstrucao.addElement("Linha");
+			columnNamesInstrucao.addElement("Instrucao");
+			columnNamesInstrucao.addElement("Atributo #1");
+			columnNamesInstrucao.addElement("Atributo #2");
+			columnNamesInstrucao.addElement("Comentario");
+			columnNamesPilha.addElement("Endereco");
+			columnNamesPilha.addElement( "Valor");
+			
+			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
+			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
+			barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
+			tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
+			tabelaInstrucoes.setFillsViewportHeight(false);
+			pnlTabela.add(barraRolagemInstrucoes);
+			
+
+			// Tabela referente a pilha
+			rowLinhaPinlha.addElement(String.valueOf(S));
+			rowLinhaPinlha.addElement(String.valueOf(M));
+			rowDataPilha.add(rowLinhaPinlha);
+			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
+			barraRolagemPilha = new JScrollPane(tabelaPilha);
+			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
+			tabelaPilha.setFillsViewportHeight(false);
+			pnlPilha.add(barraRolagemPilha);
+			
+			
+			// Entrada opcional
+			
+			JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
+			scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			textEntrada.setText("Entrada"); // colocar codigo aquui
+			pnlAmostraDados.add(scrollableTextEntrada);
+			
+			// saida
+
+			
+			JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
+			scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			texSaida.setText("SAida"); // colocar codigo aquui
+			pnlAmostraDados.add(scrollableTextSaida);
+
+			//break
+			JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
+			scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
+			pnlAmostraDados.add(scrollableTextBreakPoint);
 		}
 	}
 
 	protected class Executar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
 			ExecucaoCompilador EC = new ExecucaoCompilador();
 			//EC.InstrucaoLinha("LDC", S, 0, -999);
 			//EC.InstrucaoLinha("LDV", S, -999, 0);
-			/*
-			S = S+1;
-			M.add(S,0);
-			S = S+1;
-			M.add(S, M.get(S-1));
-			*/
+			
+			rowLinhaPinlha.clear();
+			for(int i = 0; i < 10; i++)
+			{
+				S = i;
+				M.add(S,i);
+				rowLinhaPinlha.addElement(String.valueOf(i));
+				rowLinhaPinlha.addElement(String.valueOf(i));
+			}
 			System.out.println(M);
+
+			rowDataPilha.add(rowLinhaPinlha);
+			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
+			barraRolagemPilha = new JScrollPane(tabelaPilha);
+			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
+			tabelaPilha.setFillsViewportHeight(false);
+			pnlPilha.add(barraRolagemPilha);
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
 	}
@@ -391,13 +410,21 @@ public class Janela extends JFrame {
 	protected class DeBug implements ActionListener {
 		public void actionPerformed(ActionEvent e) 
 		{		
-		
+			
 		}
 	}
 
 	protected class Continuar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			S = 0;
+			try {
+	            for (int i=0; i<nlinha ; i++) {
+	                Thread.sleep(1000);//seria um pause na interface não deu certo
+	                tabelaInstrucoes.setRowSelectionInterval(i, i);
+	            }
+	        } catch (InterruptedException ie)
+	        {
+	            Thread.currentThread().interrupt();
+	        }
 			statusBar1.setText("Mensagem: Pressione Continuar");
 		}
 	}
