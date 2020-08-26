@@ -21,7 +21,8 @@ public class Janela extends JFrame {
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
 			btnSair = new JButton("Sair");
 
-	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
+	protected JLabel statusBar1 = new JLabel("Mensagem:"),statusBar2 = new JLabel ("Coordenada:");
+	
 	protected JTable tabelaInstrucoes;
 	protected JScrollPane barraRolagemInstrucoes;
 	protected JTable tabelaPilha;
@@ -42,8 +43,13 @@ public class Janela extends JFrame {
 	protected Vector<Integer> M = new Vector<Integer>(); //pilha ou  logcia pdf
 	
 	protected MeuJPanel pnlTabela = new MeuJPanel();
-	protected MeuJPanel pnlEntrada = new MeuJPanel();
+	protected MeuJPanel pnlAmostraDados = new MeuJPanel();
 	protected MeuJPanel pnlPilha = new MeuJPanel();
+
+	
+	protected JTextArea textEntrada = new JTextArea(10, 10);
+	protected JTextArea texSaida = new JTextArea(10, 10);
+	protected JTextArea texBreakPoint = new JTextArea(10, 10);
 
 	public Janela() {
 		super("Construcao Compiladores");
@@ -112,11 +118,9 @@ public class Janela extends JFrame {
 		pnlBotoes.add(btnDeBug);
 		pnlBotoes.add(btnContinuar);
 		pnlBotoes.add(btnSair);
-
 		JPanel pnlStatus = new JPanel();
-		GridLayout grdStatus = new GridLayout(1, 2);
+		GridLayout grdStatus = new GridLayout(3, 0);
 		pnlStatus.setLayout(grdStatus);
-
 		pnlStatus.add(statusBar1);
 		pnlStatus.add(statusBar2);
 
@@ -124,19 +128,20 @@ public class Janela extends JFrame {
 		cntForm.setLayout(new BorderLayout());
 		cntForm.add(pnlBotoes, BorderLayout.NORTH);
 		cntForm.add(pnlStatus, BorderLayout.SOUTH);
-
+		
+		
+		
 		GridLayout grdTabela = new GridLayout(0, 1); // tentar arrumar setsize
 		pnlTabela.setLayout(grdTabela);
-		pnlEntrada.setLayout(grdTabela);
-
+		pnlAmostraDados.setLayout(grdTabela);
 		pnlPilha.setLayout(grdTabela);
 
 		cntForm.add(pnlTabela, BorderLayout.CENTER);
-		cntForm.add(pnlEntrada, BorderLayout.WEST);
+		cntForm.add(pnlAmostraDados, BorderLayout.WEST);
 		cntForm.add(pnlPilha, BorderLayout.EAST);
-
+		
 		this.addWindowListener(new FechamentoDeJanela());
-
+		
 		this.setSize(700, 500);
 		this.setVisible(true);
 	}
@@ -154,7 +159,7 @@ public class Janela extends JFrame {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			statusBar2.setText("Coordenada: " + e.getX() + "," + e.getY());
+			 statusBar2.setText("Coordenada: "+e.getX()+","+e.getY());
 		}
 
 		@Override
@@ -180,6 +185,7 @@ public class Janela extends JFrame {
 		@Override
 		public void mouseExited(MouseEvent e) {
 			// TODO Auto-generated method stub
+			
 		}
 	}
 
@@ -324,6 +330,33 @@ public class Janela extends JFrame {
 				tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
 				tabelaPilha.setFillsViewportHeight(false);
 				pnlPilha.add(barraRolagemPilha);
+				
+				// Entrada opcional
+				
+				JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
+				scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				textEntrada.setText("Entrada"); // colocar codigo aquui
+				pnlAmostraDados.add(scrollableTextEntrada);
+				// getContentPane().add(pnlEntrada);
+				// saida
+
+				
+				JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
+				scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				texSaida.setText("SAida"); // colocar codigo aquui
+				pnlAmostraDados.add(scrollableTextSaida);
+
+				
+				JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
+				scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
+				pnlAmostraDados.add(scrollableTextBreakPoint);
+				// getContentPane().add(pnlEntrada);
+
+			
 
 			}
 
@@ -356,9 +389,9 @@ public class Janela extends JFrame {
 	}
 
 	protected class DeBug implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-
-			statusBar1.setText("Mensagem: Execucao Passo a Passo");
+		public void actionPerformed(ActionEvent e) 
+		{		
+		
 		}
 	}
 
@@ -381,7 +414,8 @@ public class Janela extends JFrame {
 			System.exit(0);
 		}
 	}
-	protected class ExecucaoCompilador extends WindowAdapter {
+	protected class ExecucaoCompilador {
+		boolean isnumber=false;
 		public void InstrucaoLinha(String Instrucao, int S, int k, int n, int m, int t) 
 		{
 			int valor;
@@ -543,11 +577,24 @@ public class Janela extends JFrame {
 				break;
 			case "RD":
 				S = S + 1;//desemvolver interface
-				int Entrada = 1;
+				int Entrada = 0;
+				do {
+						try
+						{
+							String x = javax.swing.JOptionPane.showInputDialog("Digite Somente Numeros");
+							Entrada = Integer.parseInt(x); 
+							isnumber = true;
+						}
+						catch(NumberFormatException  e1)
+						{  
+					     System.out.println(e1);    
+					    }
+				}while(!isnumber);
+				textEntrada.setText(Entrada + "\n"+ textEntrada.getText());
 				M.add(S, Entrada);
 				break;
 			case "PRN":
-				System.out.println(M.get(S));
+				texSaida.setText((M.get(S)) + "\n"+ texSaida.getText());
 				//interface
 				S = S - 1;
 				break;
