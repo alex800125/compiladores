@@ -119,7 +119,7 @@ public class Janela extends JFrame {
 		pnlBotoes.add(btnContinuar);
 		pnlBotoes.add(btnSair);
 		JPanel pnlStatus = new JPanel();
-		GridLayout grdStatus = new GridLayout(3, 0);
+		GridLayout grdStatus = new GridLayout(1, 2);
 		pnlStatus.setLayout(grdStatus);
 		pnlStatus.add(statusBar1);
 		pnlStatus.add(statusBar2);
@@ -421,11 +421,11 @@ public class Janela extends JFrame {
 			int valor;
 			switch (Instrucao)
 			{
-			case "LDC":
+			case "LDC": //Carregar constante
 				S = S + 1;
 				M.add(S, (int)k);
 				break;
-			case "LDV":
+			case "LDV": //Carregar valor
 				S = S + 1;
 				valor = (int)M.get(n);
 				M.add( S, M.get(n) );
