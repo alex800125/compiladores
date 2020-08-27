@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.imageio.*;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -21,17 +20,17 @@ public class Janela extends JFrame {
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
 			btnSair = new JButton("Sair");
 
-	protected JLabel statusBar1 = new JLabel("Mensagem:"),statusBar2 = new JLabel ("Coordenada:");
-	
+	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
+
 	protected JTable tabelaInstrucoes;
 	protected JScrollPane barraRolagemInstrucoes;
 	protected JTable tabelaPilha;
 	protected JScrollPane barraRolagemPilha;
 
-	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME", "CMA", "CEQ",
-			"CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC", "DALLOC",
-			"CALL", "RETURN" };
-	
+	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
+			"CMA", "CEQ", "CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
+			"DALLOC", "CALL", "RETURN" };
+
 	protected int nlinha;
 	protected int S;
 	protected int Ji;
@@ -42,14 +41,13 @@ public class Janela extends JFrame {
 	protected Vector<String> rowLinhaPinlha = new Vector<String>();
 	protected Vector<Vector> rowDataPilha = new Vector<Vector>();
 	protected Vector<String> columnNamesPilha = new Vector<String>();
-	
-	protected Vector<Integer> M = new Vector<Integer>(); //pilha ou  logcia pdf
-	
+
+	protected Vector<Integer> M = new Vector<Integer>(); // pilha
+
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlAmostraDados = new MeuJPanel();
 	protected MeuJPanel pnlPilha = new MeuJPanel();
 
-	
 	protected JTextArea textEntrada = new JTextArea(10, 10);
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
@@ -131,9 +129,7 @@ public class Janela extends JFrame {
 		cntForm.setLayout(new BorderLayout());
 		cntForm.add(pnlBotoes, BorderLayout.NORTH);
 		cntForm.add(pnlStatus, BorderLayout.SOUTH);
-		
-		
-		
+
 		GridLayout grdTabela = new GridLayout(0, 1); // tentar arrumar setsize
 		pnlTabela.setLayout(grdTabela);
 		pnlAmostraDados.setLayout(grdTabela);
@@ -142,9 +138,9 @@ public class Janela extends JFrame {
 		cntForm.add(pnlTabela, BorderLayout.CENTER);
 		cntForm.add(pnlAmostraDados, BorderLayout.WEST);
 		cntForm.add(pnlPilha, BorderLayout.EAST);
-		
+
 		this.addWindowListener(new FechamentoDeJanela());
-		
+
 		this.setSize(700, 500);
 		this.setVisible(true);
 	}
@@ -162,7 +158,7 @@ public class Janela extends JFrame {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			 statusBar2.setText("Coordenada: "+e.getX()+","+e.getY());
+			statusBar2.setText("Coordenada: " + e.getX() + "," + e.getY());
 		}
 
 		@Override
@@ -188,7 +184,7 @@ public class Janela extends JFrame {
 		@Override
 		public void mouseExited(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
 
@@ -231,7 +227,7 @@ public class Janela extends JFrame {
 								}
 								// se for uma instrucao, deixa o espaco na tabela da linha em branco
 								if (isInstruction) {
-									rowLinhaInstrucao.add(String.valueOf(nlinha));
+									rowLinhaInstrucao.add("");
 									rowLinhaInstrucao.add(l);
 									posicao++;
 								} else {
@@ -255,7 +251,7 @@ public class Janela extends JFrame {
 										for (String lc : linhaComentario) {
 											if (posicaoLc != 0)
 												comentario = comentario + lc;
-											
+
 											posicaoLc++;
 										}
 										rowLinhaInstrucao.add(comentario);
@@ -263,12 +259,12 @@ public class Janela extends JFrame {
 									if (posicao == 2) {
 										rowLinhaInstrucao.add("");
 										rowLinhaInstrucao.add("");
-										
+
 										linhaComentario = strLine.split(";");
 										for (String lc : linhaComentario) {
 											if (posicaoLc != 0)
 												comentario = comentario + lc;
-											
+
 											posicaoLc++;
 										}
 										rowLinhaInstrucao.add(comentario);
@@ -280,7 +276,7 @@ public class Janela extends JFrame {
 										for (String lc : linhaComentario) {
 											if (posicaoLc != 0)
 												comentario = comentario + lc;
-											
+
 											posicaoLc++;
 										}
 										rowLinhaInstrucao.add(comentario);
@@ -290,7 +286,7 @@ public class Janela extends JFrame {
 										for (String lc : linhaComentario) {
 											if (posicaoLc != 0)
 												comentario = comentario + lc;
-											
+
 											posicaoLc++;
 										}
 										rowLinhaInstrucao.add(comentario);
@@ -303,9 +299,10 @@ public class Janela extends JFrame {
 							posicao++;
 						}
 
-						rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os itens
+						rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os
+																		// itens
 
-						System.out.println("Linha = " + strLine + " | posicao = " + posicao);
+						// System.out.println("Linha = " + strLine + " | posicao = " + posicao);
 					}
 
 					in.close();
@@ -318,8 +315,8 @@ public class Janela extends JFrame {
 
 			statusBar1.setText("Mensagem: Arquivo a ser aberto");
 		}
-		void InterfaceAbrir() 
-		{
+
+		void InterfaceAbrir() {
 			// Adiciona os campos da tabela
 			columnNamesInstrucao.addElement("Linha");
 			columnNamesInstrucao.addElement("Instrucao");
@@ -327,15 +324,14 @@ public class Janela extends JFrame {
 			columnNamesInstrucao.addElement("Atributo #2");
 			columnNamesInstrucao.addElement("Comentario");
 			columnNamesPilha.addElement("Endereco");
-			columnNamesPilha.addElement( "Valor");
-			
+			columnNamesPilha.addElement("Valor");
+
 			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
 			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
 			barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
 			tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
 			tabelaInstrucoes.setFillsViewportHeight(false);
 			pnlTabela.add(barraRolagemInstrucoes);
-			
 
 			// Tabela referente a pilha
 			rowLinhaPinlha.addElement(String.valueOf(S));
@@ -346,26 +342,24 @@ public class Janela extends JFrame {
 			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
 			tabelaPilha.setFillsViewportHeight(false);
 			pnlPilha.add(barraRolagemPilha);
-			
-			
+
 			// Entrada opcional
-			
+
 			JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
 			scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			textEntrada.setText("Entrada"); // colocar codigo aquui
+			textEntrada.setText("Entrada"); // colocar codigo aqui
 			pnlAmostraDados.add(scrollableTextEntrada);
-			
+
 			// saida
 
-			
 			JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
 			scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			texSaida.setText("SAida"); // colocar codigo aquui
+			texSaida.setText("Saida"); // colocar codigo aqui
 			pnlAmostraDados.add(scrollableTextSaida);
 
-			//break
+			// break
 			JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
 			scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -377,25 +371,55 @@ public class Janela extends JFrame {
 	protected class Executar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			ExecucaoCompilador EC = new ExecucaoCompilador();
-			//EC.InstrucaoLinha("LDC", S, 0, -999);
-			//EC.InstrucaoLinha("LDV", S, -999, 0);
-			
-			rowLinhaPinlha.clear();
-			for(int i = 0; i < 10; i++)
-			{
-				S = i;
-				M.add(S,i);
-				rowLinhaPinlha.addElement(String.valueOf(i));
-				rowLinhaPinlha.addElement(String.valueOf(i));
+
+			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
+			int TopoPilha = 0;
+			System.out.println("total de linhas: " + totalLinhasCodigo);
+
+			for (int i = 0; i < totalLinhasCodigo; i++) {
+				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(i, 1);
+				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(i, 2);
+				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(i, 3);
+
+				// Finaliza o programa
+				if (instrucao.equals("HLT")) {
+
+					// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
+					// Futuramente remover esses comandos desses IFs do
+					// ExecucaoCompilador.InstrucaoLinha
+					break;
+
+				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF")) {
+
+					// Ver o que deve ser ao encontrar um Jump
+					// Futuramente remover esses comandos desses IFs do
+					// ExecucaoCompilador.InstrucaoLinha
+
+				} else if (instrucao.equals("CALL")) {
+
+					// Ver o que deve ser ao encontrar uma chamada de função/procedimento
+					// Futuramente remover esses comandos desses IFs do
+					// ExecucaoCompilador.InstrucaoLinha
+
+				} else {
+					System.out.println("instrucao = " + instrucao + " | atributo_1 = " + atributo_1 + " | atributo_2 = "
+							+ atributo_2 + " | TopoPilha = " + TopoPilha);
+					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
+					
+					// Precisamos trabalhar primeiro nessa parte, sobre o que fazer com o topo da Pilha
+				}
 			}
+
 			System.out.println(M);
 
-			rowDataPilha.add(rowLinhaPinlha);
-			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
-			barraRolagemPilha = new JScrollPane(tabelaPilha);
-			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
-			tabelaPilha.setFillsViewportHeight(false);
-			pnlPilha.add(barraRolagemPilha);
+			// não sabia o que era essas coisas aqui em baixo, deixei comentado
+
+//			rowDataPilha.add(rowLinhaPinlha);
+//			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
+//			barraRolagemPilha = new JScrollPane(tabelaPilha);
+//			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
+//			tabelaPilha.setFillsViewportHeight(false);
+//			pnlPilha.add(barraRolagemPilha);
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
 	}
@@ -408,23 +432,21 @@ public class Janela extends JFrame {
 	}
 
 	protected class DeBug implements ActionListener {
-		public void actionPerformed(ActionEvent e) 
-		{		
-			
+		public void actionPerformed(ActionEvent e) {
+
 		}
 	}
 
 	protected class Continuar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			try {
-	            for (int i=0; i<nlinha ; i++) {
-	                Thread.sleep(1000);//seria um pause na interface não deu certo
-	                tabelaInstrucoes.setRowSelectionInterval(i, i);
-	            }
-	        } catch (InterruptedException ie)
-	        {
-	            Thread.currentThread().interrupt();
-	        }
+//			try {
+//				for (int i = 0; i < nlinha; i++) {
+//					Thread.sleep(1000);// seria um pause na interface não deu certo
+//					tabelaInstrucoes.setRowSelectionInterval(i, i);
+//				}
+//			} catch (InterruptedException ie) {
+//				Thread.currentThread().interrupt();
+//			}
 			statusBar1.setText("Mensagem: Pressione Continuar");
 		}
 	}
@@ -441,226 +463,229 @@ public class Janela extends JFrame {
 			System.exit(0);
 		}
 	}
+
 	protected class ExecucaoCompilador {
-		boolean isnumber=false;
-		public void InstrucaoLinha(String Instrucao, int S, int k, int n, int m, int t) 
-		{
-			int valor;
-			switch (Instrucao)
-			{
-			case "LDC": //Carregar constante
-				S = S + 1;
-				M.add(S, (int)k);
+		boolean isnumber = false;
+
+		public int InstrucaoLinha(String Instrucao, String PrimeiroAtributo, String SegundoAtributo, int TopoPilha,
+				int linhaJump) {
+			int valor, k = 0;
+
+			statusBar1.setText("Executando " + Instrucao);
+
+			switch (Instrucao) {
+			case "LDC": // Carregar constante
+				TopoPilha = TopoPilha + 1;
+				M.add(TopoPilha, (int) k);
 				break;
-			case "LDV": //Carregar valor
-				S = S + 1;
-				valor = (int)M.get(n);
-				M.add( S, M.get(n) );
+
+			case "LDV": // Carregar valor
+				TopoPilha = TopoPilha + 1;
+				valor = (int) M.get(Integer.parseInt(SegundoAtributo));
+				M.add(TopoPilha, M.get(Integer.parseInt(SegundoAtributo)));
 				break;
+
 			case "ADD":
-				valor = (int)M.get(S-1) + (int)M.get(S) ; 
-				M.add( (S-1), (int)valor);
-				S = S - 1;
+				valor = (int) M.get(TopoPilha - 1) + (int) M.get(TopoPilha);
+				M.add((TopoPilha - 1), (int) valor);
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "SUB":
-				valor = (int)M.get(S-1) - (int)M.get(S) ; 
-				M.add( (S-1), (int)valor);
-				S = S - 1;
+				valor = (int) M.get(TopoPilha - 1) - (int) M.get(TopoPilha);
+				M.add((TopoPilha - 1), (int) valor);
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "MULT":
-				valor = (int)M.get(S-1) * (int)M.get(S) ; 
-				M.add( (S-1), (int)valor);
-				S = S - 1;
+				valor = (int) M.get(TopoPilha - 1) * (int) M.get(TopoPilha);
+				M.add((TopoPilha - 1), (int) valor);
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "DIVI":
-				valor = (int) M.get(S-1) / (int) M.get(S) ; 
-				M.add( (S-1), (int)valor);
-				S = S - 1;
+				valor = (int) M.get(TopoPilha - 1) / (int) M.get(TopoPilha);
+				M.add((TopoPilha - 1), (int) valor);
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "INV":
-				valor = (int) M.get(S) * -1; 
-				M.add(S, (int)valor);
+				valor = (int) M.get(TopoPilha) * -1;
+				M.add(TopoPilha, (int) valor);
 				break;
+
 			case "AND":
-				if(M.get(S-1).equals(1) && M.get(S).equals(1) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1).equals(1) && M.get(TopoPilha).equals(1)) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else 
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "OR":
-				if(M.get(S-1).equals(1) || M.get(S).equals(1) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1).equals(1) || M.get(TopoPilha).equals(1)) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else 
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "NEG":
-				valor =  1 - (int)M.get(S); 
-				M.add(S, (int)valor);
+				valor = 1 - (int) M.get(TopoPilha);
+				M.add(TopoPilha, (int) valor);
 				break;
+
 			case "CME":
-				if(M.get(S-1) < M.get(S) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1) < M.get(TopoPilha)) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "CMA":
-				if(M.get(S-1) > M.get(S) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1) > M.get(TopoPilha)) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "CEQ":
-				if(M.get(S-1).equals(M.get(S)) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1).equals(M.get(TopoPilha))) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "CDIF":
-				if(! M.get(S-1).equals(M.get(S)) )
-				{
-					M.add( (S-1), (int)1);
+				if (!M.get(TopoPilha - 1).equals(M.get(TopoPilha))) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "CMEQ":
-				if(M.get(S-1) <= M.get(S) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1) <= M.get(TopoPilha)) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "CMAG":
-				if(M.get(S-1) >= M.get(S) )
-				{
-					M.add( (S-1), (int)1);
+				if (M.get(TopoPilha - 1) >= M.get(TopoPilha)) {
+					M.add((TopoPilha - 1), (int) 1);
+				} else {
+					M.add((TopoPilha - 1), (int) 0);
 				}
-				else
-				{
-					M.add( (S-1), (int)0);
-				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "START":
-				S = - 1;
+				TopoPilha = -1;
 				break;
-			case "HLT":				
+
+			case "HLT":
 				break;
+
 			case "STR":
-				valor = (int)M.get(S);
-				M.add(n,valor);
-				
-				S = S - 1;
+				valor = (int) M.get(TopoPilha);
+				M.add(Integer.parseInt(SegundoAtributo), valor);
+
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "JMP":
-				Ji = t; //talvez nao seja so isso
-				//aparentemente tem algo a mais pra fazer aqui
+				Ji = linhaJump; // talvez nao seja so isso
+				// aparentemente tem algo a mais pra fazer aqui
 				break;
+
 			case "JMPF":
-				if( M.get(S).equals(0))
-				{
-					Ji = t;
-				}
-				else 
-				{
+				if (M.get(TopoPilha).equals(0)) {
+					Ji = linhaJump;
+				} else {
 					Ji = Ji + 1;
 				}
-				S = S - 1;
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "NULL":
-				//nada????
+				// nada????
 				break;
+
 			case "RD":
-				S = S + 1;//desemvolver interface
+				TopoPilha = TopoPilha + 1;// desenvolver interface
 				int Entrada = 0;
 				do {
-						try
-						{
-							String x = javax.swing.JOptionPane.showInputDialog("Digite Somente Numeros");
-							Entrada = Integer.parseInt(x); 
-							isnumber = true;
-						}
-						catch(NumberFormatException  e1)
-						{  
-					     System.out.println(e1);    
-					    }
-				}while(!isnumber);
-				textEntrada.setText(Entrada + "\n"+ textEntrada.getText());
-				M.add(S, Entrada);
+					try {
+						String x = javax.swing.JOptionPane.showInputDialog("Digite Somente Numeros");
+						Entrada = Integer.parseInt(x);
+						isnumber = true;
+					} catch (NumberFormatException e1) {
+						System.out.println(e1);
+					}
+				} while (!isnumber);
+				textEntrada.setText(Entrada + "\n" + textEntrada.getText());
+				M.add(TopoPilha, Entrada);
 				break;
+
 			case "PRN":
-				texSaida.setText((M.get(S)) + "\n"+ texSaida.getText());
-				//interface
-				S = S - 1;
+				texSaida.setText((M.get(TopoPilha)) + "\n" + texSaida.getText());
+				// interface
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			case "ALLOC":
-				
-				for(k = 0; k < n-1; k++)
-				{
-					S = S + 1;
-					valor = (int)M.get(m+k);  //pode dar problema no tamanho de M[m+k], pegar posiçao que nao exite
-					M.add(S, valor);
+
+				for (k = 0; k < Integer.parseInt(SegundoAtributo) - 1; k++) {
+					TopoPilha = TopoPilha + 1;
+					valor = (int) M.get(Integer.parseInt(PrimeiroAtributo) + k); // pode dar problema no tamanho de
+																					// M[m+k], pegar posiçao que nao
+																					// exite
+					M.add(TopoPilha, valor);
 				}
 
 				break;
+
 			case "DALLOC":
-				for(k = n-1; k  > 0; k--)
-				{
-					
-					valor = (int)M.get(S);  
-					M.add((m+k), valor);
-//aqui pode-se remover o conteudo da pilha OBRIGATORIO??
-					S = S - 1;
+				for (k = Integer.parseInt(SegundoAtributo) - 1; k > 0; k--) {
+
+					valor = (int) M.get(TopoPilha);
+					M.add((Integer.parseInt(PrimeiroAtributo) + k), valor);
+					// aqui pode-se remover o conteudo da pilha OBRIGATORIO??
+					TopoPilha = TopoPilha - 1;
 				}
 				break;
+
 			case "CALL":
-				S = S + 1;
+				TopoPilha = TopoPilha + 1;
 				valor = Ji + 1;
-				M.add(S, valor);
-				Ji = t;
+				M.add(TopoPilha, valor);
+				Ji = linhaJump;
 				break;
+
 			case "RETURN":
-				Ji = M.get(S);
-				S = S - 1;
+				Ji = M.get(TopoPilha);
+				TopoPilha = TopoPilha - 1;
 				break;
+
 			default:
-				//seria um ComentARIO?;
+				System.out.println("Intrucao nao reconhecida = " + Instrucao);
 				break;
 			}
-			
-			statusBar1.setText("Executando "+ Instrucao);
+
+			System.out.println("TopoPilha = " + TopoPilha);
+			return TopoPilha;
 		}
 	}
 }
