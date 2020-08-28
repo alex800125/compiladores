@@ -374,6 +374,8 @@ public class Janela extends JFrame {
 
 			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
 			int TopoPilha = 0;
+			int valorEntrada = 0;
+			boolean isNumber = false;
 			System.out.println("total de linhas: " + totalLinhasCodigo);
 
 			for (int i = 0; i < totalLinhasCodigo; i++) {
@@ -405,8 +407,9 @@ public class Janela extends JFrame {
 					System.out.println("instrucao = " + instrucao + " | atributo_1 = " + atributo_1 + " | atributo_2 = "
 							+ atributo_2 + " | TopoPilha = " + TopoPilha);
 					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
-					
-					// Precisamos trabalhar primeiro nessa parte, sobre o que fazer com o topo da Pilha
+
+					// Precisamos trabalhar primeiro nessa parte, sobre o que fazer com o topo da
+					// Pilha
 				}
 			}
 
@@ -465,7 +468,7 @@ public class Janela extends JFrame {
 	}
 
 	protected class ExecucaoCompilador {
-		boolean isnumber = false;
+		boolean isNumber = false;
 
 		public int InstrucaoLinha(String Instrucao, String PrimeiroAtributo, String SegundoAtributo, int TopoPilha,
 				int linhaJump) {
@@ -595,21 +598,24 @@ public class Janela extends JFrame {
 				TopoPilha = -1;
 				break;
 
+			// TODO talvez tenha q retirar daqui
 			case "HLT":
 				break;
 
 			case "STR":
 				valor = (int) M.get(TopoPilha);
-				M.add(Integer.parseInt(SegundoAtributo), valor);
+				M.add(Integer.parseInt(PrimeiroAtributo), valor);
 
 				TopoPilha = TopoPilha - 1;
 				break;
 
+			// TODO talvez tenha q retirar daqui
 			case "JMP":
 				Ji = linhaJump; // talvez nao seja so isso
 				// aparentemente tem algo a mais pra fazer aqui
 				break;
 
+			// TODO talvez tenha q retirar daqui
 			case "JMPF":
 				if (M.get(TopoPilha).equals(0)) {
 					Ji = linhaJump;
@@ -624,17 +630,17 @@ public class Janela extends JFrame {
 				break;
 
 			case "RD":
-				TopoPilha = TopoPilha + 1;// desenvolver interface
+				TopoPilha = TopoPilha + 1;
 				int Entrada = 0;
 				do {
 					try {
 						String x = javax.swing.JOptionPane.showInputDialog("Digite Somente Numeros");
 						Entrada = Integer.parseInt(x);
-						isnumber = true;
+						isNumber = true;
 					} catch (NumberFormatException e1) {
 						System.out.println(e1);
 					}
-				} while (!isnumber);
+				} while (!isNumber);
 				textEntrada.setText(Entrada + "\n" + textEntrada.getText());
 				M.add(TopoPilha, Entrada);
 				break;
@@ -647,12 +653,14 @@ public class Janela extends JFrame {
 
 			case "ALLOC":
 
-				for (k = 0; k < Integer.parseInt(SegundoAtributo) - 1; k++) {
+				for (k = 0; k <= Integer.parseInt(SegundoAtributo) - 1; k++) {
+
 					TopoPilha = TopoPilha + 1;
-					valor = (int) M.get(Integer.parseInt(PrimeiroAtributo) + k); // pode dar problema no tamanho de
-																					// M[m+k], pegar posiçao que nao
-																					// exite
-					M.add(TopoPilha, valor);
+					M.add(TopoPilha, -999);
+//					valor = (int) M.get(Integer.parseInt(PrimeiroAtributo) + k); // pode dar problema no tamanho de
+					// M[m+k], pegar posiçao que nao
+					// exite
+
 				}
 
 				break;
