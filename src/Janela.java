@@ -38,7 +38,7 @@ public class Janela extends JFrame {
 	protected Vector<String> rowLinhaInstrucao = new Vector<String>();
 	protected Vector<Vector> rowDataInstrucao = new Vector<Vector>();
 	protected Vector<String> columnNamesInstrucao = new Vector<String>();
-	protected Vector<String> rowLinhaPinlha = new Vector<String>();
+	protected Vector<String> rowLinhaPilha = new Vector<String>();
 	protected Vector<Vector> rowDataPilha = new Vector<Vector>();
 	protected Vector<String> columnNamesPilha = new Vector<String>();
 
@@ -324,7 +324,7 @@ public class Janela extends JFrame {
 			columnNamesInstrucao.addElement("Atributo #2");
 			columnNamesInstrucao.addElement("Comentario");
 			columnNamesPilha.addElement("Endereco");
-			columnNamesPilha.addElement("Valor");
+			columnNamesPilha.addElement("Valor1");
 
 			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
 			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
@@ -334,9 +334,7 @@ public class Janela extends JFrame {
 			pnlTabela.add(barraRolagemInstrucoes);
 
 			// Tabela referente a pilha
-			rowLinhaPinlha.addElement(String.valueOf(S));
-			rowLinhaPinlha.addElement(String.valueOf(M));
-			rowDataPilha.add(rowLinhaPinlha);
+			rowDataPilha.add(rowLinhaPilha);
 			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
 			barraRolagemPilha = new JScrollPane(tabelaPilha);
 			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
@@ -417,12 +415,6 @@ public class Janela extends JFrame {
 
 			// não sabia o que era essas coisas aqui em baixo, deixei comentado
 
-//			rowDataPilha.add(rowLinhaPinlha);
-//			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
-//			barraRolagemPilha = new JScrollPane(tabelaPilha);
-//			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
-//			tabelaPilha.setFillsViewportHeight(false);
-//			pnlPilha.add(barraRolagemPilha);
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
 	}
@@ -435,8 +427,35 @@ public class Janela extends JFrame {
 	}
 
 	protected class DeBug implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-
+		public void actionPerformed(ActionEvent e) 
+		{
+			rowLinhaPilha = new Vector<String>();
+			
+			for(int i = 0; i< 10;i++)
+			{
+				M.add(i, i*i);
+			}
+			
+			for(int i = 0; i< M.size();i++)
+			{
+				
+				rowLinhaPilha.addElement(String.valueOf(i));
+				rowLinhaPilha.addElement(String.valueOf(M.get(i)));
+				rowDataPilha.add(0,rowLinhaPilha);
+				
+				
+			}
+			columnNamesPilha.addElement("Endereco");
+			columnNamesPilha.addElement("Valor1");
+			
+			rowDataPilha.addElement(rowLinhaPilha);
+			System.out.println(rowDataPilha);
+			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
+			barraRolagemPilha = new JScrollPane(tabelaPilha);
+			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
+			tabelaPilha.setFillsViewportHeight(false);
+			pnlPilha.add(barraRolagemPilha);
+			
 		}
 	}
 
