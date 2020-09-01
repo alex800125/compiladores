@@ -43,6 +43,7 @@ public class Janela extends JFrame {
 	protected Vector<String> columnNamesPilha = new Vector<String>();
 
 	protected Vector<Integer> M = new Vector<Integer>(); // pilha
+	protected Vector<Integer> ChamadasCall = new Vector<Integer>(); // pilha
 
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlAmostraDados = new MeuJPanel();
@@ -296,12 +297,13 @@ public class Janela extends JFrame {
 								}
 
 							}
+							
 							posicao++;
 						}
-
+						
 						rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os
 																		// itens
-
+						//System.out.println(rowDataInstrucao);
 						// System.out.println("Linha = " + strLine + " | posicao = " + posicao);
 					}
 
@@ -368,13 +370,15 @@ public class Janela extends JFrame {
 
 	protected class Executar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			ChamadasCall = new Vector<Integer>();
 			ExecucaoCompilador EC = new ExecucaoCompilador();
-
+			
 			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
 			int TopoPilha = 0;
 			int valorEntrada = 0;
+			int valorReturn = 0;
 			boolean isNumber = false;
-			System.out.println("total de linhas: " + totalLinhasCodigo);
+			//System.out.println("total de linhas: " + totalLinhasCodigo);
 
 			for (int i = 0; i < totalLinhasCodigo; i++) {
 				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(i, 1);
@@ -382,24 +386,39 @@ public class Janela extends JFrame {
 				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(i, 3);
 
 				// Finaliza o programa
-				if (instrucao.equals("HLT")) {
-
+				if (instrucao.equals("HLT"))
+				{
+					System.out.println("HTL");
 					// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
 					// Futuramente remover esses comandos desses IFs do
 					// ExecucaoCompilador.InstrucaoLinha
 					break;
 
-				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
+				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL")))
+				{
 
 					for (int t = 0; t < totalLinhasCodigo; t++) {
 						String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
 						
-						if (atributo_1.equals(linha)) {
-							i = t;
+						if (atributo_1.equals(linha))
+						{
+							if((instrucao.equals("CALL")))
+							{
+								ChamadasCall.add(i);
+								
+							}
+							i = t; //loo´p
+							
 						}
 					}
 
-				} else {
+				} else if(instrucao.equals("RETURN"))
+				{
+					ChamadasCall.size();
+					i = ChamadasCall.get((ChamadasCall.size()-1));
+					ChamadasCall.remove((ChamadasCall.size()-1));
+					
+				}else{
 					System.out.println("instrucao = " + instrucao + " | atributo_1 = " + atributo_1 + " | atributo_2 = "
 							+ atributo_2 + " | TopoPilha = " + TopoPilha);
 					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
@@ -408,11 +427,12 @@ public class Janela extends JFrame {
 					// Pilha
 				}
 				
-				System.out.println(M);
+				//System.out.println(M);
+				EC.AtualizarPilha(TopoPilha);
 			}
 
-			System.out.println(M + "\n\n");
-
+			
+			
 			// não sabia o que era essas coisas aqui em baixo, deixei comentado
 
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
@@ -429,32 +449,7 @@ public class Janela extends JFrame {
 	protected class DeBug implements ActionListener {
 		public void actionPerformed(ActionEvent e) 
 		{
-			rowLinhaPilha = new Vector<String>();
 			
-			for(int i = 0; i< 10;i++)
-			{
-				M.add(i, i*i);
-			}
-			
-			for(int i = 0; i< M.size();i++)
-			{
-				
-				rowLinhaPilha.addElement(String.valueOf(i));
-				rowLinhaPilha.addElement(String.valueOf(M.get(i)));
-				rowDataPilha.add(0,rowLinhaPilha);
-				
-				
-			}
-			columnNamesPilha.addElement("Endereco");
-			columnNamesPilha.addElement("Valor1");
-			
-			rowDataPilha.addElement(rowLinhaPilha);
-			System.out.println(rowDataPilha);
-			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
-			barraRolagemPilha = new JScrollPane(tabelaPilha);
-			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
-			tabelaPilha.setFillsViewportHeight(false);
-			pnlPilha.add(barraRolagemPilha);
 			
 		}
 	}
@@ -504,7 +499,7 @@ public class Janela extends JFrame {
 			case "LDV": // Carregar valor
 				TopoPilha = TopoPilha + 1;
 				valor = (int) M.get(Integer.parseInt(PrimeiroAtributo));
-				M.add(TopoPilha, M.get(Integer.parseInt(PrimeiroAtributo)));
+				M.set(TopoPilha, M.get(Integer.parseInt(PrimeiroAtributo)));
 				break;
 
 			case "ADD":
@@ -691,7 +686,7 @@ public class Janela extends JFrame {
 			case "CALL":
 				TopoPilha = TopoPilha + 1;
 				valor = Ji + 1;
-				M.add(TopoPilha, valor);
+				M.set(TopoPilha, valor);
 				Ji = linhaJump;
 				break;
 
@@ -705,8 +700,31 @@ public class Janela extends JFrame {
 				break;
 			}
 
-			System.out.println("TopoPilha = " + TopoPilha);
+			//System.out.println("TopoPilha = " + TopoPilha);
 			return TopoPilha;
 		}
+		public void AtualizarPilha(int TopoPilha) 
+		{
+			pnlPilha = new MeuJPanel();
+			rowDataPilha = new Vector<Vector>();
+			columnNamesPilha = new Vector<String>();
+			for(int i = 0; i < M.size();i++)
+			{				
+				rowLinhaPilha = new Vector<String>(); //limpa o vector, nao sei se eh o mais correto, pode afetar a memoria fisica
+				rowLinhaPilha.addElement(String.valueOf(i));
+				rowLinhaPilha.addElement(String.valueOf(M.get(i)));
+				rowDataPilha.addElement(rowLinhaPilha);
+			}
+			System.out.println(rowDataPilha);
+			columnNamesPilha.addElement("Endereco");
+			columnNamesPilha.addElement("Valor1");
+			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
+			barraRolagemPilha = new JScrollPane(tabelaPilha);
+			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
+			tabelaPilha.setFillsViewportHeight(false);
+			pnlPilha.add(barraRolagemPilha);
+			
+		}
 	}
+	
 }
