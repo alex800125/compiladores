@@ -428,9 +428,9 @@ public class Janela extends JFrame {
 				}
 				
 				//System.out.println(M);
-				EC.AtualizarPilha(TopoPilha);
+				
 			}
-
+			EC.AtualizarPilha(TopoPilha);
 			
 			
 			// não sabia o que era essas coisas aqui em baixo, deixei comentado
@@ -705,9 +705,10 @@ public class Janela extends JFrame {
 		}
 		public void AtualizarPilha(int TopoPilha) 
 		{
-			pnlPilha = new MeuJPanel();
+			//pnlPilha = new MeuJPanel();
 			rowDataPilha = new Vector<Vector>();
 			columnNamesPilha = new Vector<String>();
+			pnlPilha.remove(barraRolagemPilha);
 			for(int i = 0; i < M.size();i++)
 			{				
 				rowLinhaPilha = new Vector<String>(); //limpa o vector, nao sei se eh o mais correto, pode afetar a memoria fisica
