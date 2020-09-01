@@ -389,17 +389,15 @@ public class Janela extends JFrame {
 					// ExecucaoCompilador.InstrucaoLinha
 					break;
 
-				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF")) {
+				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
 
-					// Ver o que deve ser ao encontrar um Jump
-					// Futuramente remover esses comandos desses IFs do
-					// ExecucaoCompilador.InstrucaoLinha
-
-				} else if (instrucao.equals("CALL")) {
-
-					// Ver o que deve ser ao encontrar uma chamada de função/procedimento
-					// Futuramente remover esses comandos desses IFs do
-					// ExecucaoCompilador.InstrucaoLinha
+					for (int t = 0; t < totalLinhasCodigo; t++) {
+						String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
+						
+						if (atributo_1.equals(linha)) {
+							i = t;
+						}
+					}
 
 				} else {
 					System.out.println("instrucao = " + instrucao + " | atributo_1 = " + atributo_1 + " | atributo_2 = "
@@ -409,9 +407,11 @@ public class Janela extends JFrame {
 					// Precisamos trabalhar primeiro nessa parte, sobre o que fazer com o topo da
 					// Pilha
 				}
+				
+				System.out.println(M);
 			}
 
-			System.out.println(M);
+			System.out.println(M + "\n\n");
 
 			// não sabia o que era essas coisas aqui em baixo, deixei comentado
 
@@ -503,112 +503,112 @@ public class Janela extends JFrame {
 
 			case "LDV": // Carregar valor
 				TopoPilha = TopoPilha + 1;
-				valor = (int) M.get(Integer.parseInt(SegundoAtributo));
-				M.add(TopoPilha, M.get(Integer.parseInt(SegundoAtributo)));
+				valor = (int) M.get(Integer.parseInt(PrimeiroAtributo));
+				M.add(TopoPilha, M.get(Integer.parseInt(PrimeiroAtributo)));
 				break;
 
 			case "ADD":
 				valor = (int) M.get(TopoPilha - 1) + (int) M.get(TopoPilha);
-				M.add((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), (int) valor);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "SUB":
 				valor = (int) M.get(TopoPilha - 1) - (int) M.get(TopoPilha);
-				M.add((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), (int) valor);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "MULT":
 				valor = (int) M.get(TopoPilha - 1) * (int) M.get(TopoPilha);
-				M.add((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), (int) valor);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "DIVI":
 				valor = (int) M.get(TopoPilha - 1) / (int) M.get(TopoPilha);
-				M.add((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), (int) valor);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "INV":
 				valor = (int) M.get(TopoPilha) * -1;
-				M.add(TopoPilha, (int) valor);
+				M.set(TopoPilha, (int) valor);
 				break;
 
 			case "AND":
 				if (M.get(TopoPilha - 1).equals(1) && M.get(TopoPilha).equals(1)) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "OR":
 				if (M.get(TopoPilha - 1).equals(1) || M.get(TopoPilha).equals(1)) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "NEG":
 				valor = 1 - (int) M.get(TopoPilha);
-				M.add(TopoPilha, (int) valor);
+				M.set(TopoPilha, (int) valor);
 				break;
 
 			case "CME":
 				if (M.get(TopoPilha - 1) < M.get(TopoPilha)) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CMA":
 				if (M.get(TopoPilha - 1) > M.get(TopoPilha)) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CEQ":
 				if (M.get(TopoPilha - 1).equals(M.get(TopoPilha))) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CDIF":
 				if (!M.get(TopoPilha - 1).equals(M.get(TopoPilha))) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CMEQ":
 				if (M.get(TopoPilha - 1) <= M.get(TopoPilha)) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CMAG":
 				if (M.get(TopoPilha - 1) >= M.get(TopoPilha)) {
-					M.add((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), (int) 1);
 				} else {
-					M.add((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), (int) 0);
 				}
 				TopoPilha = TopoPilha - 1;
 				break;
@@ -623,8 +623,8 @@ public class Janela extends JFrame {
 
 			case "STR":
 				valor = (int) M.get(TopoPilha);
-				M.add(Integer.parseInt(PrimeiroAtributo), valor);
-
+				M.set(Integer.parseInt(PrimeiroAtributo), valor);
+				
 				TopoPilha = TopoPilha - 1;
 				break;
 
@@ -673,22 +673,16 @@ public class Janela extends JFrame {
 			case "ALLOC":
 
 				for (k = 0; k <= Integer.parseInt(SegundoAtributo) - 1; k++) {
-
 					TopoPilha = TopoPilha + 1;
-					M.add(TopoPilha, -999);
-//					valor = (int) M.get(Integer.parseInt(PrimeiroAtributo) + k); // pode dar problema no tamanho de
-					// M[m+k], pegar posiçao que nao
-					// exite
-
+					M.add(TopoPilha, -999); //atualmente -999 é referente a lixo;
 				}
-
 				break;
 
 			case "DALLOC":
-				for (k = Integer.parseInt(SegundoAtributo) - 1; k > 0; k--) {
+				for (k = Integer.parseInt(SegundoAtributo) - 1; k >= 0; k--) {
 
 					valor = (int) M.get(TopoPilha);
-					M.add((Integer.parseInt(PrimeiroAtributo) + k), valor);
+					M.set((Integer.parseInt(PrimeiroAtributo) + k), valor);
 					// aqui pode-se remover o conteudo da pilha OBRIGATORIO??
 					TopoPilha = TopoPilha - 1;
 				}
