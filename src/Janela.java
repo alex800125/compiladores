@@ -28,7 +28,7 @@ public class Janela extends JFrame {
 	protected JScrollPane barraRolagemPilha;
 
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
-			"CMA", "CEQ", "CDIF", "CMEQ", "CMAG", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
+			"CMA", "CEQ", "CDIF", "CMEQ", "CMAQ", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
 			"DALLOC", "CALL", "RETURN" };
 
 	protected int nlinha;
@@ -147,6 +147,8 @@ public class Janela extends JFrame {
 	}
 
 	protected class MeuJPanel extends JPanel implements MouseListener, MouseMotionListener {
+		private static final long serialVersionUID = 1L;
+
 		public MeuJPanel() {
 			super();
 
@@ -297,13 +299,13 @@ public class Janela extends JFrame {
 								}
 
 							}
-							
+
 							posicao++;
 						}
-						
+
 						rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os
 																		// itens
-						//System.out.println(rowDataInstrucao);
+						// System.out.println(rowDataInstrucao);
 						// System.out.println("Linha = " + strLine + " | posicao = " + posicao);
 					}
 
@@ -372,69 +374,50 @@ public class Janela extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			ChamadasCall = new Vector<Integer>();
 			ExecucaoCompilador EC = new ExecucaoCompilador();
-			
+
 			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
 			int TopoPilha = 0;
-			int valorEntrada = 0;
 			int valorReturn = 0;
-			boolean isNumber = false;
-			//System.out.println("total de linhas: " + totalLinhasCodigo);
 
 			for (int i = 0; i < totalLinhasCodigo; i++) {
 				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(i, 1);
 				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(i, 2);
 				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(i, 3);
 
+				System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
+						+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
+
 				// Finaliza o programa
-				if (instrucao.equals("HLT"))
-				{
+				if (instrucao.equals("HLT")) {
 					System.out.println("HTL");
 					// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
 					// Futuramente remover esses comandos desses IFs do
 					// ExecucaoCompilador.InstrucaoLinha
 					break;
 
-				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL")))
-				{
+				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
 
 					for (int t = 0; t < totalLinhasCodigo; t++) {
 						String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
-						
-						if (atributo_1.equals(linha))
-						{
-							if((instrucao.equals("CALL")))
-							{
-								ChamadasCall.add(i);
-								
+
+						if (atributo_1.equals(linha)) {
+//							System.out.println("Linha " + linha + " | N = " + i);
+							if ((instrucao.equals("CALL"))) {
+								valorReturn = i;
 							}
-							i = t; //loo´p
-							
+							i = t;
 						}
 					}
 
-				} else if(instrucao.equals("RETURN"))
-				{
-					ChamadasCall.size();
-					i = ChamadasCall.get((ChamadasCall.size()-1));
-					ChamadasCall.remove((ChamadasCall.size()-1));
-					
-				}else{
-					System.out.println("instrucao = " + instrucao + " | atributo_1 = " + atributo_1 + " | atributo_2 = "
-							+ atributo_2 + " | TopoPilha = " + TopoPilha);
+				} else if (instrucao.equals("RETURN")) {
+					i = valorReturn;
+				} else {
 					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
-
-					// Precisamos trabalhar primeiro nessa parte, sobre o que fazer com o topo da
-					// Pilha
 				}
-				
-				//System.out.println(M);
-				
+				System.out.println(M);
 			}
-			EC.AtualizarPilha(TopoPilha);
-			
-			
-			// não sabia o que era essas coisas aqui em baixo, deixei comentado
 
+			EC.AtualizarPilha(TopoPilha);
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
 	}
@@ -447,10 +430,8 @@ public class Janela extends JFrame {
 	}
 
 	protected class DeBug implements ActionListener {
-		public void actionPerformed(ActionEvent e) 
-		{
-			
-			
+		public void actionPerformed(ActionEvent e) {
+
 		}
 	}
 
@@ -486,125 +467,137 @@ public class Janela extends JFrame {
 
 		public int InstrucaoLinha(String Instrucao, String PrimeiroAtributo, String SegundoAtributo, int TopoPilha,
 				int linhaJump) {
-			int valor, k = 0;
+			int valor;
 
 			statusBar1.setText("Executando " + Instrucao);
 
 			switch (Instrucao) {
-			case "LDC": // Carregar constante
+			case "LDC": // Carregar constante (passado por parametro)
 				TopoPilha = TopoPilha + 1;
-				M.add(TopoPilha, (int) k);
+				M.add(TopoPilha, Integer.parseInt(PrimeiroAtributo));
 				break;
 
-			case "LDV": // Carregar valor
+			case "LDV": // Carregar valor (passado a posicao no vetor que vai conter esse valor)
 				TopoPilha = TopoPilha + 1;
 				valor = (int) M.get(Integer.parseInt(PrimeiroAtributo));
-				M.set(TopoPilha, M.get(Integer.parseInt(PrimeiroAtributo)));
+				M.add(TopoPilha, valor);
 				break;
 
 			case "ADD":
 				valor = (int) M.get(TopoPilha - 1) + (int) M.get(TopoPilha);
-				M.set((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), valor);
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "SUB":
 				valor = (int) M.get(TopoPilha - 1) - (int) M.get(TopoPilha);
-				M.set((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), valor);
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "MULT":
 				valor = (int) M.get(TopoPilha - 1) * (int) M.get(TopoPilha);
-				M.set((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), valor);
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "DIVI":
 				valor = (int) M.get(TopoPilha - 1) / (int) M.get(TopoPilha);
-				M.set((TopoPilha - 1), (int) valor);
+				M.set((TopoPilha - 1), valor);
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "INV":
 				valor = (int) M.get(TopoPilha) * -1;
-				M.set(TopoPilha, (int) valor);
+				M.set(TopoPilha, valor);
 				break;
 
 			case "AND":
 				if (M.get(TopoPilha - 1).equals(1) && M.get(TopoPilha).equals(1)) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "OR":
 				if (M.get(TopoPilha - 1).equals(1) || M.get(TopoPilha).equals(1)) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "NEG":
-				valor = 1 - (int) M.get(TopoPilha);
-				M.set(TopoPilha, (int) valor);
+				valor = -1 * (int) M.get(TopoPilha);
+				M.set(TopoPilha, valor);
 				break;
 
 			case "CME":
 				if (M.get(TopoPilha - 1) < M.get(TopoPilha)) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CMA":
 				if (M.get(TopoPilha - 1) > M.get(TopoPilha)) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CEQ":
 				if (M.get(TopoPilha - 1).equals(M.get(TopoPilha))) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CDIF":
 				if (!M.get(TopoPilha - 1).equals(M.get(TopoPilha))) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "CMEQ":
 				if (M.get(TopoPilha - 1) <= M.get(TopoPilha)) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
-			case "CMAG":
+			case "CMAQ":
 				if (M.get(TopoPilha - 1) >= M.get(TopoPilha)) {
-					M.set((TopoPilha - 1), (int) 1);
+					M.set((TopoPilha - 1), 1);
 				} else {
-					M.set((TopoPilha - 1), (int) 0);
+					M.set((TopoPilha - 1), 0);
 				}
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
@@ -612,35 +605,15 @@ public class Janela extends JFrame {
 				TopoPilha = -1;
 				break;
 
-			// TODO talvez tenha q retirar daqui
-			case "HLT":
-				break;
-
 			case "STR":
 				valor = (int) M.get(TopoPilha);
 				M.set(Integer.parseInt(PrimeiroAtributo), valor);
-				
-				TopoPilha = TopoPilha - 1;
-				break;
+				M.remove(TopoPilha);
 
-			// TODO talvez tenha q retirar daqui
-			case "JMP":
-				Ji = linhaJump; // talvez nao seja so isso
-				// aparentemente tem algo a mais pra fazer aqui
-				break;
-
-			// TODO talvez tenha q retirar daqui
-			case "JMPF":
-				if (M.get(TopoPilha).equals(0)) {
-					Ji = linhaJump;
-				} else {
-					Ji = Ji + 1;
-				}
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "NULL":
-				// nada????
 				break;
 
 			case "RD":
@@ -661,38 +634,26 @@ public class Janela extends JFrame {
 
 			case "PRN":
 				texSaida.setText((M.get(TopoPilha)) + "\n" + texSaida.getText());
-				// interface
+				M.remove(TopoPilha);
 				TopoPilha = TopoPilha - 1;
 				break;
 
 			case "ALLOC":
 
-				for (k = 0; k <= Integer.parseInt(SegundoAtributo) - 1; k++) {
+				for (int k = 0; k <= Integer.parseInt(SegundoAtributo) - 1; k++) {
 					TopoPilha = TopoPilha + 1;
-					M.add(TopoPilha, -999); //atualmente -999 é referente a lixo;
+					M.add(TopoPilha, -999); // atualmente -999 é referente a lixo;
 				}
 				break;
 
 			case "DALLOC":
-				for (k = Integer.parseInt(SegundoAtributo) - 1; k >= 0; k--) {
+				for (int k = Integer.parseInt(SegundoAtributo) - 1; k >= 0; k--) {
 
 					valor = (int) M.get(TopoPilha);
 					M.set((Integer.parseInt(PrimeiroAtributo) + k), valor);
-					// aqui pode-se remover o conteudo da pilha OBRIGATORIO??
+					M.remove(TopoPilha);
 					TopoPilha = TopoPilha - 1;
 				}
-				break;
-
-			case "CALL":
-				TopoPilha = TopoPilha + 1;
-				valor = Ji + 1;
-				M.set(TopoPilha, valor);
-				Ji = linhaJump;
-				break;
-
-			case "RETURN":
-				Ji = M.get(TopoPilha);
-				TopoPilha = TopoPilha - 1;
 				break;
 
 			default:
@@ -700,18 +661,17 @@ public class Janela extends JFrame {
 				break;
 			}
 
-			//System.out.println("TopoPilha = " + TopoPilha);
 			return TopoPilha;
 		}
-		public void AtualizarPilha(int TopoPilha) 
-		{
-			//pnlPilha = new MeuJPanel();
+
+		public void AtualizarPilha(int TopoPilha) {
+			// pnlPilha = new MeuJPanel();
 			rowDataPilha = new Vector<Vector>();
 			columnNamesPilha = new Vector<String>();
 			pnlPilha.remove(barraRolagemPilha);
-			for(int i = 0; i < M.size();i++)
-			{				
-				rowLinhaPilha = new Vector<String>(); //limpa o vector, nao sei se eh o mais correto, pode afetar a memoria fisica
+			for (int i = 0; i < M.size(); i++) {
+				rowLinhaPilha = new Vector<String>(); // limpa o vector, nao sei se eh o mais correto, pode afetar a
+														// memoria fisica
 				rowLinhaPilha.addElement(String.valueOf(i));
 				rowLinhaPilha.addElement(String.valueOf(M.get(i)));
 				rowDataPilha.addElement(rowLinhaPilha);
@@ -724,8 +684,8 @@ public class Janela extends JFrame {
 			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
 			tabelaPilha.setFillsViewportHeight(false);
 			pnlPilha.add(barraRolagemPilha);
-			
+
 		}
 	}
-	
+
 }
