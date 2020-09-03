@@ -384,8 +384,9 @@ public class Janela extends JFrame {
 				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(i, 2);
 				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(i, 3);
 
-				System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
-						+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
+				//System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
+				//		+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
+				System.out.println(instrucao +" " + atributo_1 +" " + atributo_2 +" " +  TopoPilha );
 
 				// Finaliza o programa
 				if (instrucao.equals("HLT")) {
@@ -403,14 +404,17 @@ public class Janela extends JFrame {
 						if (atributo_1.equals(linha)) {
 //							System.out.println("Linha " + linha + " | N = " + i);
 							if ((instrucao.equals("CALL"))) {
-								valorReturn = i;
+								ChamadasCall.add(i);
 							}
 							i = t;
 						}
 					}
 
 				} else if (instrucao.equals("RETURN")) {
-					i = valorReturn;
+					
+					i = ChamadasCall.get((ChamadasCall.size()-1));
+					ChamadasCall.remove((ChamadasCall.size()-1));
+					//i = valorReturn;
 				} else {
 					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
 				}
@@ -676,7 +680,7 @@ public class Janela extends JFrame {
 				rowLinhaPilha.addElement(String.valueOf(M.get(i)));
 				rowDataPilha.addElement(rowLinhaPilha);
 			}
-			System.out.println(rowDataPilha);
+			System.out.println(M);
 			columnNamesPilha.addElement("Endereco");
 			columnNamesPilha.addElement("Valor1");
 			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
