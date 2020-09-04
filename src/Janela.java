@@ -377,12 +377,11 @@ public class Janela extends JFrame {
 
 			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
 			int TopoPilha = 0;
-			int valorReturn = 0;
 
-			for (int i = 0; i < totalLinhasCodigo; i++) {
-				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(i, 1);
-				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(i, 2);
-				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(i, 3);
+			for (int LinhaAtual = 0; LinhaAtual < totalLinhasCodigo; LinhaAtual++) {
+				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 1);
+				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 2);
+				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 3);
 
 				//System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
 				//		+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
@@ -404,15 +403,15 @@ public class Janela extends JFrame {
 						if (atributo_1.equals(linha)) {
 //							System.out.println("Linha " + linha + " | N = " + i);
 							if ((instrucao.equals("CALL"))) {
-								ChamadasCall.add(i);
+								ChamadasCall.add(LinhaAtual);
 							}
-							i = t;
+							LinhaAtual = t;
 						}
 					}
 
 				} else if (instrucao.equals("RETURN")) {
 					
-					i = ChamadasCall.get((ChamadasCall.size()-1));
+					LinhaAtual = ChamadasCall.get((ChamadasCall.size()-1));
 					ChamadasCall.remove((ChamadasCall.size()-1));
 					//i = valorReturn;
 				} else {
@@ -434,23 +433,84 @@ public class Janela extends JFrame {
 	}
 
 	protected class DeBug implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
 
+		public void actionPerformed(ActionEvent e) 
+		{
+			ChamadasCall = new Vector<Integer>();
 		}
+		
 	}
 
 	protected class Continuar implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-//			try {
-//				for (int i = 0; i < nlinha; i++) {
-//					Thread.sleep(1000);// seria um pause na interface não deu certo
-//					tabelaInstrucoes.setRowSelectionInterval(i, i);
-//				}
-//			} catch (InterruptedException ie) {
-//				Thread.currentThread().interrupt();
-//			}
-			statusBar1.setText("Mensagem: Pressione Continuar");
+		int TopoPilha;
+		int LinhaAtual = -1;
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(LinhaAtual != -999)
+			{
+			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
+			ExecucaoCompilador EC = new ExecucaoCompilador();
+			tabelaInstrucoes.setRowSelectionInterval((LinhaAtual)+1, (LinhaAtual)+1);
+			LinhaAtual = CompiladorLinhaLinha(LinhaAtual+1, totalLinhasCodigo, EC);
+			
+			}
+			
+			if(LinhaAtual != -999)
+			{
+				statusBar1.setText("Mensagem: Fim das Linhas");
+			}
 		}
+		public int CompiladorLinhaLinha(int LinhaAtual, int totalLinhasCodigo, ExecucaoCompilador EC) 
+		{
+
+				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 1);
+				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 2);
+				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 3);
+
+				//System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
+				//		+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
+				System.out.println(instrucao +" " + atributo_1 +" " + atributo_2 +" " +  TopoPilha );
+
+				// Finaliza o programa
+				if (instrucao.equals("HLT")) {
+					System.out.println("HTL");
+					// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
+					// Futuramente remover esses comandos desses IFs do
+					// ExecucaoCompilador.InstrucaoLinha
+					return -999;
+					//break;
+
+				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
+
+					for (int t = 0; t < totalLinhasCodigo; t++) {
+						String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
+
+						if (atributo_1.equals(linha)) {
+//							System.out.println("Linha " + linha + " | N = " + i);
+							if ((instrucao.equals("CALL"))) {
+								ChamadasCall.add(LinhaAtual);
+							}
+							LinhaAtual = t;
+						}
+					}
+
+				} else if (instrucao.equals("RETURN")) {
+					
+					LinhaAtual = ChamadasCall.get((ChamadasCall.size()-1));
+					ChamadasCall.remove((ChamadasCall.size()-1));
+					//i = valorReturn;
+				} else {
+					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
+				}
+				System.out.println(M);
+			
+
+			EC.AtualizarPilha(TopoPilha);
+			statusBar1.setText("Mensagem: Arquivo a ser Executado");
+			return LinhaAtual;
+				
+		}
+		
 	}
 
 	protected class Sair implements ActionListener {
