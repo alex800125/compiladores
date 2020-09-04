@@ -27,6 +27,8 @@ public class MaquinaVirtual extends JFrame {
 	protected JScrollPane barraRolagemInstrucoes;
 	protected JTable tabelaPilha;
 	protected JScrollPane barraRolagemPilha;
+	protected JTable tabelaLexema;
+	protected JScrollPane barraRolagemLexema;
 
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
 			"CMA", "CEQ", "CDIF", "CMEQ", "CMAQ", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
@@ -42,6 +44,9 @@ public class MaquinaVirtual extends JFrame {
 	protected Vector<String> rowLinhaPilha = new Vector<String>();
 	protected Vector<Vector> rowDataPilha = new Vector<Vector>();
 	protected Vector<String> columnNamesPilha = new Vector<String>();
+	protected Vector<String> rowLinhaLexema = new Vector<String>();
+	protected Vector<Vector> rowDataLexema = new Vector<Vector>();
+	protected Vector<String> columnNamesLexema = new Vector<String>();
 
 	protected Vector<Integer> M = new Vector<Integer>(); // pilha
 	protected Vector<Integer> ChamadasCall = new Vector<Integer>(); // pilha
