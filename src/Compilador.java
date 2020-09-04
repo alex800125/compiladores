@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-public class Janela extends JFrame {
+public class Compilador extends JFrame {
 	protected static final long serialVersionUID = 1L;
 
 	protected JButton btnAbrir = new JButton("Abrir"), // carregar arquivo
@@ -18,6 +18,7 @@ public class Janela extends JFrame {
 			btnApagar = new JButton("Apagar"), // apagar escritas
 			btnDeBug = new JButton("DeBug"), // Escrever debug
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
+			btnLexico = new JButton("Analisador Lexico"), // proxima instruaao
 			btnSair = new JButton("Sair");
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
@@ -53,7 +54,7 @@ public class Janela extends JFrame {
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
 
-	public Janela() {
+	public Compilador() {
 		super("Construcao Compiladores");
 
 		try {
@@ -108,8 +109,10 @@ public class Janela extends JFrame {
 		btnApagar.addActionListener(new Apagar());
 		btnDeBug.addActionListener(new DeBug());
 		btnContinuar.addActionListener(new Continuar());
+		btnLexico.addActionListener(new AnalisadorLexicoChamada());
 		btnSair.addActionListener(new Sair());
-
+		
+		
 		JPanel pnlBotoes = new JPanel();
 		FlowLayout flwBotoes = new FlowLayout();
 		pnlBotoes.setLayout(flwBotoes);
@@ -119,7 +122,9 @@ public class Janela extends JFrame {
 		pnlBotoes.add(btnApagar);
 		pnlBotoes.add(btnDeBug);
 		pnlBotoes.add(btnContinuar);
+		pnlBotoes.add(btnLexico);
 		pnlBotoes.add(btnSair);
+		
 		JPanel pnlStatus = new JPanel();
 		GridLayout grdStatus = new GridLayout(1, 2);
 		pnlStatus.setLayout(grdStatus);
@@ -188,6 +193,15 @@ public class Janela extends JFrame {
 		public void mouseExited(MouseEvent e) {
 			// TODO Auto-generated method stub
 
+		}
+	}
+	
+	protected class AnalisadorLexicoChamada implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			
+			AnalisadorLexico AL = new AnalisadorLexico();
+			AL.AnalisadorEntrada();
+			statusBar1.setText("Mensagem: Analisador Lexico");
 		}
 	}
 
