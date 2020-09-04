@@ -47,3 +47,15 @@
 /Compilador$Sair.class
 /Compilador.class
 /Compilador$AnalisadorLexicoChamada.class
+/MaquinaVirtual$Abrir.class
+/MaquinaVirtual$AnalisadorLexicoChamada.class
+/MaquinaVirtual$Apagar.class
+/MaquinaVirtual$Continuar.class
+/MaquinaVirtual$DeBug.class
+/MaquinaVirtual$ExecucaoCompilador.class
+/MaquinaVirtual$Executar.class
+/MaquinaVirtual$FechamentoDeJanela.class
+/MaquinaVirtual$MeuJPanel.class
+/MaquinaVirtual$Sair.class
+/MaquinaVirtual.class
+/Main.class

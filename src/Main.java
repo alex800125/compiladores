@@ -1,5 +1,5 @@
-public class Editor {
+public class Main {
 	public static void main(String args[]) {
-		new Compilador();
+		new MaquinaVirtual();
 	}
 }
