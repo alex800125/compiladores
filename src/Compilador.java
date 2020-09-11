@@ -19,7 +19,7 @@ public class Compilador extends MaquinaVirtual
 	void AnalisadorEntrada() 
 	{
 	int nlinha;
-	
+	boolean iscomentario = false;
 	String[] linha;
 	String[] argumento;
 	String[] linhaComentario;
@@ -40,10 +40,33 @@ public class Compilador extends MaquinaVirtual
 			while ((strLine = br.readLine()) != null) {
 				nlinha++;
 				linha = strLine.split(" ");	
-				for (String l : linha) 
+				
+				for(int i = 0; i < linha.length; i++)
 				{
-					Analisador(l);
+					if(linha[i].contains("/*") || iscomentario)
+					{
+						while(linha[i].contains("*/"))
+						{
+							
+							i++;
+							if(i == linha.length)
+							{
+								iscomentario = true;
+								break;
+							}
+						}
+					}
+					if(linha[i].contains("//"))
+					{
+						i =  linha.length;
+					}
+					else 
+					{
+						Analisador(linha[i],linha);
+					}
 				}
+				
+				
 				
 			}
 		} catch (Exception e1) { // Catch exception if any
@@ -53,165 +76,171 @@ public class Compilador extends MaquinaVirtual
 	}
 
 }
-	int Analisador(String Lexema)
+	int Analisador(String Lexema, String[] linha)
 	{
+		MLexama.add(Lexema);
 		switch (Lexema)
 		{
-		case "programa": // Carregar constante (passado por parametro)
-
+		case "programa": 
 			
 			MSimbolo.add("Sprograma");
+			if(linha.length!=0)
+			{
+				MLexama.add(linha[1]);
+				MSimbolo.add("Sindentificador");
+			}
+			
 			break;
-		case "inicio": // Carregar constante (passado por parametro)
+		case "inicio": 
 
 			MSimbolo.add("Sinicio");
 			break;
-		case "fim": // Carregar constante (passado por parametro)
+		case "fim": 
 
 			MSimbolo.add("Sfim");
 			break;
-		case "procedimento": // Carregar constante (passado por parametro)
+		case "procedimento": 
 
 			MSimbolo.add("Sprocedimento");
 			break;
-		case "funcao": // Carregar constante (passado por parametro)
+		case "funcao": 
 
 			MSimbolo.add("Sfuncao");
 			break;
-		case "se": // Carregar constante (passado por parametro)
+		case "se": 
 
 			MSimbolo.add("Sse");
 			break;
-		case "entao": // Carregar constante (passado por parametro)
+		case "entao": 
 
 			MSimbolo.add("Sentao");
 			break;
-		case "senao": // Carregar constante (passado por parametro)
+		case "senao": 
 
 			MSimbolo.add("Ssenao");
 			break;
-		case "enquanto": // Carregar constante (passado por parametro)
+		case "enquanto": 
 
 			MSimbolo.add("Senquanto");
 			break;
-		case "faca": // Carregar constante (passado por parametro)
+		case "faca": 
 
 			MSimbolo.add("Sfaca");
 			break;
-		case ":=": // Carregar constante (passado por parametro)
+		case ":=": 
 
 			MSimbolo.add("Satribuição");
 			break;
-		case "escreva": // Carregar constante (passado por parametro)
+		case "escreva": 
 
 			MSimbolo.add("Sescreva");
 			break;
-		case "leia": // Carregar constante (passado por parametro)
+		case "leia": 
 
 			MSimbolo.add("Sleia");
 			break;
-		case "var": // Carregar constante (passado por parametro)
+		case "var": 
 
 			MSimbolo.add("Svar");
 			break;
-		case "inteiro": // Carregar constante (passado por parametro)
+		case "inteiro": 
 
 			MSimbolo.add("Sinteiro");
 			break;
-		case "booleano": // Carregar constante (passado por parametro)
+		case "booleano": 
 
 			MSimbolo.add("Sbooleano");
 			break;
-		case "indentificador": // Carregar constante (passado por parametro)
+		case "indentificador": 
 
 			MSimbolo.add("Sindentificador");
 			break;
-		case "numero": // Carregar constante (passado por parametro)
+		case "numero": 
 
 			MSimbolo.add("Snúmero");
 			break;
-		case ".": // Carregar constante (passado por parametro)
+		case ".": 
 
 			MSimbolo.add("Sponto");
 			break;
-		case ";": // Carregar constante (passado por parametro)
+		case ";": 
 
 			MSimbolo.add("Sponto_virgula");
 			break;
-		case ",": // Carregar constante (passado por parametro)
+		case ",": 
 
 			MSimbolo.add("Svirgula");
 			break;
-		case "(": // Carregar constante (passado por parametro)
+		case "(": 
 
 			MSimbolo.add("Sabre_parenteses");
 			break;
-		case ")": // Carregar constante (passado por parametro)
+		case ")": 
 
 			MSimbolo.add("Sfecha_parenteses");
 			break;
-		case ">": // Carregar constante (passado por parametro)
+		case ">": 
 
 			MSimbolo.add("Smaior");
 			break;
-		case ">=": // Carregar constante (passado por parametro)
+		case ">=": 
 
 			MSimbolo.add("Smaiorig");
 			break;
-		case "=": // Carregar constante (passado por parametro)
+		case "=": 
 
 			MSimbolo.add("Sig");
 			break;
-		case "<": // Carregar constante (passado por parametro)
+		case "<": 
 
 			MSimbolo.add("Smenor");
 			break;
-		case "<=": // Carregar constante (passado por parametro)
+		case "<=": 
 
 			MSimbolo.add("Smenorig");
 			break;
-		case "!=": // Carregar constante (passado por parametro)
+		case "!=": 
 
 			MSimbolo.add("Sgif");
 			break;
-		case "+": // Carregar constante (passado por parametro)
+		case "+": 
 
 			MSimbolo.add("Smais");
 			break;
-		case "-": // Carregar constante (passado por parametro)
+		case "-": 
 
 			MSimbolo.add("Smenos");
 			break;
-		case "*": // Carregar constante (passado por parametro)
+		case "*": 
 
 			MSimbolo.add("Smult");
 			break;
-		case "div": // Carregar constante (passado por parametro)
+		case "div": 
 
 			MSimbolo.add("Sdiv");
 			break;
-		case "e": // Carregar constante (passado por parametro)
+		case "e": 
 
 			MSimbolo.add("Se");
 			break;
-		case "ou": // Carregar constante (passado por parametro)
+		case "ou": 
 
 			MSimbolo.add("Sou");
 			break;
-		case "nao": // Carregar constante (passado por parametro)
+		case "nao": 
 
 			MSimbolo.add("Snao");
 			break;
-		case ":": // Carregar constante (passado por parametro)
+		case ":": 
 
 			MSimbolo.add("Sdoispontos");
 			break;
 			default:
 				System.err.println(Lexema);
+				
 				break;
 		
 		}
-		MLexama.add(Lexema);
 		return 0;
 	}
 	public void TabelaLexema() {
