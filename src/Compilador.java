@@ -43,22 +43,21 @@ public class Compilador extends MaquinaVirtual
 				
 				for(int i = 0; i < linha.length; i++)
 				{
-					if(linha[i].contains("/*") || iscomentario)
+					
+					if(linha[i].contains("/*") || linha[i].contains("{"))
 					{
-						while(linha[i].contains("*/"))
+						
+						while(i <= linha.length-1 && (!linha[i].contains("*/")|| !linha[i].contains("}") ) ) //nota: tem que verificar sempre se i chega ao final da linha
 						{
-							
+							//System.out.print(linha[i] + " "); //comentarios iginorados
 							i++;
-							if(i == linha.length)
-							{
-								iscomentario = true;
-								break;
-							}
 						}
 					}
-					if(linha[i].contains("//"))
-					{
-						i =  linha.length;
+					else if(linha[i].contains("//"))
+					{	
+						
+						i =  linha.length-1;
+						System.out.println(linha[i]);
 					}
 					else 
 					{
@@ -236,7 +235,7 @@ public class Compilador extends MaquinaVirtual
 			MSimbolo.add("Sdoispontos");
 			break;
 			default:
-				System.err.println(Lexema);
+				//System.err.println(Lexema);
 				
 				break;
 		
