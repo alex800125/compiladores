@@ -39,8 +39,12 @@ public class Compilador extends MaquinaVirtual
 
 			while ((strLine = br.readLine()) != null) {
 				nlinha++;
-							
-				Analisador("programa");
+				linha = strLine.split(" ");	
+				for (String l : linha) 
+				{
+					Analisador(l);
+				}
+				
 			}
 		} catch (Exception e1) { // Catch exception if any
 			System.err.println("Error: " + e1.getMessage());
@@ -55,6 +59,7 @@ public class Compilador extends MaquinaVirtual
 		{
 		case "programa": // Carregar constante (passado por parametro)
 			System.out.println("Sprograma");
+			
 			MSimbolo.add("Sprograma");
 			break;
 		case "inicio": // Carregar constante (passado por parametro)
@@ -206,6 +211,7 @@ public class Compilador extends MaquinaVirtual
 				break;
 		
 		}
+		MLexama.add(Lexema);
 		return 0;
 	}
 	public void TabelaLexema() {
@@ -216,7 +222,7 @@ public class Compilador extends MaquinaVirtual
 		for (int i = 0; i < MSimbolo.size(); i++) {
 			rowLinhaLexema = new Vector<String>(); // limpa o vector, nao sei se eh o mais correto, pode afetar a
 													// memoria fisica
-			rowLinhaLexema.addElement(String.valueOf(i));
+			rowLinhaLexema.addElement(String.valueOf(MLexama.get(i)));
 			rowLinhaLexema.addElement(String.valueOf(MSimbolo.get(i)));
 			rowDataLexema.addElement(rowLinhaLexema);
 		}
