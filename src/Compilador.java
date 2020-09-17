@@ -10,6 +10,7 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 public class Compilador extends MaquinaVirtual {
 	protected Vector<String> MLexama = new Vector<String>();
@@ -23,12 +24,14 @@ public class Compilador extends MaquinaVirtual {
 	int countCaracter = -1;
 
 	void AnalisadorEntrada() {
+		int nlinha = 0;
 		System.out.println("new Compilador");
 
 		ArrayList<String> linha = new ArrayList();
-
+		
 		JFileChooser fileChooser = new JFileChooser();
 
+		
 		int returnValue = fileChooser.showOpenDialog(null);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 
@@ -41,6 +44,8 @@ public class Compilador extends MaquinaVirtual {
 
 				// roda o arquivo inteiro fazendo a analise lexica
 				while ((strLine = br.readLine()) != null) {
+					
+					nlinha ++;
 					countCaracter = -1;
 					while (strLine.length() > countCaracter && !strLine.equals("")) {
 						countCaracter++;
@@ -57,10 +62,12 @@ public class Compilador extends MaquinaVirtual {
 
 							if (!fimDaLinha) {
 								if (erroDetectado) {
+									MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
 									break;
 								} else {
 									pegaToken(caracter);
 									if (erroDetectado) {
+										MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
 										break;
 									}
 								}
@@ -70,14 +77,17 @@ public class Compilador extends MaquinaVirtual {
 						}
 
 					}
+					
 				}
 			} catch (Exception e1) {
 				System.err.println("Error: " + e1.getMessage());
 				System.err.println(countCaracter);
 				System.err.println(strLine.charAt(countCaracter));
-			}
+				MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
+				}
 
 			if (erroDetectado) {
+				MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter)+ "\n" );
 				System.out.println("Erro na linha: " + countCaracter);
 				TabelaLexema();
 			} else {
@@ -188,9 +198,11 @@ public class Compilador extends MaquinaVirtual {
 			trataOperadorRelacional(caracter);
 		} else if (caracter == ';' || caracter == ',' || caracter == '(' || caracter == ')' || caracter == '.') {
 			trataPontuacao(caracter);
-		} else if (caracter == ' ') {
+		} else if (trataComentariosConsomeEspaco(caracter) == ' '){
 			// apenas ignora
-		} else {
+		}  else if (caracter == ' ') {
+			// apenas ignora
+		}else {
 			erroDetectado = true;
 			countCaracter = strLine.length();
 		}
@@ -217,7 +229,7 @@ public class Compilador extends MaquinaVirtual {
 			}
 
 		}
-		adicionaToken(numero, "snumero");
+		analisador(numero);
 	}
 
 	void trataIdentificadorPalavraReservada(char caracter) {
@@ -259,21 +271,21 @@ public class Compilador extends MaquinaVirtual {
 			char simbolo = strLine.charAt(countCaracter);
 
 			if (simbolo == '=') {
-				adicionaToken(":=", "satribuicao");
+				analisador(":=");
 			} else {
 				countCaracter--;
-				adicionaToken(":", "sdoispontos");
+				analisador(":");
 			}
 		}
 	}
 
 	void trataOperadorAritmetico(char caracter) {
 		if (caracter == '+') {
-			adicionaToken("+", "smais");
+			analisador("+");
 		} else if (caracter == '-') {
-			adicionaToken("-", "smenos");
+			analisador("-");
 		} else {
-			adicionaToken("*", "smult");
+			analisador("*");
 		}
 		// ver pq do divisão não estar aqui
 	}
@@ -290,12 +302,13 @@ public class Compilador extends MaquinaVirtual {
 				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
-					adicionaToken("<=", "smenorig");
+					analisador("<=");
 				} else {
 					countCaracter--;
+					analisador("<"); //add 2 vezes
 				}
 			}
-			adicionaToken("<", "smenor");
+			
 
 		} else if (caracter == '>') {
 
@@ -304,16 +317,17 @@ public class Compilador extends MaquinaVirtual {
 				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
-					adicionaToken(">=", "smaiorig");
+					analisador(">=");
 				} else {
 					countCaracter--;
+					analisador(">");
 				}
 			}
-			adicionaToken(">", "smaior");
+			
 
 		} else if (caracter == '=') {
 
-			adicionaToken("=", "sig");
+			analisador("=");//possivel erro???
 
 		} else if (caracter == '!') {
 			countCaracter++;
@@ -321,7 +335,7 @@ public class Compilador extends MaquinaVirtual {
 				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
-					adicionaToken("!=", "sdif");
+					analisador("!=");
 				}
 			} else {
 				erroDetectado = true;
@@ -335,40 +349,23 @@ public class Compilador extends MaquinaVirtual {
 
 	void trataPontuacao(char caracter) {
 		if (caracter == ';') {
-			adicionaToken(";", "sponto_virgula");
+			analisador(";");
 		} else if (caracter == ',') {
-			adicionaToken(",", "svirgula");
+			analisador(",");
 		} else if (caracter == '(') {
-			adicionaToken("(", "sabre_parenteses");
+			analisador("(");
 		} else if (caracter == ')') {
-			adicionaToken(")", "sfecha_parenteses");
+			analisador(")");
 		} else {
-			adicionaToken(".", "sponto");
+			analisador(".");
 		}
 	}
 
 	void analisador(String lexema) {
-
-//		String Lexema = linha.get(0);
-
 		switch (lexema) {
 		case "programa":
-//			if (Lexema.contains(";")) {
 			MLexama.add(lexema);
 			MSimbolo.add("Sprograma");
-//	
-//				
-//				for (int i = 1; i <= linha)
-//			
-//				
-//				MLexama.add(String.valueOf(linha.replace(";", "")));
-//				MSimbolo.add("Sindentificador");
-//				Analisador(";", null, 0);
-//
-//			} else {
-//				MErro.add(String.valueOf(nlinha));
-//			}
-
 			break;
 		case "inicio":
 			MLexama.add(lexema);
@@ -376,20 +373,11 @@ public class Compilador extends MaquinaVirtual {
 			break;
 		case "fim":
 			MLexama.add(lexema);
-			;
 			MSimbolo.add("Sfim");
 			break;
 		case "procedimento":
 			MLexama.add(lexema);
 			MSimbolo.add("Sprocedimento");
-//			if (linha.contains(";")) {
-//				MLexama.add(String.valueOf(linha.replace(";", "")));
-//				MSimbolo.add("Sindentificador");
-//				Analisador(";", null, 0);
-//
-//			} else {
-//				MErro.add(String.valueOf(nlinha));
-//			}
 			break;
 		case "funcao":
 			MLexama.add(lexema);
@@ -398,58 +386,10 @@ public class Compilador extends MaquinaVirtual {
 		case "se":
 			MLexama.add(lexema);
 			MSimbolo.add("Sse");
-//			System.out.println();
-//			if (linha.contains(">")) {
-//				String[] variavel = linha.split(">");
-//				MLexama.add(variavel[0]);
-//				MSimbolo.add("Sindentificador");
-//				Analisador(">", null, 0);
-//				MLexama.add(variavel[1]);
-//				MSimbolo.add("Sindentificador");
-//			} else if (linha.contains(">=")) {
-//				String[] variavel = linha.split(">=");
-//				MLexama.add(variavel[0]);
-//				MSimbolo.add("Sindentificador");
-//				Analisador(">=", null, 0);
-//				MLexama.add(variavel[1]);
-//				MSimbolo.add("Sindentificador");
-//			} else if (linha.contains("<")) {
-//				String[] variavel = linha.split("<");
-//				MLexama.add(variavel[0]);
-//				MSimbolo.add("Sindentificador");
-//				Analisador("<", null, 0);
-//				MLexama.add(variavel[1]);
-//				MSimbolo.add("Sindentificador");
-//			} else if (linha.contains("<=")) {
-//				String[] variavel = linha.split("<=");
-//				MLexama.add(variavel[0]);
-//				MSimbolo.add("Sindentificador");
-//				Analisador("<=", null, 0);
-//				MLexama.add(variavel[1]);
-//				MSimbolo.add("Sindentificador");
-//			} else {
-//				MErro.add(String.valueOf(nlinha));
-//			}
 			break;
 		case "entao":
 			MLexama.add(lexema);
 			MSimbolo.add("Sentao");
-//			if (linha.contains(":=")) {
-//				String[] variavel = linha.split(":=");
-//				MLexama.add(variavel[0]);
-//				MSimbolo.add("Sindentificador");
-//				Analisador(":=", null, 0);
-//				if (variavel[1].replace(";", "").replace(" ", "").matches("^[0-9]*$")) {
-//					MLexama.add(variavel[1].replace(";", ""));
-//					MSimbolo.add("Snumero");
-//					Analisador(";", null, 0);
-//				} else {
-//					MErro.add(String.valueOf(nlinha));
-//				}
-//
-//			} else {
-//				MErro.add(String.valueOf(nlinha));
-//			}
 			break;
 		case "senao":
 			MLexama.add(lexema);
@@ -474,22 +414,6 @@ public class Compilador extends MaquinaVirtual {
 		case "var":
 			MLexama.add(lexema);
 			MSimbolo.add("Svar");
-//			if (linha.contains(":") && linha.contains(";")) {
-//
-//				String[] variavel = linha.split(":");
-//				String[] NomeVariavel = variavel[0].split(",");
-//				for (String a : NomeVariavel) {
-//					MLexama.add(a.replace(":", ""));
-//					MSimbolo.add("Sindentificador");
-//					Analisador(",", null, 0);
-//				}
-//				Analisador(":", null, 0);
-//				Analisador(variavel[1].replace(" ", "").replace(";", ""), null, 0);
-//				Analisador(";", null, 0);
-//			} else {
-//				MErro.add(String.valueOf(nlinha));
-//			}
-
 			break;
 		case "inteiro":
 			MLexama.add(lexema);
@@ -584,16 +508,12 @@ public class Compilador extends MaquinaVirtual {
 			MSimbolo.add("Sdoispontos");
 			break;
 		default:
-			adicionaToken(lexema, "sidentificador");
+			MLexama.add(lexema);
+			MSimbolo.add("Sidentificador");
 			break;
 
 		}
 
-	}
-
-	void adicionaToken(String lexema, String simbolo) {
-		MLexama.add(lexema);
-		MSimbolo.add(simbolo);
 	}
 
 	public void TabelaLexema() {
@@ -615,8 +535,9 @@ public class Compilador extends MaquinaVirtual {
 		barraRolagemLexema = new JScrollPane(tabelaLexema);
 		tabelaLexema.setPreferredScrollableViewportSize(tabelaLexema.getPreferredSize());
 		tabelaLexema.setFillsViewportHeight(false);
-		pnlPilha.add(barraRolagemLexema);
-
+		pnlTabela.add(barraRolagemLexema);
+		texBreakPoint = new JTextArea(10, 15);
+		
 		JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
 		scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
