@@ -19,7 +19,8 @@ public class Compilador extends MaquinaVirtual {
 	BufferedReader br;
 	String strLine = null;
 	boolean erroDetectado = false;
-	int nCaracter = -1;
+	boolean fimDaLinha = false;
+	int countCaracter = -1;
 
 	void AnalisadorEntrada() {
 		System.out.println("new Compilador");
@@ -40,36 +41,44 @@ public class Compilador extends MaquinaVirtual {
 
 				// roda o arquivo inteiro fazendo a analise lexica
 				while ((strLine = br.readLine()) != null) {
-					while (strLine.length() > nCaracter) {
-						if (!strLine.equals("")) // linha vazia
-						{
-							nCaracter++;
-							char caracter = strLine.charAt(nCaracter);
+					countCaracter = -1;
+					while (strLine.length() > countCaracter && !strLine.equals("")) {
+						countCaracter++;
 
-							System.out.println("nCaracter = " + nCaracter);
+						System.out
+								.println("countCaracter = " + countCaracter + "strLine.length() = " + strLine.length());
+						if (countCaracter < strLine.length()) {
+							char caracter = strLine.charAt(countCaracter);
+
+							System.out.println("nCaracter = " + countCaracter);
 							System.out.println("caracter = " + caracter);
 
 							caracter = trataComentariosConsomeEspaco(caracter);
 
-							if (erroDetectado) {
-								break;
-							} else {
-								pegaToken(caracter);
+							if (!fimDaLinha) {
 								if (erroDetectado) {
 									break;
+								} else {
+									pegaToken(caracter);
+									if (erroDetectado) {
+										break;
+									}
 								}
+							} else {
+								fimDaLinha = false;
 							}
 						}
+
 					}
 				}
 			} catch (Exception e1) {
 				System.err.println("Error: " + e1.getMessage());
-				System.err.println(nCaracter);
-				System.err.println(strLine);
+				System.err.println(countCaracter);
+				System.err.println(strLine.charAt(countCaracter));
 			}
 
 			if (erroDetectado) {
-				System.out.println("Erro na linha: " + nCaracter);
+				System.out.println("Erro na linha: " + countCaracter);
 				TabelaLexema();
 			} else {
 				TabelaLexema();
@@ -82,76 +91,80 @@ public class Compilador extends MaquinaVirtual {
 		while (caracter == '{' || caracter == ' ' || caracter == '/') {
 			if (caracter == '{') {
 				while (caracter != '}') {
-					nCaracter++;
-					if (nCaracter >= strLine.length()) {
+					countCaracter++;
+					if (countCaracter >= strLine.length()) {
 						erroDetectado = true;
 						break;
 					}
-					caracter = strLine.charAt(nCaracter);
+					caracter = strLine.charAt(countCaracter);
 				}
 				if (caracter == '}') {
-					nCaracter++;
-					if (nCaracter >= strLine.length()) {
+					countCaracter++;
+					if (countCaracter >= strLine.length()) {
+
+						fimDaLinha = true;
+						return ' ';
+
+					} else {
 						return caracter;
 					}
-					caracter = strLine.charAt(nCaracter);
 				}
 			}
 
 			if (caracter == ' ') {
-				nCaracter++;
-				if (nCaracter >= strLine.length()) {
+				countCaracter++;
+				if (countCaracter >= strLine.length()) {
 					return caracter;
 				}
-				caracter = strLine.charAt(nCaracter);
+				caracter = strLine.charAt(countCaracter);
 			}
 
 			if (caracter == '/') {
-				nCaracter++;
-				if (nCaracter >= strLine.length()) {
+				countCaracter++;
+				if (countCaracter >= strLine.length()) {
 					erroDetectado = true;
 					break;
 				}
-				caracter = strLine.charAt(nCaracter);
+				caracter = strLine.charAt(countCaracter);
 
 				if (caracter == '/') {
 					try {
 						strLine = br.readLine();
-						nCaracter = 0;
-						return strLine.charAt(nCaracter);
+						countCaracter = 0;
+						return strLine.charAt(countCaracter);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 				if (caracter == '*') {
 					while (true) {
-						nCaracter++;
-						if (nCaracter >= strLine.length()) {
+						countCaracter++;
+						if (countCaracter >= strLine.length()) {
 							erroDetectado = true;
 							return ' ';
 						}
-						caracter = strLine.charAt(nCaracter);
+						caracter = strLine.charAt(countCaracter);
 
 						if (caracter == '*') {
-							nCaracter++;
-							if (nCaracter >= strLine.length()) {
+							countCaracter++;
+							if (countCaracter >= strLine.length()) {
 								erroDetectado = true;
 								break;
 							}
-							caracter = strLine.charAt(nCaracter);
+							caracter = strLine.charAt(countCaracter);
 
 							if (caracter == '/') {
-								nCaracter++;
-								if (nCaracter >= strLine.length()) {
+								countCaracter++;
+								if (countCaracter >= strLine.length()) {
 									try {
 										strLine = br.readLine();
-										nCaracter = 0;
-										return strLine.charAt(nCaracter);
+										countCaracter = 0;
+										return strLine.charAt(countCaracter);
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
 								}
-								return strLine.charAt(nCaracter);
+								return strLine.charAt(countCaracter);
 							}
 						}
 					}
@@ -175,9 +188,11 @@ public class Compilador extends MaquinaVirtual {
 			trataOperadorRelacional(caracter);
 		} else if (caracter == ';' || caracter == ',' || caracter == '(' || caracter == ')' || caracter == '.') {
 			trataPontuacao(caracter);
+		} else if (caracter == ' ') {
+			// apenas ignora
 		} else {
 			erroDetectado = true;
-			nCaracter = strLine.length();
+			countCaracter = strLine.length();
 		}
 	}
 
@@ -187,18 +202,18 @@ public class Compilador extends MaquinaVirtual {
 
 		numero = Character.toString(caracter);
 
-		if (nCaracter < strLine.length()) {
-			proximoCaracter = strLine.charAt(nCaracter);
-			while (Character.isDigit(proximoCaracter) && ((nCaracter + 1) < strLine.length())
+		if (countCaracter < strLine.length()) {
+			proximoCaracter = strLine.charAt(countCaracter);
+			while (Character.isDigit(proximoCaracter) && ((countCaracter + 1) < strLine.length())
 					&& !Character.isWhitespace(proximoCaracter)) {
-				nCaracter++;
-				proximoCaracter = strLine.charAt(nCaracter);
+				countCaracter++;
+				proximoCaracter = strLine.charAt(countCaracter);
 				if (Character.isDigit(proximoCaracter)) {
 					numero = numero + Character.toString(proximoCaracter);
 				}
 			}
 			if (!(Character.isDigit(proximoCaracter))) {
-				nCaracter--;
+				countCaracter--;
 			}
 
 		}
@@ -211,14 +226,14 @@ public class Compilador extends MaquinaVirtual {
 
 		palavra = Character.toString(caracter);
 
-		if (nCaracter < strLine.length()) {
-			proximoCaracter = strLine.charAt(nCaracter);
+		if (countCaracter < strLine.length()) {
+			proximoCaracter = strLine.charAt(countCaracter);
 			if (Character.isLetter(proximoCaracter)) {
 				while ((Character.isLetter(proximoCaracter) || Character.isDigit(proximoCaracter)
-						|| proximoCaracter == '_') && (nCaracter + 1) < strLine.length()
+						|| proximoCaracter == '_') && countCaracter < strLine.length() - 1
 						&& !Character.isWhitespace(proximoCaracter)) {
-					nCaracter++;
-					proximoCaracter = strLine.charAt(nCaracter);
+					countCaracter++;
+					proximoCaracter = strLine.charAt(countCaracter);
 					if ((Character.isLetter(proximoCaracter) || Character.isDigit(proximoCaracter)
 							|| proximoCaracter == '_')) {
 						palavra = palavra + Character.toString(proximoCaracter);
@@ -228,25 +243,25 @@ public class Compilador extends MaquinaVirtual {
 
 			if (!(Character.isLetter(proximoCaracter) || Character.isDigit(proximoCaracter)
 					|| proximoCaracter == '_')) {
-				nCaracter--;
+				countCaracter--;
 			}
 
 		}
-
+		System.out.println("palavra = " + palavra);
 		analisador(palavra);
 
 	}
 
 	void trataAtribuicao(char caracter) {
 
-		if ((nCaracter + 1) < strLine.length()) {
-			nCaracter = nCaracter + 1;
-			char simbolo = strLine.charAt(nCaracter);
+		if ((countCaracter + 1) < strLine.length()) {
+			countCaracter = countCaracter + 1;
+			char simbolo = strLine.charAt(countCaracter);
 
 			if (simbolo == '=') {
 				adicionaToken(":=", "satribuicao");
 			} else {
-				nCaracter--;
+				countCaracter--;
 				adicionaToken(":", "sdoispontos");
 			}
 		}
@@ -270,28 +285,28 @@ public class Compilador extends MaquinaVirtual {
 
 		if (caracter == '<') {
 
-			nCaracter++;
-			if (nCaracter < strLine.length()) {
-				newCaracter = strLine.charAt(nCaracter);
+			countCaracter++;
+			if (countCaracter < strLine.length()) {
+				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
 					adicionaToken("<=", "smenorig");
 				} else {
-					nCaracter--;
+					countCaracter--;
 				}
 			}
 			adicionaToken("<", "smenor");
 
 		} else if (caracter == '>') {
 
-			nCaracter++;
-			if (nCaracter < strLine.length()) {
-				newCaracter = strLine.charAt(nCaracter);
+			countCaracter++;
+			if (countCaracter < strLine.length()) {
+				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
 					adicionaToken(">=", "smaiorig");
 				} else {
-					nCaracter--;
+					countCaracter--;
 				}
 			}
 			adicionaToken(">", "smaior");
@@ -301,19 +316,21 @@ public class Compilador extends MaquinaVirtual {
 			adicionaToken("=", "sig");
 
 		} else if (caracter == '!') {
-			nCaracter++;
-			if (nCaracter < strLine.length()) {
-				newCaracter = strLine.charAt(nCaracter);
+			countCaracter++;
+			if (countCaracter < strLine.length()) {
+				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
 					adicionaToken("!=", "sdif");
 				}
+			} else {
+				erroDetectado = true;
+				countCaracter = strLine.length();
 			}
+		} else {
 			erroDetectado = true;
-			nCaracter = strLine.length();
+			countCaracter = strLine.length();
 		}
-		erroDetectado = true;
-		nCaracter = strLine.length();
 	}
 
 	void trataPontuacao(char caracter) {
@@ -446,10 +463,6 @@ public class Compilador extends MaquinaVirtual {
 			MLexama.add(lexema);
 			MSimbolo.add("Sfaca");
 			break;
-		case ":=":
-			MLexama.add(lexema);
-			MSimbolo.add("Satribuição");
-			break;
 		case "escreva":
 			MLexama.add(lexema);
 			MSimbolo.add("Sescreva");
@@ -571,17 +584,12 @@ public class Compilador extends MaquinaVirtual {
 			MSimbolo.add("Sdoispontos");
 			break;
 		default:
-			// System.err.println(Lexema);
-
+			adicionaToken(lexema, "sidentificador");
 			break;
 
 		}
 
 	}
-
-//	boolean isInvalidCharacter(char character) {
-//		return (character == '\n' || Character.isWhitespace(character) || Character.isSpaceChar(character));
-//	}
 
 	void adicionaToken(String lexema, String simbolo) {
 		MLexama.add(lexema);
