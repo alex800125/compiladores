@@ -391,6 +391,9 @@ public class Compilador extends MaquinaVirtual {
 				if (newCaracter == '=') {
 					op = op + newCaracter;
 					analisador("!=");
+				} else {
+					erroDetectado = true;
+					countCaracter = strLine.length();
 				}
 			} else {
 				erroDetectado = true;
