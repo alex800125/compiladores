@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -21,14 +22,18 @@ public class Compilador extends MaquinaVirtual {
 	String strLine = null;
 	boolean erroDetectado = false;
 	boolean fimDaLinha = false;
+	boolean IniciodoComentario = false;
 	int countCaracter = -1;
 
 	void AnalisadorEntrada() {
 		int nlinha = 0;
-		System.out.println("new Compilador");
+		//System.out.println("new Compilador");
 
+		ArrayList<String> linha = new ArrayList();
+		
 		JFileChooser fileChooser = new JFileChooser();
 
+		
 		int returnValue = fileChooser.showOpenDialog(null);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 
@@ -41,59 +46,56 @@ public class Compilador extends MaquinaVirtual {
 
 				// roda o arquivo inteiro fazendo a analise lexica
 				while ((strLine = br.readLine()) != null) {
+					
+					nlinha ++;
+					countCaracter = -1;
+					while (strLine.length() > countCaracter && !strLine.equals("")) {
+						countCaracter++;
 
-					nlinha++;
-					if (!erroDetectado) {
-						while (strLine.length() > countCaracter && !strLine.equals("")) {
-							countCaracter++;
+						//System.out.println("countCaracter = " + countCaracter + "strLine.length() = " + strLine.length());
+						if (countCaracter < strLine.length()) {
+							char caracter = strLine.charAt(countCaracter);
 
-							System.out.println("nlinha = " + nlinha + " | countCaracter = " + countCaracter
-									+ " | strLine.length() = " + strLine.length());
-							if (countCaracter < strLine.length()) {
-								char caracter = strLine.charAt(countCaracter);
+							//System.out.println("nCaracter = " + countCaracter);
+							//System.out.println("caracter = " + caracter);
 
-								System.out.println("nCaracter = " + countCaracter);
-								System.out.println("caracter = " + caracter);
+							caracter = trataComentariosConsomeEspaco(caracter);
 
-								caracter = trataComentariosConsomeEspaco(caracter);
-
-								if (!fimDaLinha) {
-									if (erroDetectado) {
-//									MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
-										break;
-									} else {
-										pegaToken(caracter);
-										if (erroDetectado) {
-//										MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
-											break;
-										}
-									}
+							if (!fimDaLinha) {
+								if (erroDetectado) {
+									MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
+									break;
 								} else {
-									fimDaLinha = false;
+									pegaToken(caracter);
+									if (erroDetectado) {
+										MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
+										break;
+									}
 								}
+							} else {
+								fimDaLinha = false;
 							}
-
 						}
-						countCaracter = -1;
-					} else {
-						break;
+
 					}
+					
 				}
 			} catch (Exception e1) {
 				System.err.println("Error: " + e1.getMessage());
-				System.err.println(countCaracter);
-				System.err.println(strLine.charAt(countCaracter));
+				//System.err.println(countCaracter);
+				//System.err.println(strLine.charAt(countCaracter));
 				MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
-			}
+				}
 
 			if (erroDetectado) {
-				MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter) + "\n");
-				System.out.println("Erro na linha: " + nlinha);
+				MErro.add("Linha: " + String.valueOf(nlinha) + "Posição: " + String.valueOf(countCaracter)+ "\n" );
+				//System.out.println("Erro na linha: " + countCaracter);
 				TabelaLexema();
 			} else {
 				TabelaLexema();
 			}
 		}
+		//TrataErroPontuacao();
 
 	}
 
@@ -111,19 +113,12 @@ public class Compilador extends MaquinaVirtual {
 				if (caracter == '}') {
 					countCaracter++;
 					if (countCaracter >= strLine.length()) {
-						try {
-							if ((strLine = br.readLine()) != null) {
-								countCaracter = 0;
-								nlinha++;
-								return strLine.charAt(countCaracter);
-							} else {
-								erroDetectado = true;
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+
+						fimDaLinha = true;
+						return ' ';
+
 					} else {
-						caracter = strLine.charAt(countCaracter);
+						return caracter;
 					}
 				}
 			}
@@ -131,17 +126,7 @@ public class Compilador extends MaquinaVirtual {
 			if (caracter == ' ') {
 				countCaracter++;
 				if (countCaracter >= strLine.length()) {
-					try {
-						if ((strLine = br.readLine()) != null) {
-							countCaracter = 0;
-							nlinha++;
-							return strLine.charAt(countCaracter);
-						} else {
-							erroDetectado = true;
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					return caracter;
 				}
 				caracter = strLine.charAt(countCaracter);
 			}
@@ -156,67 +141,53 @@ public class Compilador extends MaquinaVirtual {
 
 				if (caracter == '/') {
 					try {
-						if ((strLine = br.readLine()) != null) {
-							countCaracter = 0;
-							nlinha++;
-							return strLine.charAt(countCaracter);
-						} else {
-							erroDetectado = true;
-						}
+						strLine = br.readLine();
+						countCaracter = 0;
+						return strLine.charAt(countCaracter);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 				if (caracter == '*') {
+					IniciodoComentario = true;
 					while (true) {
 						countCaracter++;
 						if (countCaracter >= strLine.length()) {
+							//erroDetectado = true;
+							IniciodoComentario = true;
 							try {
-								if ((strLine = br.readLine()) != null) {
-									countCaracter = 0;
-									nlinha++;
-								} else {
-									erroDetectado = true;
-									return ' ';
-								}
+								strLine = br.readLine();
+								countCaracter = 0;
+								
+								return trataComentariosdeVariasLinhas(strLine.charAt(countCaracter));
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+							
 						}
 						caracter = strLine.charAt(countCaracter);
 
 						if (caracter == '*') {
 							countCaracter++;
 							if (countCaracter >= strLine.length()) {
-								try {
-									if ((strLine = br.readLine()) != null) {
-										countCaracter = 0;
-										nlinha++;
-									} else {
-										erroDetectado = true;
-									}
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-							} else {
-								caracter = strLine.charAt(countCaracter);
+								IniciodoComentario = false;
+								erroDetectado = true;
+								break;
+							}
+							caracter = strLine.charAt(countCaracter);
 
-								if (caracter == '/') {
-									countCaracter++;
-									if (countCaracter >= strLine.length()) {
-										try {
-											if ((strLine = br.readLine()) != null) {
-												countCaracter = 0;
-												nlinha++;
-												return strLine.charAt(countCaracter);
-											}
-										} catch (IOException e) {
-											e.printStackTrace();
-										}
-									} else {
+							if (caracter == '/') {
+								countCaracter++;
+								if (countCaracter >= strLine.length()) {
+									try {
+										strLine = br.readLine();
+										countCaracter = 0;
 										return strLine.charAt(countCaracter);
+									} catch (IOException e) {
+										e.printStackTrace();
 									}
 								}
+								return strLine.charAt(countCaracter);
 							}
 						}
 					}
@@ -224,7 +195,83 @@ public class Compilador extends MaquinaVirtual {
 			}
 		}
 		return caracter;
+	}
+	char trataComentariosdeVariasLinhas(char caracter) 
+	{
+		while (true) {
+			
+			if(strLine.equals(""))
+			{
+				IniciodoComentario = true;
+				try {
+					strLine = br.readLine();
+					countCaracter = 0;
+					return trataComentariosdeVariasLinhas(strLine.charAt(countCaracter));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			/*
+			if (caracter == ' ') {
+				countCaracter++;
+				caracter = strLine.charAt(countCaracter);
+			}
+			*/
+			if (countCaracter >= strLine.length()) {
+				//erroDetectado = true;
+				IniciodoComentario = true;
+				try {
+					
+					strLine = br.readLine();
+					countCaracter = 0;
+					if(!strLine.equals(""))
+					{
+						return trataComentariosdeVariasLinhas(strLine.charAt(countCaracter));
+					}
+					else
+					{
+						strLine = br.readLine();
+						countCaracter = 0;
+						return trataComentariosdeVariasLinhas(strLine.charAt(countCaracter));
+					}
+					
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			
 
+			if (caracter == '*') {
+				countCaracter++;
+				if (countCaracter >= strLine.length()) {
+					IniciodoComentario = false;
+					erroDetectado = true;
+					break;
+				}
+				caracter = strLine.charAt(countCaracter);
+
+				if (caracter == '/') {
+					countCaracter++;
+					if (countCaracter >= strLine.length()) {
+						try {
+							strLine = br.readLine();
+							countCaracter = 0;
+							return strLine.charAt(countCaracter);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					return strLine.charAt(countCaracter);
+				}
+			}
+			caracter = strLine.charAt(countCaracter);
+			countCaracter++;
+			
+		}
+		return caracter;
 	}
 
 	private final void pegaToken(char caracter) {
@@ -241,10 +288,11 @@ public class Compilador extends MaquinaVirtual {
 			trataOperadorRelacional(caracter);
 		} else if (caracter == ';' || caracter == ',' || caracter == '(' || caracter == ')' || caracter == '.') {
 			trataPontuacao(caracter);
-		} else if (caracter == ' ') {
-			System.out.println("\n\nErro na linha: " + nlinha + " | caracter = " + caracter + "\n\n");
+		} else if (trataComentariosConsomeEspaco(caracter) == ' '){
 			// apenas ignora
-		} else {
+		}  else if (caracter == ' ') {
+			// apenas ignora
+		}else {
 			erroDetectado = true;
 			countCaracter = strLine.length();
 		}
@@ -301,7 +349,7 @@ public class Compilador extends MaquinaVirtual {
 			}
 
 		}
-		System.out.println("palavra = " + palavra);
+		//System.out.println("palavra = " + palavra);
 		analisador(palavra);
 
 	}
@@ -347,9 +395,10 @@ public class Compilador extends MaquinaVirtual {
 					analisador("<=");
 				} else {
 					countCaracter--;
-					analisador("<"); // add 2 vezes
+					analisador("<"); //add 2 vezes
 				}
 			}
+			
 
 		} else if (caracter == '>') {
 
@@ -364,10 +413,11 @@ public class Compilador extends MaquinaVirtual {
 					analisador(">");
 				}
 			}
+			
 
 		} else if (caracter == '=') {
 
-			analisador("=");// possivel erro???
+			analisador("=");//possivel erro???
 
 		} else if (caracter == '!') {
 			countCaracter++;
@@ -399,6 +449,142 @@ public class Compilador extends MaquinaVirtual {
 		} else {
 			analisador(".");
 		}
+	}
+	void TrataErroPontuacao() {
+		int totalLinhasCodigo = tabelaLexema.getRowCount();
+		
+		for (int LinhaAtual = 0; LinhaAtual < totalLinhasCodigo; LinhaAtual++)
+		{
+			String instrucao = (String) tabelaLexema.getModel().getValueAt(LinhaAtual, 1);
+			switch (instrucao) {
+			case "Sprograma":
+				LinhaAtual++;
+				String indentificador = (String) tabelaLexema.getModel().getValueAt(LinhaAtual, 1);
+				LinhaAtual++;
+				String pontuacao = (String) tabelaLexema.getModel().getValueAt(LinhaAtual, 1); //sempre vou ter isso
+
+				if(indentificador != "Sindentificador" && pontuacao != "Sponto_virgula")
+				{
+					MErro.add("Linha: " + String.valueOf(LinhaAtual) + " Syntax error on token 'Programa',"
+							+ " Identifier expected after this token" + "\n" );
+					System.out.println("Linha: " + String.valueOf(LinhaAtual) + " Syntax error on token " + instrucao 
+							+ " Identifier expected after this token" + "\n" );
+					erroDetectado = true;
+				}
+				System.out.println("Saiu");
+				break;
+			case "Sinicio":
+				
+				break;
+			case "Sfim":
+				
+				break;
+			case "Sprocedimento":
+				
+				break;
+			case "Sfuncao":
+				
+				break;
+			case "SSe":
+				
+				break;
+			case "Sentao":
+				
+				break;
+			case "Ssenao":
+				
+				break;
+			case "Senquanto":
+				
+				break;
+			case "Sfaca":
+				
+				break;
+			case "Sescreva":
+				
+				break;
+			case "Sleia":
+				
+				break;
+			case "Svar":
+				
+				break;
+			case "Sinteiro":
+				
+				break;
+			case "Sbooleano":
+				
+				break;
+			case "Sindentificador":
+				
+				break;
+			case "Snumero":
+				
+				break;
+			case "S.":
+				
+				break;
+			case "S;":
+				
+				break;
+			case "S,":
+				
+				break;
+			case "S(":
+				
+				break;
+			case "S)":
+				
+				break;
+			case "S>":
+				
+				break;
+			case "S>=":
+				
+				break;
+			case "S=":
+				
+				break;
+			case "S<":
+				
+				break;
+			case "S<=":
+				
+				break;
+			case "S!=":
+				
+				break;
+			case "S+":
+				
+				break;
+			case "S-":
+				
+				break;
+			case "S*":
+				
+				break;
+			case "Sdiv":
+				
+				break;
+			case "Se":
+				
+				break;
+			case "Sou":
+				
+				break;
+			case "Snao":
+				
+				break;
+			case "S:":
+				
+				break;
+			default:
+				
+				break;
+
+			}
+		}
+		
 	}
 
 	void analisador(String lexema) {
@@ -577,7 +763,7 @@ public class Compilador extends MaquinaVirtual {
 		tabelaLexema.setFillsViewportHeight(false);
 		pnlTabela.add(barraRolagemLexema);
 		texBreakPoint = new JTextArea(10, 15);
-
+		
 		JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
 		scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
