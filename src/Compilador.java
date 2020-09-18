@@ -90,6 +90,26 @@ public class Compilador extends MaquinaVirtual {
 
 	private final char trataComentariosConsomeEspaco(char caracter) {
 		while (caracter == '{' || caracter == ' ' || caracter == '/') {
+			if (caracter == ' ') {
+				countCaracter++;
+				while (countCaracter >= strLine.length()) {
+					try {
+						if ((strLine = br.readLine()) != null) {
+							countCaracter = 0;
+							nlinha++;
+							return strLine.charAt(countCaracter);
+						} else {
+							fimDaLinha = true;
+							return ' ';
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				caracter = strLine.charAt(countCaracter);
+			}
+			
 			if (caracter == '{') {
 				while (caracter != '}') {
 
@@ -129,26 +149,6 @@ public class Compilador extends MaquinaVirtual {
 
 					caracter = strLine.charAt(countCaracter);
 				}
-			}
-
-			if (caracter == ' ') {
-				countCaracter++;
-				while (countCaracter >= strLine.length()) {
-					try {
-						if ((strLine = br.readLine()) != null) {
-							countCaracter = 0;
-							nlinha++;
-							return strLine.charAt(countCaracter);
-						} else {
-							fimDaLinha = true;
-							return ' ';
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-
-				caracter = strLine.charAt(countCaracter);
 			}
 
 			if (caracter == '/') {
@@ -284,7 +284,9 @@ public class Compilador extends MaquinaVirtual {
 			}
 
 		}
-		analisador(numero);
+//		analisador(numero);
+		MLexama.add(numero);
+		MSimbolo.add("Snumero");
 	}
 
 	void trataIdentificadorPalavraReservada(char caracter) {
@@ -661,7 +663,7 @@ public class Compilador extends MaquinaVirtual {
 			break;
 		case "!=":
 			MLexama.add(lexema);
-			MSimbolo.add("Sgif");
+			MSimbolo.add("Sdif");
 			break;
 		case "+":
 			MLexama.add(lexema);
@@ -694,6 +696,10 @@ public class Compilador extends MaquinaVirtual {
 		case ":":
 			MLexama.add(lexema);
 			MSimbolo.add("Sdoispontos");
+			break;
+		case ":=":
+			MLexama.add(lexema);
+			MSimbolo.add("Satribuicao");
 			break;
 		default:
 			MLexama.add(lexema);
