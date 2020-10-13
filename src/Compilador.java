@@ -26,12 +26,10 @@ public class Compilador extends MaquinaVirtual {
 	int countCaracter = -1;
 	int nlinha = 0;
 
-	void AnalisadorEntrada() {
+	public Token AnalisadorEntrada() {
 
-		// System.out.println("new Compilador");
-
+		Token token = null;
 		ArrayList<String> linha = new ArrayList();
-
 		JFileChooser fileChooser = new JFileChooser();
 
 		int returnValue = fileChooser.showOpenDialog(null);
@@ -64,7 +62,7 @@ public class Compilador extends MaquinaVirtual {
 							if (erroDetectado || fimDaLinha) {
 								break;
 							} else {
-								pegaToken(caracter);
+								token = pegaToken(caracter);
 							}
 
 						}
@@ -85,7 +83,7 @@ public class Compilador extends MaquinaVirtual {
 				TabelaLexema();
 			}
 		}
-
+		return token;
 	}
 
 	private final char trataComentariosConsomeEspaco(char caracter) {
@@ -109,7 +107,7 @@ public class Compilador extends MaquinaVirtual {
 
 				caracter = strLine.charAt(countCaracter);
 			}
-			
+
 			if (caracter == '{') {
 				while (caracter != '}') {
 
@@ -240,30 +238,36 @@ public class Compilador extends MaquinaVirtual {
 
 	}
 
-	private final void pegaToken(char caracter) {
+	private final Token pegaToken(char caracter) {
 
+		Token token = null;
 		if (Character.isDigit(caracter)) {
-			trataDigito(caracter);
+			token = trataDigito(caracter);
 		} else if (Character.isLetter(caracter)) {
-			trataIdentificadorPalavraReservada(caracter);
+			token = trataIdentificadorPalavraReservada(caracter);
 		} else if (caracter == ':') {
-			trataAtribuicao(caracter);
+			token = trataAtribuicao(caracter);
 		} else if (caracter == '+' || caracter == '-' || caracter == '*') {
-			trataOperadorAritmetico(caracter);
+			token = trataOperadorAritmetico(caracter);
 		} else if (caracter == '<' || caracter == '>' || caracter == '=' || caracter == '!') {
-			trataOperadorRelacional(caracter);
+			token = trataOperadorRelacional(caracter);
 		} else if (caracter == ';' || caracter == ',' || caracter == '(' || caracter == ')' || caracter == '.') {
-			trataPontuacao(caracter);
+			token = trataPontuacao(caracter);
 		} else if (Character.isWhitespace(caracter)) {
 			// apenas ignora
 		} else {
+
+			// TODO token erro, seria bom criar
+
 			System.out.println("caracter = " + caracter);
 			erroDetectado = true;
 			countCaracter = strLine.length();
 		}
+
+		return token;
 	}
 
-	void trataDigito(char caracter) {
+	private Token trataDigito(char caracter) {
 		String numero;
 		char proximoCaracter;
 
@@ -284,12 +288,14 @@ public class Compilador extends MaquinaVirtual {
 			}
 
 		}
-//		analisador(numero);
+
 		MLexama.add(numero);
 		MSimbolo.add("Snumero");
+
+		return new Token("Snumero", numero, nlinha);
 	}
 
-	void trataIdentificadorPalavraReservada(char caracter) {
+	private Token trataIdentificadorPalavraReservada(char caracter) {
 		String palavra;
 		char proximoCaracter;
 
@@ -317,38 +323,44 @@ public class Compilador extends MaquinaVirtual {
 
 		}
 		// System.out.println("palavra = " + palavra);
-		analisador(palavra);
+		return analisador(palavra);
 
 	}
 
-	void trataAtribuicao(char caracter) {
+	private Token trataAtribuicao(char caracter) {
 
+		Token token = null;
 		if ((countCaracter + 1) < strLine.length()) {
 			countCaracter = countCaracter + 1;
 			char simbolo = strLine.charAt(countCaracter);
 
 			if (simbolo == '=') {
-				analisador(":=");
+				token = analisador(":=");
 			} else {
 				countCaracter--;
-				analisador(":");
+				token = analisador(":");
 			}
 		}
+		return token;
 	}
 
-	void trataOperadorAritmetico(char caracter) {
+	private Token trataOperadorAritmetico(char caracter) {
+
+		Token token = null;
 		if (caracter == '+') {
-			analisador("+");
+			token = analisador("+");
 		} else if (caracter == '-') {
-			analisador("-");
+			token = analisador("-");
 		} else {
-			analisador("*");
+			token = analisador("*");
 		}
 		// ver pq do divisão não estar aqui
+		return token;
 	}
 
-	void trataOperadorRelacional(char caracter) {
+	private Token trataOperadorRelacional(char caracter) {
 
+		Token token = null;
 		String op = Character.toString(caracter);
 		char newCaracter;
 
@@ -359,10 +371,10 @@ public class Compilador extends MaquinaVirtual {
 				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
-					analisador("<=");
+					token = analisador("<=");
 				} else {
 					countCaracter--;
-					analisador("<"); // add 2 vezes
+					token = analisador("<"); // add 2 vezes
 				}
 			}
 
@@ -373,16 +385,16 @@ public class Compilador extends MaquinaVirtual {
 				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
-					analisador(">=");
+					token = analisador(">=");
 				} else {
 					countCaracter--;
-					analisador(">");
+					token = analisador(">");
 				}
 			}
 
 		} else if (caracter == '=') {
 
-			analisador("=");// possivel erro???
+			token = analisador("=");// possivel erro???
 
 		} else if (caracter == '!') {
 			countCaracter++;
@@ -390,7 +402,7 @@ public class Compilador extends MaquinaVirtual {
 				newCaracter = strLine.charAt(countCaracter);
 				if (newCaracter == '=') {
 					op = op + newCaracter;
-					analisador("!=");
+					token = analisador("!=");
 				} else {
 					erroDetectado = true;
 					countCaracter = strLine.length();
@@ -403,314 +415,221 @@ public class Compilador extends MaquinaVirtual {
 			erroDetectado = true;
 			countCaracter = strLine.length();
 		}
+
+		return token;
 	}
 
-	void trataPontuacao(char caracter) {
+	private Token trataPontuacao(char caracter) {
+
+		Token token = null;
+
 		if (caracter == ';') {
-			analisador(";");
+			token = analisador(";");
 		} else if (caracter == ',') {
-			analisador(",");
+			token = analisador(",");
 		} else if (caracter == '(') {
-			analisador("(");
+			token = analisador("(");
 		} else if (caracter == ')') {
-			analisador(")");
+			token = analisador(")");
 		} else {
-			analisador(".");
-		}
-	}
-
-	void TrataErroPontuacao() {
-		int totalLinhasCodigo = tabelaLexema.getRowCount();
-
-		for (int LinhaAtual = 0; LinhaAtual < totalLinhasCodigo; LinhaAtual++) {
-			String instrucao = (String) tabelaLexema.getModel().getValueAt(LinhaAtual, 1);
-			switch (instrucao) {
-			case "Sprograma":
-				LinhaAtual++;
-				String indentificador = (String) tabelaLexema.getModel().getValueAt(LinhaAtual, 1);
-				LinhaAtual++;
-				String pontuacao = (String) tabelaLexema.getModel().getValueAt(LinhaAtual, 1); // sempre vou ter isso
-
-				if (indentificador != "Sindentificador" && pontuacao != "Sponto_virgula") {
-					MErro.add("Linha: " + String.valueOf(LinhaAtual) + " Syntax error on token 'Programa',"
-							+ " Identifier expected after this token" + "\n");
-					System.out.println("Linha: " + String.valueOf(LinhaAtual) + " Syntax error on token " + instrucao
-							+ " Identifier expected after this token" + "\n");
-					erroDetectado = true;
-				}
-				System.out.println("Saiu");
-				break;
-			case "Sinicio":
-
-				break;
-			case "Sfim":
-
-				break;
-			case "Sprocedimento":
-
-				break;
-			case "Sfuncao":
-
-				break;
-			case "SSe":
-
-				break;
-			case "Sentao":
-
-				break;
-			case "Ssenao":
-
-				break;
-			case "Senquanto":
-
-				break;
-			case "Sfaca":
-
-				break;
-			case "Sescreva":
-
-				break;
-			case "Sleia":
-
-				break;
-			case "Svar":
-
-				break;
-			case "Sinteiro":
-
-				break;
-			case "Sbooleano":
-
-				break;
-			case "Sindentificador":
-
-				break;
-			case "Snumero":
-
-				break;
-			case "S.":
-
-				break;
-			case "S;":
-
-				break;
-			case "S,":
-
-				break;
-			case "S(":
-
-				break;
-			case "S)":
-
-				break;
-			case "S>":
-
-				break;
-			case "S>=":
-
-				break;
-			case "S=":
-
-				break;
-			case "S<":
-
-				break;
-			case "S<=":
-
-				break;
-			case "S!=":
-
-				break;
-			case "S+":
-
-				break;
-			case "S-":
-
-				break;
-			case "S*":
-
-				break;
-			case "Sdiv":
-
-				break;
-			case "Se":
-
-				break;
-			case "Sou":
-
-				break;
-			case "Snao":
-
-				break;
-			case "S:":
-
-				break;
-			default:
-
-				break;
-
-			}
+			token = analisador(".");
 		}
 
+		return token;
 	}
 
-	void analisador(String lexema) {
+	private Token analisador(String lexema) {
+		Token token = null;
 		switch (lexema) {
 		case "programa":
 			MLexama.add(lexema);
 			MSimbolo.add("Sprograma");
+			token = new Token("Sprograma", lexema, nlinha);
 			break;
 		case "inicio":
 			MLexama.add(lexema);
 			MSimbolo.add("Sinicio");
+			token = new Token("Sinicio", lexema, nlinha);
 			break;
 		case "fim":
 			MLexama.add(lexema);
 			MSimbolo.add("Sfim");
+			token = new Token("Sfim", lexema, nlinha);
 			break;
 		case "procedimento":
 			MLexama.add(lexema);
 			MSimbolo.add("Sprocedimento");
+			token = new Token("Sprocedimento", lexema, nlinha);
 			break;
 		case "funcao":
 			MLexama.add(lexema);
 			MSimbolo.add("Sfuncao");
+			token = new Token("Sfuncao", lexema, nlinha);
 			break;
 		case "se":
 			MLexama.add(lexema);
 			MSimbolo.add("Sse");
+			token = new Token("Sse", lexema, nlinha);
 			break;
 		case "entao":
 			MLexama.add(lexema);
 			MSimbolo.add("Sentao");
+			token = new Token("Sentao", lexema, nlinha);
 			break;
 		case "senao":
 			MLexama.add(lexema);
 			MSimbolo.add("Ssenao");
+			token = new Token("Ssenao", lexema, nlinha);
 			break;
 		case "enquanto":
 			MLexama.add(lexema);
 			MSimbolo.add("Senquanto");
+			token = new Token("Senquanto", lexema, nlinha);
 			break;
 		case "faca":
 			MLexama.add(lexema);
 			MSimbolo.add("Sfaca");
+			token = new Token("Sfaca", lexema, nlinha);
 			break;
 		case "escreva":
 			MLexama.add(lexema);
 			MSimbolo.add("Sescreva");
+			token = new Token("Sescreva", lexema, nlinha);
 			break;
 		case "leia":
 			MLexama.add(lexema);
 			MSimbolo.add("Sleia");
+			token = new Token("Sleia", lexema, nlinha);
 			break;
 		case "var":
 			MLexama.add(lexema);
 			MSimbolo.add("Svar");
+			token = new Token("Svar", lexema, nlinha);
 			break;
 		case "inteiro":
 			MLexama.add(lexema);
 			MSimbolo.add("Sinteiro");
+			token = new Token("Sinteiro", lexema, nlinha);
 			break;
 		case "booleano":
 			MLexama.add(lexema);
 			MSimbolo.add("Sbooleano");
-			break;
-		case "indentificador":
-			MLexama.add(lexema);
-			MSimbolo.add("Sindentificador");
+			token = new Token("Sbooleano", lexema, nlinha);
 			break;
 		case "numero":
 			MLexama.add(lexema);
-			MSimbolo.add("Snúmero");
+			MSimbolo.add("Snumero");
+			token = new Token("Snumero", lexema, nlinha);
 			break;
 		case ".":
 			MLexama.add(lexema);
 			MSimbolo.add("Sponto");
+			token = new Token("Sponto", lexema, nlinha);
 			break;
 		case ";":
 			MLexama.add(lexema);
 			MSimbolo.add("Sponto_virgula");
+			token = new Token("Sponto_virgula", lexema, nlinha);
 			break;
 		case ",":
 			MLexama.add(lexema);
 			MSimbolo.add("Svirgula");
+			token = new Token("Svirgula", lexema, nlinha);
 			break;
 		case "(":
 			MLexama.add(lexema);
 			MSimbolo.add("Sabre_parenteses");
+			token = new Token("Sabre_parenteses", lexema, nlinha);
 			break;
 		case ")":
 			MLexama.add(lexema);
 			MSimbolo.add("Sfecha_parenteses");
+			token = new Token("Sfecha_parenteses", lexema, nlinha);
 			break;
 		case ">":
 			MLexama.add(lexema);
 			MSimbolo.add("Smaior");
+			token = new Token("Smaior", lexema, nlinha);
 			break;
 		case ">=":
 			MLexama.add(lexema);
 			MSimbolo.add("Smaiorig");
+			token = new Token("Smaiorig", lexema, nlinha);
 			break;
 		case "=":
 			MLexama.add(lexema);
 			MSimbolo.add("Sig");
+			token = new Token("Sig", lexema, nlinha);
 			break;
 		case "<":
 			MLexama.add(lexema);
 			MSimbolo.add("Smenor");
+			token = new Token("Smenor", lexema, nlinha);
 			break;
 		case "<=":
 			MLexama.add(lexema);
 			MSimbolo.add("Smenorig");
+			token = new Token("Smenorig", lexema, nlinha);
 			break;
 		case "!=":
 			MLexama.add(lexema);
 			MSimbolo.add("Sdif");
+			token = new Token("Sdif", lexema, nlinha);
 			break;
 		case "+":
 			MLexama.add(lexema);
 			MSimbolo.add("Smais");
+			token = new Token("Smais", lexema, nlinha);
 			break;
 		case "-":
 			MLexama.add(lexema);
 			MSimbolo.add("Smenos");
+			token = new Token("Smenos", lexema, nlinha);
 			break;
 		case "*":
 			MLexama.add(lexema);
 			MSimbolo.add("Smult");
+			token = new Token("Smult", lexema, nlinha);
 			break;
 		case "div":
 			MLexama.add(lexema);
 			MSimbolo.add("Sdiv");
+			token = new Token("Sdiv", lexema, nlinha);
 			break;
 		case "e":
 			MLexama.add(lexema);
 			MSimbolo.add("Se");
+			token = new Token("Se", lexema, nlinha);
 			break;
 		case "ou":
 			MLexama.add(lexema);
 			MSimbolo.add("Sou");
+			token = new Token("Sou", lexema, nlinha);
 			break;
 		case "nao":
 			MLexama.add(lexema);
 			MSimbolo.add("Snao");
+			token = new Token("Snao", lexema, nlinha);
 			break;
 		case ":":
 			MLexama.add(lexema);
 			MSimbolo.add("Sdoispontos");
+			token = new Token("Sdoispontos", lexema, nlinha);
 			break;
 		case ":=":
 			MLexama.add(lexema);
 			MSimbolo.add("Satribuicao");
+			token = new Token("Satribuicao", lexema, nlinha);
 			break;
 		default:
 			MLexama.add(lexema);
 			MSimbolo.add("Sidentificador");
+			token = new Token("Sidentificador", lexema, nlinha);
 			break;
 
 		}
 
+		return token;
 	}
 
 	public void TabelaLexema() {
