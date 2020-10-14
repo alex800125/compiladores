@@ -18,7 +18,7 @@ public class MaquinaVirtual extends JFrame {
 			btnApagar = new JButton("Apagar"), // apagar escritas
 			btnDeBug = new JButton("DeBug"), // Escrever debug
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
-			btnLexico = new JButton("Analisador Lexico"), // proxima instruaao
+			btnAnalisador = new JButton("Analisador Do Codigo"), // proxima instruaao
 			btnSair = new JButton("Sair");
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
@@ -29,6 +29,8 @@ public class MaquinaVirtual extends JFrame {
 	protected JScrollPane barraRolagemPilha;
 	protected JTable tabelaLexema;
 	protected JScrollPane barraRolagemLexema;
+	protected JTable tabelaSintatico;
+	protected JScrollPane barraRolagemSintatico;
 
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
 			"CMA", "CEQ", "CDIF", "CMEQ", "CMAQ", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
@@ -47,6 +49,9 @@ public class MaquinaVirtual extends JFrame {
 	protected Vector<String> rowLinhaLexema = new Vector<String>();
 	protected Vector<Vector> rowDataLexema = new Vector<Vector>();
 	protected Vector<String> columnNamesLexema = new Vector<String>();
+	protected Vector<String> rowLinhaSintatico = new Vector<String>();
+	protected Vector<Vector> rowDataSintatico = new Vector<Vector>();
+	protected Vector<String> columnNamesSintatico = new Vector<String>();
 
 	protected Vector<Integer> M = new Vector<Integer>(); // pilha
 	protected Vector<Integer> ChamadasCall = new Vector<Integer>(); // pilha
@@ -114,7 +119,7 @@ public class MaquinaVirtual extends JFrame {
 		btnApagar.addActionListener(new Apagar());
 		btnDeBug.addActionListener(new DeBug());
 		btnContinuar.addActionListener(new Continuar());
-		btnLexico.addActionListener(new AnalisadorLexicoChamada());
+		btnAnalisador.addActionListener(new AnalisadorChamada());
 		btnSair.addActionListener(new Sair());
 		
 		
@@ -127,7 +132,7 @@ public class MaquinaVirtual extends JFrame {
 		pnlBotoes.add(btnApagar);
 		pnlBotoes.add(btnDeBug);
 		pnlBotoes.add(btnContinuar);
-		pnlBotoes.add(btnLexico);
+		pnlBotoes.add(btnAnalisador);
 		pnlBotoes.add(btnSair);
 		
 		JPanel pnlStatus = new JPanel();
@@ -201,12 +206,12 @@ public class MaquinaVirtual extends JFrame {
 		}
 	}
 	
-	protected class AnalisadorLexicoChamada implements ActionListener {
+	protected class AnalisadorChamada implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			
-			Compilador CP = new Compilador();
-			CP.AnalisadorEntrada();
-			statusBar1.setText("Mensagem: Analisador Lexico");
+			Sintatico SI = new Sintatico();
+			SI.analisadorSintatico();
+			setVisible(false);
+			statusBar1.setText("Mensagem: Analisador Do Codigo");
 		}
 	}
 
@@ -456,6 +461,7 @@ public class MaquinaVirtual extends JFrame {
 			rowLinhaPilha.removeAllElements();
 			rowDataPilha.removeAllElements();
 			columnNamesPilha.removeAllElements();
+			
 			textEntrada.removeAll();
 			texSaida.removeAll();
 			texBreakPoint.removeAll();

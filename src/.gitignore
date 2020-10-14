@@ -59,3 +59,7 @@
 /MaquinaVirtual$Sair.class
 /MaquinaVirtual.class
 /Main.class
+/Lexico.class
+/Sintatico.class
+/Token.class
+/MaquinaVirtual$AnalisadorChamada.class

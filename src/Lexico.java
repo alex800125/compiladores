@@ -52,7 +52,7 @@ public class Lexico extends MaquinaVirtual {
 	}
 
 	public Token AnalisadorEntrada() throws IOException {
-		System.out.println("AnalisadorEntrada nlinha = " + nlinha);
+		//System.out.println("AnalisadorEntrada nlinha = " + nlinha);
 		Token token = null;
 		char caracter = ' ';
 
@@ -80,7 +80,7 @@ public class Lexico extends MaquinaVirtual {
 		if (!erroDetectado || !fimDaLinha) {
 			token = pegaToken(caracter);
 			if (erroDetectado) {
-				System.out.println("ERRO nlinha = " + nlinha);
+				//System.out.println("ERRO nlinha = " + nlinha);
 				MErro.add("Erro na Linha: " + nlinha);
 			} else {
 				return token;
@@ -190,11 +190,11 @@ public class Lexico extends MaquinaVirtual {
 						countCaracter++;
 						while (countCaracter >= strLine.length()) {
 							try {
-								System.out.println("while");
+								//System.out.println("while");
 								if ((strLine = br.readLine()) != null) {
 									countCaracter = 0;
 									nlinha++;
-									System.out.println("dentro while nlinha = " + nlinha);
+									//System.out.println("dentro while nlinha = " + nlinha);
 									if (strLine.length() > 0) {
 										while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
 											countCaracter++;
@@ -281,7 +281,7 @@ public class Lexico extends MaquinaVirtual {
 
 			// TODO token erro, seria bom criar
 
-			System.out.println("caracter = " + caracter);
+			//System.out.println("caracter = " + caracter);
 			erroDetectado = true;
 			countCaracter = strLine.length();
 		}
