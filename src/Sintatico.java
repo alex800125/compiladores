@@ -1,9 +1,12 @@
+import Excecoes.excecaoSintatico;
+
 import java.io.IOException;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -22,11 +25,13 @@ public class Sintatico extends MaquinaVirtual {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	Lexico lexico = new Lexico();
 	Token token = null;
 	protected Vector<Token> tokens = new Vector<Token>();
 
 	public void analisadorSintatico() {
-		Lexico lexico = new Lexico();
+
 		lexico.InicializadorArquivo();
 
 		do {
@@ -35,9 +40,9 @@ public class Sintatico extends MaquinaVirtual {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			if (token.getLexema().equals("ERRO")) {
-				System.out.println("Token ERRO");
+				System.out.println(lexico.getMensagemErro());
 				break;
 			} else {
 				tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
@@ -46,6 +51,53 @@ public class Sintatico extends MaquinaVirtual {
 		} while (token.getSimbolo() != "Sponto");
 		// lexico.TabelaLexema();
 		TabelaSintatico();
+	}
+
+	public void analisadorSintatico1() throws excecaoSintatico, IOException {
+
+		lexico.InicializadorArquivo();
+
+		token = lexico.AnalisadorEntrada();
+		if (token.getSimbolo().equals(Simbolos.programa)) {
+			token = lexico.AnalisadorEntrada();
+			if (token.getSimbolo().equals(Simbolos.identificador)) {
+				token = lexico.AnalisadorEntrada();
+				if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+
+					analisaBloco();
+					token = lexico.AnalisadorEntrada();
+					if (token.getSimbolo().equals(Simbolos.ponto)) {
+						token = lexico.AnalisadorEntrada();
+
+						if (token.getSimbolo().equals(Simbolos.eof)) {
+
+							System.out.println("Fim do programa, sucesso");
+
+						} else {
+							throw new excecaoSintatico(
+									"Fim do programa, não pode haver mais items. Linha: " + token.getLinha());
+						}
+					} else {
+						throw new excecaoSintatico(Simbolos.ponto, token.getSimbolo(), token.getLinha());
+					}
+				} else {
+					throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
+				}
+			} else {
+				throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+			}
+		} else {
+			throw new excecaoSintatico(Simbolos.programa, token.getSimbolo(), token.getLinha());
+		}
+	}
+
+	private void analisaBloco() throws excecaoSintatico {
+//		token = la.lexical();
+//
+//		analisaEtVariaveis();
+//		analisaSubrotinas();
+//		analisaComandos();
+
 	}
 
 	public void TabelaSintatico() {

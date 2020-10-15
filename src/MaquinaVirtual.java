@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import Excecoes.excecaoSintatico;
+
 public class MaquinaVirtual extends JFrame {
 	protected static final long serialVersionUID = 1L;
 
@@ -209,7 +211,11 @@ public class MaquinaVirtual extends JFrame {
 	protected class AnalisadorChamada implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Sintatico SI = new Sintatico();
-			SI.analisadorSintatico();
+			try {
+				SI.analisadorSintatico1();
+			} catch (excecaoSintatico | IOException e1) {
+				System.out.println("Erro = " + e1);
+			}
 			setVisible(false);
 			statusBar1.setText("Mensagem: Analisador Do Codigo");
 		}
