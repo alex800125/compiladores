@@ -24,6 +24,7 @@ public class Lexico extends MaquinaVirtual {
 	protected Vector<String> MErro = new Vector<String>();
 
 	BufferedReader br;
+	BufferedReader br2;
 	String strLine = null;
 	String mensagemErro = "";
 	boolean erroDetectado = false;
@@ -32,8 +33,8 @@ public class Lexico extends MaquinaVirtual {
 	int countCaracter = -1;
 	int nlinha = 0;
 
-	public void InicializadorArquivo() {
-		System.out.println("InicializadorArquivo");
+	public BufferedReader InicializadorArquivo() {
+		////System.out.println("InicializadorArquivo");
 		JFileChooser fileChooser = new JFileChooser();
 
 		int returnValue = fileChooser.showOpenDialog(null);
@@ -42,20 +43,27 @@ public class Lexico extends MaquinaVirtual {
 			File selectedFile = fileChooser.getSelectedFile();
 
 			try {
+				String strLine2 =null;
 				FileInputStream fstream = new FileInputStream(selectedFile);
 				DataInputStream in = new DataInputStream(fstream);
 				br = new BufferedReader(new InputStreamReader(in));
+				
+				FileInputStream fstream2 = new FileInputStream(selectedFile);
+				DataInputStream in2 = new DataInputStream(fstream2);
+				br2 = new BufferedReader(new InputStreamReader(in2));
 				nlinha++;
 				strLine = br.readLine();
-
+				return br2;
 			} catch (Exception e1) {
 				e1.printStackTrace();
+				return null;
 			}
 		}
+		return null;
 	}
 
 	public Token AnalisadorEntrada() throws IOException {
-		System.out.println("AnalisadorEntrada nlinha = " + nlinha);
+		////System.out.println("AnalisadorEntrada nlinha = " + nlinha);
 		Token token = null;
 		char caracter = ' ';
 
@@ -82,7 +90,7 @@ public class Lexico extends MaquinaVirtual {
 			if (!erroDetectado && !fimDoArquivo) {
 				token = pegaToken(caracter);
 				if (erroDetectado) {
-					System.out.println("ERRO nlinha = " + nlinha);
+					////System.out.println("ERRO nlinha = " + nlinha);
 					MErro.add("Erro na Linha: " + nlinha);
 				} else {
 					return token;
@@ -201,11 +209,11 @@ public class Lexico extends MaquinaVirtual {
 						countCaracter++;
 						while (countCaracter >= strLine.length()) {
 							try {
-								System.out.println("while");
+								////System.out.println("while");
 								if ((strLine = br.readLine()) != null) {
 									countCaracter = 0;
 									nlinha++;
-									System.out.println("dentro while nlinha = " + nlinha);
+									////System.out.println("dentro while nlinha = " + nlinha);
 									if (strLine.length() > 0) {
 										while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
 											countCaracter++;
@@ -289,7 +297,7 @@ public class Lexico extends MaquinaVirtual {
 		} else if (caracter == ';' || caracter == ',' || caracter == '(' || caracter == ')' || caracter == '.') {
 			token = trataPontuacao(caracter);
 		} else {
-			System.out.println("caracter = " + caracter);
+			////System.out.println("caracter = " + caracter);
 			erroDetectado = true;
 			countCaracter = strLine.length();
 			throw new excecaoLexico("Caracter não tratado = '" + caracter + "' | linha = " + nlinha);

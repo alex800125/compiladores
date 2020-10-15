@@ -28,9 +28,10 @@ public class Sintatico extends MaquinaVirtual {
 
 	Lexico lexico = new Lexico();
 	Token token = null;
+	BufferedReader br2;
 	protected Vector<Token> tokens = new Vector<Token>();
 
-	public void analisadorSintatico() {
+	public void analisadorSintatico() throws IOException {
 
 		lexico.InicializadorArquivo();
 
@@ -42,53 +43,70 @@ public class Sintatico extends MaquinaVirtual {
 			}
 
 			if (token.getLexema().equals("ERRO")) {
-				System.out.println(lexico.getMensagemErro());
+				////System.out.println(lexico.getMensagemErro());
 				break;
 			} else {
 				tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
-				System.out.println("Token lexema = " + token.getLexema() + " | simbolo = " + token.getSimbolo());
+				////System.out.println("Token lexema = " + token.getLexema() + " | simbolo = " + token.getSimbolo());
 			}
 		} while (token.getSimbolo() != "Sponto");
 		// lexico.TabelaLexema();
 		TabelaSintatico();
+		TabelaInstrucoes2();
 	}
 
 	public void analisadorSintatico1() throws excecaoSintatico, IOException {
 
-		lexico.InicializadorArquivo();
-
+		br2 = lexico.InicializadorArquivo();
 		token = lexico.AnalisadorEntrada();
+		tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
 		if (token.getSimbolo().equals(Simbolos.programa)) {
 			token = lexico.AnalisadorEntrada();
+			tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
 			if (token.getSimbolo().equals(Simbolos.identificador)) {
 				token = lexico.AnalisadorEntrada();
+				tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
 				if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
 
 					analisaBloco();
 					token = lexico.AnalisadorEntrada();
+					tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
 					if (token.getSimbolo().equals(Simbolos.ponto)) {
 						token = lexico.AnalisadorEntrada();
+						tokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
 
 						if (token.getSimbolo().equals(Simbolos.eof)) {
 
-							System.out.println("Fim do programa, sucesso");
+							////System.out.println("Fim do programa, sucesso");
 
 						} else {
+							TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
+							TabelaInstrucoes2();
 							throw new excecaoSintatico(
 									"Fim do programa, não pode haver mais items. Linha: " + token.getLinha());
 						}
 					} else {
+						TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
+						TabelaInstrucoes2();
 						throw new excecaoSintatico(Simbolos.ponto, token.getSimbolo(), token.getLinha());
 					}
 				} else {
+					TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
+					TabelaInstrucoes2();
 					throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
 				}
 			} else {
+				TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
+				TabelaInstrucoes2();
 				throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
 			}
 		} else {
+			TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
+			TabelaInstrucoes2();
 			throw new excecaoSintatico(Simbolos.programa, token.getSimbolo(), token.getLinha());
 		}
+		TabelaSintatico();
+		TabelaInstrucoes2();
 	}
 
 	private void analisaBloco() throws excecaoSintatico {
@@ -126,15 +144,54 @@ public class Sintatico extends MaquinaVirtual {
 		tabelaSintatico.setFillsViewportHeight(false);
 		pnlTabela.add(barraRolagemSintatico);
 
-		/*
-		 * texBreakPoint = new JTextArea(10, 15); JScrollPane scrollableTextBreakPoint =
-		 * new JScrollPane(texBreakPoint);
-		 * scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.
-		 * HORIZONTAL_SCROLLBAR_ALWAYS);
-		 * scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.
-		 * VERTICAL_SCROLLBAR_ALWAYS); texBreakPoint.setText("aaa"); // colocar codigo
-		 * aquui pnlAmostraDados.add(scrollableTextBreakPoint);
-		 */
+	}
+	public void TabelaInstrucoes2() throws IOException
+	{
+		// pnlPilha = new MeuJPanel();
+		rowDataInstrucao2 = new Vector<Vector>();
+		columnNamesInstrucao2 = new Vector<String>();
+		// pnlPilha.remove(barraRolagemLexema);
+		String strLine2;
+		String[] linha2;
+		int nlinha2=0;
+
+		////System.out.println(strLine2);
+		while ((strLine2 = br2.readLine()) != null)
+		{
+			nlinha2++;
+			linha2 = strLine2.split(" ");
+			rowLinhaInstrucao2 = new Vector<String>();
+			rowLinhaInstrucao2.addElement(String.valueOf(nlinha2));
+			for (String l : linha2)
+			{
+				rowLinhaInstrucao2.addElement(String.valueOf(l));
+			}
+			rowDataInstrucao2.addElement(rowLinhaInstrucao2);
+			//System.out.println(rowDataInstrucao2);
+		}
+
+		columnNamesInstrucao2.addElement("Linha");
+		columnNamesInstrucao2.addElement("Arg1");
+		columnNamesInstrucao2.addElement("Arg2");
+		columnNamesInstrucao2.addElement("Arg3");
+		columnNamesInstrucao2.addElement("Arg4");
+		columnNamesInstrucao2.addElement("Arg5");
+		columnNamesInstrucao2.addElement("Arg6");
+		columnNamesInstrucao2.addElement("Arg7");
+		columnNamesInstrucao2.addElement("Arg8");
+		columnNamesInstrucao2.addElement("Arg9");
+		columnNamesInstrucao2.addElement("Arg10");
+		columnNamesInstrucao2.addElement("Arg11");
+		columnNamesInstrucao2.addElement("Arg12");
+		columnNamesInstrucao2.addElement("Arg13");
+
+
+		tabelaInstrucao2 = new JTable(rowDataInstrucao2, columnNamesInstrucao2);
+		barraRolagemInstrucao2 = new JScrollPane(tabelaInstrucao2);
+		tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
+		tabelaInstrucao2.setFillsViewportHeight(false);
+		pnlAmostraDados.add(barraRolagemInstrucao2);
+
 	}
 
 }

@@ -33,6 +33,8 @@ public class MaquinaVirtual extends JFrame {
 	protected JScrollPane barraRolagemLexema;
 	protected JTable tabelaSintatico;
 	protected JScrollPane barraRolagemSintatico;
+	protected JTable tabelaInstrucao2;
+	protected JScrollPane barraRolagemInstrucao2;
 
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
 			"CMA", "CEQ", "CDIF", "CMEQ", "CMAQ", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
@@ -54,6 +56,9 @@ public class MaquinaVirtual extends JFrame {
 	protected Vector<String> rowLinhaSintatico = new Vector<String>();
 	protected Vector<Vector> rowDataSintatico = new Vector<Vector>();
 	protected Vector<String> columnNamesSintatico = new Vector<String>();
+	protected Vector<String> rowLinhaInstrucao2 = new Vector<String>();
+	protected Vector<Vector> rowDataInstrucao2 = new Vector<Vector>();
+	protected Vector<String> columnNamesInstrucao2 = new Vector<String>();
 
 	protected Vector<Integer> M = new Vector<Integer>(); // pilha
 	protected Vector<Integer> ChamadasCall = new Vector<Integer>(); // pilha
@@ -159,7 +164,7 @@ public class MaquinaVirtual extends JFrame {
 
 		this.addWindowListener(new FechamentoDeJanela());
 
-		this.setSize(700, 500);
+		this.setSize(1500, 1000);
 		this.setVisible(true);
 	}
 
@@ -216,7 +221,8 @@ public class MaquinaVirtual extends JFrame {
 			} catch (excecaoSintatico | IOException e1) {
 				System.out.println("Erro = " + e1);
 			}
-			setVisible(false);
+			//setVisible(false);
+			
 			statusBar1.setText("Mensagem: Analisador Do Codigo");
 		}
 	}
