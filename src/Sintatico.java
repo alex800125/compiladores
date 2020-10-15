@@ -6,7 +6,9 @@ import java.util.Vector;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.TableCellEditor;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
@@ -80,8 +82,9 @@ public class Sintatico extends MaquinaVirtual {
 							////System.out.println("Fim do programa, sucesso");
 
 						} else {
-							TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
 							TabelaInstrucoes2();
+							TabelaSintatico(); //NAO EH o lugar Oficial, so coloquei aqui pra funcionar
+							
 							throw new excecaoSintatico(
 									"Fim do programa, não pode haver mais items. Linha: " + token.getLinha());
 						}
@@ -131,9 +134,9 @@ public class Sintatico extends MaquinaVirtual {
 			rowLinhaSintatico.addElement(String.valueOf(tokens.get(i).getLexema()));
 
 			rowDataSintatico.addElement(rowLinhaSintatico);
-
+			
 		}
-
+		
 		columnNamesSintatico.addElement("Linha");
 		columnNamesSintatico.addElement("Lexema");
 		columnNamesSintatico.addElement("Simbolo");
@@ -185,13 +188,16 @@ public class Sintatico extends MaquinaVirtual {
 		columnNamesInstrucao2.addElement("Arg12");
 		columnNamesInstrucao2.addElement("Arg13");
 
-
+		
 		tabelaInstrucao2 = new JTable(rowDataInstrucao2, columnNamesInstrucao2);
 		barraRolagemInstrucao2 = new JScrollPane(tabelaInstrucao2);
 		tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
 		tabelaInstrucao2.setFillsViewportHeight(false);
+		
+		tabelaInstrucao2.addRowSelectionInterval(0, tokens.get(tokens.size()-1).getLinha()-1);
 		pnlAmostraDados.add(barraRolagemInstrucao2);
 
+		
 	}
 
 }
