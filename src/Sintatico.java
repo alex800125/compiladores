@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Vector;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+
+import java.awt.Color;
 import java.io.BufferedReader;
 
 public class Sintatico extends MaquinaVirtual {
@@ -35,6 +37,8 @@ public class Sintatico extends MaquinaVirtual {
 							if (token.getSimbolo().equals(Simbolos.eof)) {
 								System.out.println("Fim do programa, sucesso");
 								montarTabelas();
+								textErroSintatico.setBackground(Color.GREEN);
+								MostarMensagem("Fim do programa, sucesso");
 							} else {
 								getToken();
 								throw new excecaoSintatico(
@@ -55,11 +59,9 @@ public class Sintatico extends MaquinaVirtual {
 		} catch (excecaoSintatico e) {
 			System.out.println(e);
 			montarTabelas();
-			JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
-			scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-			scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			textErroSintatico.setText(String.valueOf(e)); // colocar codigo aqui
-			pnlPartedeBaixo.add(scrollableTextErroSintatico);
+			textErroSintatico.setBackground(Color.RED);
+			MostarMensagem(String.valueOf(e));
+			
 		}
 
 		System.out.println("Fim do sintatico");
@@ -388,6 +390,15 @@ public class Sintatico extends MaquinaVirtual {
 		TabelaInstrucoes2();
 		TabelaSintatico();
 		
+		
+	}
+	public void MostarMensagem(String mensagem) {
+
+		JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
+		scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
+		pnlPartedeBaixo.add(scrollableTextErroSintatico);
 	}
 
 	public void TabelaSintatico() {
