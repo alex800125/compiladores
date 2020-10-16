@@ -54,7 +54,7 @@ public class Lexico {
 		return null;
 	}
 
-	public Token AnalisadorEntrada() throws IOException {
+	public Token AnalisadorLexico() throws IOException {
 
 		System.out.println("AnalisadorEntrada nlinha = " + nlinha);
 		Token token = null;

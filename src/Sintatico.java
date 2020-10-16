@@ -17,7 +17,7 @@ public class Sintatico extends MaquinaVirtual {
 	BufferedReader br2;
 	protected Vector<Token> vetorTokens = new Vector<Token>();
 
-	public void analisadorSintatico1() throws excecaoSintatico, IOException {
+	public void analisadorSintatico() throws excecaoSintatico, IOException {
 
 		try {
 			br2 = lexico.InicializadorArquivo();
@@ -31,7 +31,7 @@ public class Sintatico extends MaquinaVirtual {
 						if (token.getSimbolo().equals(Simbolos.ponto)) {
 							// esse Token não usa a função getToken pq ele serve para verificar se o arquivo
 							// fechou ao fim, depois do Sponto, não entrando na lista de Tokens
-							token = lexico.AnalisadorEntrada();
+							token = lexico.AnalisadorLexico();
 							if (token.getSimbolo().equals(Simbolos.eof)) {
 								System.out.println("Fim do programa, sucesso");
 								montarTabelas();
@@ -371,7 +371,7 @@ public class Sintatico extends MaquinaVirtual {
 	// ----------------------------------------------------------------------------
 
 	private void getToken() throws IOException, excecaoSintatico {
-		token = lexico.AnalisadorEntrada();
+		token = lexico.AnalisadorLexico();
 		if (token.getSimbolo().equals(Simbolos.erro)) {
 			throw new excecaoSintatico("Erro na parte Lexica.");
 		} else {

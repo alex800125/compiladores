@@ -218,7 +218,7 @@ public class MaquinaVirtual extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			Sintatico SI = new Sintatico();
 			try {
-				SI.analisadorSintatico1();
+				SI.analisadorSintatico();
 			} catch (excecaoSintatico | IOException e1) {
 				System.out.println("Erro = " + e1);
 			}
