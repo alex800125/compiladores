@@ -380,8 +380,9 @@ public class Sintatico extends MaquinaVirtual {
 	}
 
 	private void montarTabelas() throws IOException {
-		TabelaSintatico();
 		TabelaInstrucoes2();
+		TabelaSintatico();
+		
 	}
 
 	public void TabelaSintatico() {
@@ -406,9 +407,10 @@ public class Sintatico extends MaquinaVirtual {
 
 		tabelaSintatico = new JTable(rowDataSintatico, columnNamesSintatico);
 		barraRolagemSintatico = new JScrollPane(tabelaSintatico);
-		tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
-		tabelaSintatico.setFillsViewportHeight(false);
-		pnlTabela.add(barraRolagemSintatico);
+//		tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
+//		tabelaSintatico.setFillsViewportHeight(false);
+		tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		pnlPilha.add(barraRolagemSintatico);
 
 	}
 
@@ -418,43 +420,33 @@ public class Sintatico extends MaquinaVirtual {
 		columnNamesInstrucao2 = new Vector<String>();
 
 		String strLine2;
-		String[] linha2;
+		
 		int nlinha2 = 0;
 
 		while ((strLine2 = br2.readLine()) != null) {
 			nlinha2++;
-			linha2 = strLine2.split(" ");
+			
 			rowLinhaInstrucao2 = new Vector<String>();
 			rowLinhaInstrucao2.addElement(String.valueOf(nlinha2));
-			for (String l : linha2) {
-				rowLinhaInstrucao2.addElement(String.valueOf(l));
-			}
+
+			rowLinhaInstrucao2.addElement(String.valueOf(strLine2));
+			
 			rowDataInstrucao2.addElement(rowLinhaInstrucao2);
 		}
 
 		columnNamesInstrucao2.addElement("Linha");
-		columnNamesInstrucao2.addElement("Arg1");
-		columnNamesInstrucao2.addElement("Arg2");
-		columnNamesInstrucao2.addElement("Arg3");
-		columnNamesInstrucao2.addElement("Arg4");
-		columnNamesInstrucao2.addElement("Arg5");
-		columnNamesInstrucao2.addElement("Arg6");
-		columnNamesInstrucao2.addElement("Arg7");
-		columnNamesInstrucao2.addElement("Arg8");
-		columnNamesInstrucao2.addElement("Arg9");
-		columnNamesInstrucao2.addElement("Arg10");
-		columnNamesInstrucao2.addElement("Arg11");
-		columnNamesInstrucao2.addElement("Arg12");
-		columnNamesInstrucao2.addElement("Arg13");
+		columnNamesInstrucao2.addElement("Codigo");
+
 
 		tabelaInstrucao2 = new JTable(rowDataInstrucao2, columnNamesInstrucao2);
 		barraRolagemInstrucao2 = new JScrollPane(tabelaInstrucao2);
-		tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
-		tabelaInstrucao2.setFillsViewportHeight(false);
+//		tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
+//		tabelaInstrucao2.setFillsViewportHeight(false);
+		tabelaInstrucao2.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
 		if (vetorTokens.size() != 0) {
 			tabelaInstrucao2.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
 		}
-		pnlAmostraDados.add(barraRolagemInstrucao2);
+		pnlTabela.add(barraRolagemInstrucao2);
 	}
 }
