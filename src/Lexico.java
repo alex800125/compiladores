@@ -10,7 +10,7 @@ import java.util.Vector;
 import javax.swing.JFileChooser;
 
 public class Lexico {
-	
+
 	protected Vector<String> MLexama = new Vector<String>();
 	protected Vector<String> MSimbolo = new Vector<String>();
 	protected Vector<String> MErro = new Vector<String>();
@@ -62,18 +62,14 @@ public class Lexico {
 
 		// while para retirar espaços vazios que possam existir no começo
 		while (countCaracter >= strLine.length()) {
-			try {
-				if ((strLine = br.readLine()) != null) {
-					countCaracter = 0;
-					nlinha++;
-					if (strLine.length() > 0) {
-						caracter = strLine.charAt(countCaracter);
-					}
-				} else {
-					return new Token(Simbolos.eof, "EOF", nlinha);
+			if ((strLine = br.readLine()) != null) {
+				countCaracter = 0;
+				nlinha++;
+				if (strLine.length() > 0) {
+					caracter = strLine.charAt(countCaracter);
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			} else {
+				return new Token(Simbolos.eof, "EOF", nlinha);
 			}
 		}
 
@@ -92,36 +88,33 @@ public class Lexico {
 				return new Token(Simbolos.eof, "EOF", nlinha);
 			}
 		} catch (excecaoLexico e) {
-			mensagemErro = e.getMessage();
+			System.out.println(e);
 		}
 
 		return new Token(Simbolos.erro, "ERRO", nlinha);
 	}
 
-	private final char trataComentariosConsomeEspaco(char caracter) throws excecaoLexico {
+	private final char trataComentariosConsomeEspaco(char caracter) throws excecaoLexico, IOException {
+		int linha = nlinha;
 		while (caracter == '{' || caracter == ' ' || caracter == '/') {
+
 			if (Character.isWhitespace(caracter)) {
 				countCaracter++;
-
 				while (countCaracter >= strLine.length()) {
-					try {
-						if ((strLine = br.readLine()) != null) {
-							countCaracter = 0;
-							nlinha++;
-							if (strLine.length() > 0) {
-								while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
-									countCaracter++;
-									if (countCaracter >= strLine.length())
-										break;
-								}
-								return trataComentariosConsomeEspaco(caracter);
+					if ((strLine = br.readLine()) != null) {
+						countCaracter = 0;
+						nlinha++;
+						if (strLine.length() > 0) {
+							while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
+								countCaracter++;
+								if (countCaracter >= strLine.length())
+									break;
 							}
-						} else {
-							fimDoArquivo = true;
-							return ' ';
+							return trataComentariosConsomeEspaco(caracter);
 						}
-					} catch (IOException e) {
-						e.printStackTrace();
+					} else {
+						fimDoArquivo = true;
+						return ' ';
 					}
 				}
 				caracter = strLine.charAt(countCaracter);
@@ -131,60 +124,25 @@ public class Lexico {
 				while (caracter != '}') {
 
 					countCaracter++;
-					while (countCaracter >= strLine.length()) {
-						try {
-							if ((strLine = br.readLine()) != null) {
-								countCaracter = 0;
-								nlinha++;
-								if (strLine.length() > 0) {
-									while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
-										countCaracter++;
-									}
-									return trataComentariosConsomeEspaco(caracter);
-								}
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
+					if (countCaracter >= strLine.length()) {
+						if ((strLine = br.readLine()) != null) {
+							countCaracter = 0;
+							nlinha++;
+						} else {
+							throw new excecaoLexico("Comentario não finalizado na linha " + linha);
 						}
 					}
-					caracter = strLine.charAt(countCaracter);
 
+					if (countCaracter < strLine.length()) {
+						caracter = strLine.charAt(countCaracter);
+					}
 				}
+
 				if (caracter == '}') {
 					countCaracter++;
 					while (countCaracter >= strLine.length()) {
-						try {
-							if ((strLine = br.readLine()) != null) {
-								countCaracter = 0;
-								nlinha++;
-								if (strLine.length() > 0) {
-									while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
-										countCaracter++;
-									}
-									return trataComentariosConsomeEspaco(caracter);
-								}
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
 
-					caracter = strLine.charAt(countCaracter);
-				}
-			}
-
-			if (caracter == '/') {
-				countCaracter++;
-				if (countCaracter >= strLine.length()) {
-					erroDetectado = true;
-					throw new excecaoLexico("Caracter não esperado na linha = " + nlinha);
-				}
-				caracter = strLine.charAt(countCaracter);
-
-				if (caracter == '/') {
-					try {
 						if ((strLine = br.readLine()) != null) {
-
 							countCaracter = 0;
 							nlinha++;
 							if (strLine.length() > 0) {
@@ -193,83 +151,95 @@ public class Lexico {
 								}
 								return trataComentariosConsomeEspaco(caracter);
 							}
+						} else {
+							fimDoArquivo = true;
+							return ' ';
 						}
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
+					caracter = strLine.charAt(countCaracter);
+				} else {
+					throw new excecaoLexico("Comentario não finalizado na linha " + linha);
+				}
+			}
+
+			if (caracter == '/') {
+				countCaracter++;
+				if (countCaracter >= strLine.length()) {
+					erroDetectado = true;
+					throw new excecaoLexico("Caracter não esperado na linha = " + linha);
+				}
+				caracter = strLine.charAt(countCaracter);
+
+				if (caracter == '/') {
+
+					if ((strLine = br.readLine()) != null) {
+
+						countCaracter = 0;
+						nlinha++;
+						if (strLine.length() > 0) {
+							while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
+								countCaracter++;
+							}
+							return trataComentariosConsomeEspaco(caracter);
+						}
+					}
+
 				} else if (caracter == '*') {
-					while (true) {
-						countCaracter++;
-						while (countCaracter >= strLine.length()) {
-							try {
+					countCaracter++;
+					while (caracter != '/') {
+						if (countCaracter >= strLine.length()) {
+							if ((strLine = br.readLine()) != null) {
+								countCaracter = 0;
+								nlinha++;
+							} else {
+								throw new excecaoLexico("Comentario não finalizado na linha " + linha);
+							}
+						}
+
+						if (countCaracter < strLine.length()) {
+							caracter = strLine.charAt(countCaracter);
+						}
+
+						while (caracter != '*') {
+
+							countCaracter++;
+							if (countCaracter >= strLine.length()) {
 								if ((strLine = br.readLine()) != null) {
 									countCaracter = 0;
 									nlinha++;
-									if (strLine.length() > 0) {
-										while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
-											countCaracter++;
-										}
-										return trataComentariosConsomeEspaco(caracter);
-									}
-								}
-
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-
-						caracter = strLine.charAt(countCaracter);
-
-						if (caracter == '*') {
-							countCaracter++;
-							while (countCaracter >= strLine.length()) {
-								try {
-									if ((strLine = br.readLine()) != null) {
-										countCaracter = 0;
-										nlinha++;
-										if (strLine.length() > 0) {
-											while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
-												countCaracter++;
-											}
-											return trataComentariosConsomeEspaco(caracter);
-										}
-									}
-								} catch (IOException e) {
-									e.printStackTrace();
+								} else {
+									throw new excecaoLexico("Comentario não finalizado na linha " + linha);
 								}
 							}
 
-							caracter = strLine.charAt(countCaracter);
-
-							if (caracter == '/') {
-								countCaracter++;
-								while (countCaracter >= strLine.length()) {
-									try {
-										if ((strLine = br.readLine()) != null) {
-											countCaracter = 0;
-											nlinha++;
-											if (strLine.length() > 0) {
-												while (Character
-														.isWhitespace(caracter = strLine.charAt(countCaracter))) {
-													countCaracter++;
-												}
-												return trataComentariosConsomeEspaco(caracter);
-											}
-										}
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
-
+							if (countCaracter < strLine.length()) {
 								caracter = strLine.charAt(countCaracter);
 							}
 						}
+
+						countCaracter++;
+						if (countCaracter < strLine.length()) {
+							caracter = strLine.charAt(countCaracter);
+						}
+
+					}
+					countCaracter++;
+					if (countCaracter >= strLine.length()) {
+						if ((strLine = br.readLine()) != null) {
+							countCaracter = 0;
+							nlinha++;
+						} else {
+							throw new excecaoLexico("Comentario não finalizado na linha " + linha);
+						}
+					}
+
+					if (countCaracter < strLine.length()) {
+						caracter = strLine.charAt(countCaracter);
 					}
 				}
 			}
 		}
 		return caracter;
-
 	}
 
 	private final Token pegaToken(char caracter) throws excecaoLexico {

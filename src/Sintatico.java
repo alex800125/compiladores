@@ -28,7 +28,6 @@ public class Sintatico extends MaquinaVirtual {
 					getToken();
 					if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
 						analisaBloco();
-						getToken();
 						if (token.getSimbolo().equals(Simbolos.ponto)) {
 							// esse Token não usa a função getToken pq ele serve para verificar se o arquivo
 							// fechou ao fim, depois do Sponto, não entrando na lista de Tokens
@@ -199,18 +198,6 @@ public class Sintatico extends MaquinaVirtual {
 	private void analisaAtribuicao(Token attributionToken) throws excecaoSintatico, IOException {
 		getToken();
 		analisaExpressao();
-//
-//		if (flagFunctionList.get(flagFunctionList.size() - 1) && (nameOfFunction.get(nameOfFunction.size() - 1)).equals(attributionToken.getLexema())) {
-//			semantic.insertTokenOnFunctionList(attributionToken);
-//		}
-//		
-//		if (nameOfFunction.size() > 0) {
-//			if (!((nameOfFunction.get(nameOfFunction.size() - 1)).equals(attributionToken.getLexema()))) {
-//				generator.createCode(Constants.STR, semantic.positionOfVariable(attributionToken.getLexema()), Constants.EMPTY);	
-//			}
-//		} else {
-//			generator.createCode(Constants.STR, semantic.positionOfVariable(attributionToken.getLexema()), Constants.EMPTY);
-//		}
 	}
 
 	private void analisaLeia() throws excecaoSintatico, IOException {
@@ -383,9 +370,13 @@ public class Sintatico extends MaquinaVirtual {
 	// Aqui pra baixo é a parte da interface
 	// ----------------------------------------------------------------------------
 
-	private void getToken() throws IOException {
+	private void getToken() throws IOException, excecaoSintatico {
 		token = lexico.AnalisadorEntrada();
-		vetorTokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
+		if (token.getSimbolo().equals(Simbolos.erro)) {
+			throw new excecaoSintatico("Erro na parte Lexica.");
+		} else {
+			vetorTokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
+		}
 	}
 
 	private void montarTabelas() throws IOException {
@@ -399,7 +390,7 @@ public class Sintatico extends MaquinaVirtual {
 		columnNamesSintatico = new Vector<String>();
 
 		for (int i = 0; i < vetorTokens.size(); i++) {
-			rowLinhaSintatico = new Vector<String>(); 
+			rowLinhaSintatico = new Vector<String>();
 
 			rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
 			rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()));
@@ -461,9 +452,9 @@ public class Sintatico extends MaquinaVirtual {
 		tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
 		tabelaInstrucao2.setFillsViewportHeight(false);
 
-		tabelaInstrucao2.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
+		if (vetorTokens.size() != 0) {
+			tabelaInstrucao2.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
+		}
 		pnlAmostraDados.add(barraRolagemInstrucao2);
-
 	}
-
 }

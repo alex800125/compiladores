@@ -70,6 +70,7 @@ public class MaquinaVirtual extends JFrame {
 	protected JTextArea textEntrada = new JTextArea(10, 10);
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
+	protected JTextArea texBreakPointErroSintatico = new JTextArea(5, 5);
 
 	public MaquinaVirtual() {
 		super("Construcao Compiladores");
