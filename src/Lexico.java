@@ -7,18 +7,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
-
 import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
 
-public class Lexico extends MaquinaVirtual {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
+public class Lexico {
+	
 	protected Vector<String> MLexama = new Vector<String>();
 	protected Vector<String> MSimbolo = new Vector<String>();
 	protected Vector<String> MErro = new Vector<String>();
@@ -34,7 +26,8 @@ public class Lexico extends MaquinaVirtual {
 	int nlinha = 0;
 
 	public BufferedReader InicializadorArquivo() {
-		////System.out.println("InicializadorArquivo");
+
+		// System.out.println("InicializadorArquivo");
 		JFileChooser fileChooser = new JFileChooser();
 
 		int returnValue = fileChooser.showOpenDialog(null);
@@ -43,11 +36,10 @@ public class Lexico extends MaquinaVirtual {
 			File selectedFile = fileChooser.getSelectedFile();
 
 			try {
-				String strLine2 =null;
 				FileInputStream fstream = new FileInputStream(selectedFile);
 				DataInputStream in = new DataInputStream(fstream);
 				br = new BufferedReader(new InputStreamReader(in));
-				
+
 				FileInputStream fstream2 = new FileInputStream(selectedFile);
 				DataInputStream in2 = new DataInputStream(fstream2);
 				br2 = new BufferedReader(new InputStreamReader(in2));
@@ -63,7 +55,8 @@ public class Lexico extends MaquinaVirtual {
 	}
 
 	public Token AnalisadorEntrada() throws IOException {
-		////System.out.println("AnalisadorEntrada nlinha = " + nlinha);
+
+		System.out.println("AnalisadorEntrada nlinha = " + nlinha);
 		Token token = null;
 		char caracter = ' ';
 
@@ -90,7 +83,7 @@ public class Lexico extends MaquinaVirtual {
 			if (!erroDetectado && !fimDoArquivo) {
 				token = pegaToken(caracter);
 				if (erroDetectado) {
-					////System.out.println("ERRO nlinha = " + nlinha);
+					System.out.println("ERRO nlinha = " + nlinha);
 					MErro.add("Erro na Linha: " + nlinha);
 				} else {
 					return token;
@@ -109,7 +102,7 @@ public class Lexico extends MaquinaVirtual {
 		while (caracter == '{' || caracter == ' ' || caracter == '/') {
 			if (Character.isWhitespace(caracter)) {
 				countCaracter++;
-				
+
 				while (countCaracter >= strLine.length()) {
 					try {
 						if ((strLine = br.readLine()) != null) {
@@ -209,11 +202,9 @@ public class Lexico extends MaquinaVirtual {
 						countCaracter++;
 						while (countCaracter >= strLine.length()) {
 							try {
-								////System.out.println("while");
 								if ((strLine = br.readLine()) != null) {
 									countCaracter = 0;
 									nlinha++;
-									////System.out.println("dentro while nlinha = " + nlinha);
 									if (strLine.length() > 0) {
 										while (Character.isWhitespace(caracter = strLine.charAt(countCaracter))) {
 											countCaracter++;
@@ -297,7 +288,7 @@ public class Lexico extends MaquinaVirtual {
 		} else if (caracter == ';' || caracter == ',' || caracter == '(' || caracter == ')' || caracter == '.') {
 			token = trataPontuacao(caracter);
 		} else {
-			////System.out.println("caracter = " + caracter);
+			System.out.println("caracter = " + caracter);
 			erroDetectado = true;
 			countCaracter = strLine.length();
 			throw new excecaoLexico("Caracter não tratado = '" + caracter + "' | linha = " + nlinha);
@@ -677,33 +668,4 @@ public class Lexico extends MaquinaVirtual {
 		return mensagemErro;
 	}
 
-	public void TabelaLexema() {
-		// pnlPilha = new MeuJPanel();
-		rowDataLexema = new Vector<Vector>();
-		columnNamesLexema = new Vector<String>();
-		// pnlPilha.remove(barraRolagemLexema);
-		for (int i = 0; i < MSimbolo.size(); i++) {
-			rowLinhaLexema = new Vector<String>(); // limpa o vector, nao sei se eh o mais correto, pode afetar a
-													// memoria fisica
-			rowLinhaLexema.addElement(String.valueOf(MLexama.get(i)));
-			rowLinhaLexema.addElement(String.valueOf(MSimbolo.get(i)));
-			rowDataLexema.addElement(rowLinhaLexema);
-		}
-
-		columnNamesLexema.addElement("Lexema");
-		columnNamesLexema.addElement("Simbolo");
-		tabelaLexema = new JTable(rowDataLexema, columnNamesLexema);
-		barraRolagemLexema = new JScrollPane(tabelaLexema);
-		tabelaLexema.setPreferredScrollableViewportSize(tabelaLexema.getPreferredSize());
-		tabelaLexema.setFillsViewportHeight(false);
-		pnlTabela.add(barraRolagemLexema);
-		texBreakPoint = new JTextArea(10, 15);
-
-		JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
-		scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		texBreakPoint.setText(MErro.toString()); // colocar codigo aquui
-		pnlAmostraDados.add(scrollableTextBreakPoint);
-
-	}
 }

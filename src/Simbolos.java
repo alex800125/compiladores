@@ -2,9 +2,9 @@
 public final class Simbolos {
 
 	public static String erro = "Erro";
-	
+
 	public static String eof = "EOF";
-	
+
 	public static String programa = "Sprograma";
 
 	public static String inicio = "Sinicio";
@@ -78,5 +78,9 @@ public final class Simbolos {
 	public static String atribuicao = "Satribuicao";
 
 	public static String identificador = "Sidentificador";
+
+	public static String verdadeiro = "Sverdadeiro";
+
+	public static String falso = "Sfalso";
 
 }
