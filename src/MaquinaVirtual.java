@@ -167,7 +167,7 @@ public class MaquinaVirtual extends JFrame {
 		
 		this.addWindowListener(new FechamentoDeJanela());
 
-		this.setSize(1500, 1000);
+		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
 	}
 
