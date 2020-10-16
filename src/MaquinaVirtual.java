@@ -66,11 +66,12 @@ public class MaquinaVirtual extends JFrame {
 	protected MeuJPanel pnlTabela = new MeuJPanel();
 	protected MeuJPanel pnlAmostraDados = new MeuJPanel();
 	protected MeuJPanel pnlPilha = new MeuJPanel();
+	protected MeuJPanel pnlPartedeBaixo = new MeuJPanel();
 
 	protected JTextArea textEntrada = new JTextArea(10, 10);
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
-	protected JTextArea texBreakPointErroSintatico = new JTextArea(5, 5);
+	protected JTextArea textErroSintatico = new JTextArea(5, 5);
 
 	public MaquinaVirtual() {
 		super("Construcao Compiladores");
@@ -158,11 +159,12 @@ public class MaquinaVirtual extends JFrame {
 		pnlTabela.setLayout(grdTabela);
 		pnlAmostraDados.setLayout(grdTabela);
 		pnlPilha.setLayout(grdTabela);
-
+		pnlPartedeBaixo.setLayout(grdTabela);
 		cntForm.add(pnlTabela, BorderLayout.CENTER);
 		cntForm.add(pnlAmostraDados, BorderLayout.WEST);
 		cntForm.add(pnlPilha, BorderLayout.EAST);
-
+		cntForm.add(pnlPartedeBaixo, BorderLayout.SOUTH);
+		
 		this.addWindowListener(new FechamentoDeJanela());
 
 		this.setSize(1500, 1000);

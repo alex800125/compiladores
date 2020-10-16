@@ -55,6 +55,11 @@ public class Sintatico extends MaquinaVirtual {
 		} catch (excecaoSintatico e) {
 			System.out.println(e);
 			montarTabelas();
+			JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
+			scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			textErroSintatico.setText(String.valueOf(e)); // colocar codigo aqui
+			pnlPartedeBaixo.add(scrollableTextErroSintatico);
 		}
 
 		System.out.println("Fim do sintatico");
