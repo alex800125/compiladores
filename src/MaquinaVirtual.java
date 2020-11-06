@@ -220,7 +220,10 @@ public class MaquinaVirtual extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			Sintatico SI = new Sintatico();
 			try {
+				dispose(); // close window
+				setVisible(false); // hide window
 				SI.analisadorSintatico();
+				
 			} catch (excecaoSintatico | IOException e1) {
 				System.out.println("Erro = " + e1);
 			}
