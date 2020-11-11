@@ -1,5 +1,6 @@
 
-public final class Simbolos {
+
+public final class Constantes {
 
 	public static String erro = "Erro";
 

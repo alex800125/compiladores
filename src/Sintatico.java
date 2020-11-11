@@ -24,17 +24,17 @@ public class Sintatico extends MaquinaVirtual {
 		try {
 			br2 = lexico.InicializadorArquivo();
 			getToken();
-			if (token.getSimbolo().equals(Simbolos.programa)) {
+			if (token.getSimbolo().equals(Constantes.programa)) {
 				getToken();
-				if (token.getSimbolo().equals(Simbolos.identificador)) {
+				if (token.getSimbolo().equals(Constantes.identificador)) {
 					getToken();
-					if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+					if (token.getSimbolo().equals(Constantes.ponto_virgula)) {
 						analisaBloco();
-						if (token.getSimbolo().equals(Simbolos.ponto)) {
+						if (token.getSimbolo().equals(Constantes.ponto)) {
 							// esse Token não usa a função getToken pq ele serve para verificar se o arquivo
 							// fechou ao fim, depois do Sponto, não entrando na lista de Tokens
 							token = lexico.AnalisadorLexico();
-							if (token.getSimbolo().equals(Simbolos.eof)) {
+							if (token.getSimbolo().equals(Constantes.eof)) {
 								System.out.println("Fim do programa, sucesso");
 								montarTabelas();
 								textErroSintatico.setBackground(Color.GREEN);
@@ -45,16 +45,16 @@ public class Sintatico extends MaquinaVirtual {
 										"Fim do programa, não pode haver mais items. Linha: " + token.getLinha());
 							}
 						} else {
-							throw new excecaoSintatico(Simbolos.ponto, token.getSimbolo(), token.getLinha());
+							throw new excecaoSintatico(Constantes.ponto, token.getSimbolo(), token.getLinha());
 						}
 					} else {
-						throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
+						throw new excecaoSintatico(Constantes.ponto_virgula, token.getSimbolo(), token.getLinha());
 					}
 				} else {
-					throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+					throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 				}
 			} else {
-				throw new excecaoSintatico(Simbolos.programa, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.programa, token.getSimbolo(), token.getLinha());
 			}
 		} catch (excecaoSintatico e) {
 			System.out.println(e);
@@ -77,20 +77,20 @@ public class Sintatico extends MaquinaVirtual {
 	}
 
 	private void analisaEtVariaveis() throws excecaoSintatico, IOException {
-		if (token.getSimbolo().equals(Simbolos.var)) {
+		if (token.getSimbolo().equals(Constantes.var)) {
 			getToken();
-			if (token.getSimbolo().equals(Simbolos.identificador)) {
-				while (token.getSimbolo().equals(Simbolos.identificador)) {
+			if (token.getSimbolo().equals(Constantes.identificador)) {
+				while (token.getSimbolo().equals(Constantes.identificador)) {
 
 					analisaVariaveis();
-					if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+					if (token.getSimbolo().equals(Constantes.ponto_virgula)) {
 						getToken();
 					} else {
-						throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
+						throw new excecaoSintatico(Constantes.ponto_virgula, token.getSimbolo(), token.getLinha());
 					}
 				}
 			} else {
-				throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 			}
 		}
 
@@ -98,93 +98,93 @@ public class Sintatico extends MaquinaVirtual {
 
 	private void analisaVariaveis() throws excecaoSintatico, IOException {
 		do {
-			if (token.getSimbolo().equals(Simbolos.identificador)) {
+			if (token.getSimbolo().equals(Constantes.identificador)) {
 
 				getToken();
-				if (token.getSimbolo().equals(Simbolos.virgula) || token.getSimbolo().equals(Simbolos.doispontos)) {
-					if (token.getSimbolo().equals(Simbolos.virgula)) {
+				if (token.getSimbolo().equals(Constantes.virgula) || token.getSimbolo().equals(Constantes.doispontos)) {
+					if (token.getSimbolo().equals(Constantes.virgula)) {
 						getToken();
-						if (token.getSimbolo().equals(Simbolos.doispontos)) {
-							throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+						if (token.getSimbolo().equals(Constantes.doispontos)) {
+							throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 						}
 					}
 				} else {
-					throw new excecaoSintatico(Simbolos.virgula, Simbolos.doispontos, token.getSimbolo(),
+					throw new excecaoSintatico(Constantes.virgula, Constantes.doispontos, token.getSimbolo(),
 							token.getLinha());
 				}
 
 			} else {
-				throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 			}
 
-		} while (!(token.getSimbolo().equals(Simbolos.doispontos)));
+		} while (!(token.getSimbolo().equals(Constantes.doispontos)));
 
 		getToken();
 		analisaTipo();
 	}
 
 	private void analisaTipo() throws excecaoSintatico, IOException {
-		if (!(token.getSimbolo().equals(Simbolos.inteiro)) && !(token.getSimbolo().equals(Simbolos.booleano))) {
-			throw new excecaoSintatico(Simbolos.inteiro, Simbolos.booleano, token.getSimbolo(), token.getLinha());
+		if (!(token.getSimbolo().equals(Constantes.inteiro)) && !(token.getSimbolo().equals(Constantes.booleano))) {
+			throw new excecaoSintatico(Constantes.inteiro, Constantes.booleano, token.getSimbolo(), token.getLinha());
 		}
 		getToken();
 	}
 
 	private void analisaSubrotinas() throws excecaoSintatico, IOException {
 
-		if ((token.getSimbolo().equals(Simbolos.procedimento)) || (token.getSimbolo().equals(Simbolos.funcao))) {
+		if ((token.getSimbolo().equals(Constantes.procedimento)) || (token.getSimbolo().equals(Constantes.funcao))) {
 			// verificar se é necessario por enquanto
 		}
 
-		while ((token.getSimbolo().equals(Simbolos.procedimento)) || (token.getSimbolo().equals(Simbolos.funcao))) {
+		while ((token.getSimbolo().equals(Constantes.procedimento)) || (token.getSimbolo().equals(Constantes.funcao))) {
 
-			if (token.getSimbolo().equals(Simbolos.procedimento)) {
+			if (token.getSimbolo().equals(Constantes.procedimento)) {
 				analisaDeclaracaoProcedimento();
 			} else {
 				analisaDeclaracaoFuncao();
 			}
 
-			if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+			if (token.getSimbolo().equals(Constantes.ponto_virgula)) {
 				getToken();
 			} else {
-				throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.ponto_virgula, token.getSimbolo(), token.getLinha());
 			}
 		}
 
 	}
 
 	private void analisaComandos() throws excecaoSintatico, IOException {
-		if (token.getSimbolo().equals(Simbolos.inicio)) {
+		if (token.getSimbolo().equals(Constantes.inicio)) {
 			getToken();
 			analisaComandoSimples();
 
-			while (!(token.getSimbolo().equals(Simbolos.fim))) {
-				if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+			while (!(token.getSimbolo().equals(Constantes.fim))) {
+				if (token.getSimbolo().equals(Constantes.ponto_virgula)) {
 
 					getToken();
-					if (!(token.getSimbolo().equals(Simbolos.fim))) {
+					if (!(token.getSimbolo().equals(Constantes.fim))) {
 						analisaComandoSimples();
 					}
 				} else {
-					throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
+					throw new excecaoSintatico(Constantes.ponto_virgula, token.getSimbolo(), token.getLinha());
 				}
 			}
 			getToken();
 		} else {
-			throw new excecaoSintatico(Simbolos.inicio, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.inicio, token.getSimbolo(), token.getLinha());
 		}
 	}
 
 	private void analisaComandoSimples() throws excecaoSintatico, IOException {
-		if (token.getSimbolo().equals(Simbolos.identificador)) {
+		if (token.getSimbolo().equals(Constantes.identificador)) {
 			analisaAtribChprocedimento();
-		} else if (token.getSimbolo().equals(Simbolos.se)) {
+		} else if (token.getSimbolo().equals(Constantes.se)) {
 			analisaSe();
-		} else if (token.getSimbolo().equals(Simbolos.enquanto)) {
+		} else if (token.getSimbolo().equals(Constantes.enquanto)) {
 			analisaEnquanto();
-		} else if (token.getSimbolo().equals(Simbolos.leia)) {
+		} else if (token.getSimbolo().equals(Constantes.leia)) {
 			analisaLeia();
-		} else if (token.getSimbolo().equals(Simbolos.escreva)) {
+		} else if (token.getSimbolo().equals(Constantes.escreva)) {
 			analisaEscreva();
 		} else {
 			analisaComandos();
@@ -195,7 +195,7 @@ public class Sintatico extends MaquinaVirtual {
 		Token aux = token;
 		getToken();
 
-		if (token.getSimbolo().equals(Simbolos.atribuicao)) {
+		if (token.getSimbolo().equals(Constantes.atribuicao)) {
 			analisaAtribuicao(aux);
 		} else {
 //			chamadaProcedimento(aux);
@@ -209,41 +209,41 @@ public class Sintatico extends MaquinaVirtual {
 
 	private void analisaLeia() throws excecaoSintatico, IOException {
 		getToken();
-		if (token.getSimbolo().equals(Simbolos.abre_parenteses)) {
+		if (token.getSimbolo().equals(Constantes.abre_parenteses)) {
 			getToken();
-			if (token.getSimbolo().equals(Simbolos.identificador)) {
+			if (token.getSimbolo().equals(Constantes.identificador)) {
 				getToken();
-				if (token.getSimbolo().equals(Simbolos.fecha_parenteses)) {
+				if (token.getSimbolo().equals(Constantes.fecha_parenteses)) {
 					getToken();
 				} else {
-					throw new excecaoSintatico(Simbolos.fecha_parenteses, token.getSimbolo(), token.getLinha());
+					throw new excecaoSintatico(Constantes.fecha_parenteses, token.getSimbolo(), token.getLinha());
 				}
 			} else {
-				throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 			}
 		} else {
-			throw new excecaoSintatico(Simbolos.abre_parenteses, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.abre_parenteses, token.getSimbolo(), token.getLinha());
 		}
 	}
 
 	private void analisaEscreva() throws excecaoSintatico, IOException {
 		getToken();
-		if (token.getSimbolo().equals(Simbolos.abre_parenteses)) {
+		if (token.getSimbolo().equals(Constantes.abre_parenteses)) {
 			getToken();
-			if (token.getSimbolo().equals(Simbolos.identificador)) {
+			if (token.getSimbolo().equals(Constantes.identificador)) {
 
 				getToken();
 
-				if (token.getSimbolo().equals(Simbolos.fecha_parenteses)) {
+				if (token.getSimbolo().equals(Constantes.fecha_parenteses)) {
 					getToken();
 				} else {
-					throw new excecaoSintatico(Simbolos.fecha_parenteses, token.getSimbolo(), token.getLinha());
+					throw new excecaoSintatico(Constantes.fecha_parenteses, token.getSimbolo(), token.getLinha());
 				}
 			} else {
-				throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 			}
 		} else {
-			throw new excecaoSintatico(Simbolos.abre_parenteses, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.abre_parenteses, token.getSimbolo(), token.getLinha());
 		}
 	}
 
@@ -251,12 +251,12 @@ public class Sintatico extends MaquinaVirtual {
 		getToken();
 		analisaExpressao();
 
-		if (token.getSimbolo().equals(Simbolos.faca)) {
+		if (token.getSimbolo().equals(Constantes.faca)) {
 			getToken();
 			analisaComandoSimples();
 
 		} else {
-			throw new excecaoSintatico(Simbolos.faca, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.faca, token.getSimbolo(), token.getLinha());
 		}
 	}
 
@@ -264,76 +264,76 @@ public class Sintatico extends MaquinaVirtual {
 		getToken();
 		analisaExpressao();
 
-		if (token.getSimbolo().equals(Simbolos.entao)) {
+		if (token.getSimbolo().equals(Constantes.entao)) {
 			getToken();
 			analisaComandoSimples();
-			if (token.getSimbolo().equals(Simbolos.senao)) {
+			if (token.getSimbolo().equals(Constantes.senao)) {
 				getToken();
 				analisaComandoSimples();
 			}
 		} else {
-			throw new excecaoSintatico(Simbolos.entao, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.entao, token.getSimbolo(), token.getLinha());
 		}
 	}
 
 	private void analisaDeclaracaoProcedimento() throws excecaoSintatico, IOException {
 		getToken();
-		if (token.getSimbolo().equals(Simbolos.identificador)) {
+		if (token.getSimbolo().equals(Constantes.identificador)) {
 			getToken();
-			if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+			if (token.getSimbolo().equals(Constantes.ponto_virgula)) {
 				analisaBloco();
 			} else {
-				throw new excecaoSintatico(Simbolos.ponto_virgula, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.ponto_virgula, token.getSimbolo(), token.getLinha());
 			}
 		} else {
-			throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 		}
 	}
 
 	private void analisaDeclaracaoFuncao() throws excecaoSintatico, IOException {
 		getToken();
-		if (token.getSimbolo().equals(Simbolos.identificador)) {
+		if (token.getSimbolo().equals(Constantes.identificador)) {
 			getToken();
 
-			if (token.getSimbolo().equals(Simbolos.doispontos)) {
+			if (token.getSimbolo().equals(Constantes.doispontos)) {
 				getToken();
 
-				if (token.getSimbolo().equals(Simbolos.inteiro) || token.getSimbolo().equals(Simbolos.booleano)) {
+				if (token.getSimbolo().equals(Constantes.inteiro) || token.getSimbolo().equals(Constantes.booleano)) {
 					getToken();
 
-					if (token.getSimbolo().equals(Simbolos.ponto_virgula)) {
+					if (token.getSimbolo().equals(Constantes.ponto_virgula)) {
 						analisaBloco();
 					}
 				} else {
-					throw new excecaoSintatico(Simbolos.inteiro, Simbolos.booleano, token.getSimbolo(),
+					throw new excecaoSintatico(Constantes.inteiro, Constantes.booleano, token.getSimbolo(),
 							token.getLinha());
 				}
 			} else {
-				throw new excecaoSintatico(Simbolos.doispontos, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.doispontos, token.getSimbolo(), token.getLinha());
 			}
 
 		} else {
-			throw new excecaoSintatico(Simbolos.identificador, token.getSimbolo(), token.getLinha());
+			throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 		}
 	}
 
 	private void analisaExpressao() throws excecaoSintatico, IOException {
 		analisaExpressaoSimples();
-		if (token.getSimbolo().equals(Simbolos.maior) || token.getSimbolo().equals(Simbolos.maiorig)
-				|| token.getSimbolo().equals(Simbolos.ig) || token.getSimbolo().equals(Simbolos.menor)
-				|| token.getSimbolo().equals(Simbolos.menorig) || token.getSimbolo().equals(Simbolos.dif)) {
+		if (token.getSimbolo().equals(Constantes.maior) || token.getSimbolo().equals(Constantes.maiorig)
+				|| token.getSimbolo().equals(Constantes.ig) || token.getSimbolo().equals(Constantes.menor)
+				|| token.getSimbolo().equals(Constantes.menorig) || token.getSimbolo().equals(Constantes.dif)) {
 			getToken();
 			analisaExpressaoSimples();
 		}
 	}
 
 	private void analisaExpressaoSimples() throws excecaoSintatico, IOException {
-		if (token.getSimbolo().equals(Simbolos.mais) || token.getSimbolo().equals(Simbolos.menos)) {
+		if (token.getSimbolo().equals(Constantes.mais) || token.getSimbolo().equals(Constantes.menos)) {
 			getToken();
 		}
 		analisaTermo();
-		while (token.getSimbolo().equals(Simbolos.mais) || token.getSimbolo().equals(Simbolos.menos)
-				|| token.getSimbolo().equals(Simbolos.ou)) {
+		while (token.getSimbolo().equals(Constantes.mais) || token.getSimbolo().equals(Constantes.menos)
+				|| token.getSimbolo().equals(Constantes.ou)) {
 			getToken();
 			analisaTermo();
 		}
@@ -341,32 +341,32 @@ public class Sintatico extends MaquinaVirtual {
 
 	private void analisaTermo() throws excecaoSintatico, IOException {
 		analisaFator();
-		while (token.getSimbolo().equals(Simbolos.mult) || token.getSimbolo().equals(Simbolos.div)
-				|| token.getSimbolo().equals(Simbolos.e)) {
+		while (token.getSimbolo().equals(Constantes.mult) || token.getSimbolo().equals(Constantes.div)
+				|| token.getSimbolo().equals(Constantes.e)) {
 			getToken();
 			analisaFator();
 		}
 	}
 
 	private void analisaFator() throws excecaoSintatico, IOException {
-		if (token.getSimbolo().equals(Simbolos.identificador)) {
+		if (token.getSimbolo().equals(Constantes.identificador)) {
 
 			getToken();
 
-		} else if (token.getSimbolo().equals(Simbolos.numero)) {
+		} else if (token.getSimbolo().equals(Constantes.numero)) {
 			getToken();
-		} else if (token.getSimbolo().equals(Simbolos.nao)) {
+		} else if (token.getSimbolo().equals(Constantes.nao)) {
 			getToken();
 			analisaFator();
-		} else if (token.getSimbolo().equals(Simbolos.abre_parenteses)) {
+		} else if (token.getSimbolo().equals(Constantes.abre_parenteses)) {
 			getToken();
 			analisaExpressao();
-			if (token.getSimbolo().equals(Simbolos.fecha_parenteses)) {
+			if (token.getSimbolo().equals(Constantes.fecha_parenteses)) {
 				getToken();
 			} else {
-				throw new excecaoSintatico(Simbolos.fecha_parenteses, token.getSimbolo(), token.getLinha());
+				throw new excecaoSintatico(Constantes.fecha_parenteses, token.getSimbolo(), token.getLinha());
 			}
-		} else if (token.getSimbolo().equals(Simbolos.verdadeiro) || token.getSimbolo().equals(Simbolos.falso)) {
+		} else if (token.getSimbolo().equals(Constantes.verdadeiro) || token.getSimbolo().equals(Constantes.falso)) {
 			getToken();
 		} else {
 			throw new excecaoSintatico("Expressão incompleta na linha: " + token.getLinha());
@@ -379,7 +379,7 @@ public class Sintatico extends MaquinaVirtual {
 
 	private void getToken() throws IOException, excecaoSintatico {
 		token = lexico.AnalisadorLexico();
-		if (token.getSimbolo().equals(Simbolos.erro)) {
+		if (token.getSimbolo().equals(Constantes.erro)) {
 			throw new excecaoSintatico("Erro na parte Lexica.");
 		} else {
 			vetorTokens.add(new Token(token.getLexema(), token.getSimbolo(), token.getLinha()));
