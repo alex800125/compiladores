@@ -11,10 +11,12 @@ public class Token {
 		this.linha = linha;
 	}
 	
+	// Ex: Sprograma
 	public String getSimbolo() {
 		return simbolo;
 	}
 	
+	// Ex: programa
 	public String getLexema() {
 		return lexema;
 	}

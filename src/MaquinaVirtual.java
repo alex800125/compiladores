@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import Excecoes.excecaoSemantico;
 import Excecoes.excecaoSintatico;
 
 public class MaquinaVirtual extends JFrame {
@@ -224,7 +225,7 @@ public class MaquinaVirtual extends JFrame {
 				setVisible(false); // hide window
 				SI.analisadorSintatico();
 				
-			} catch (excecaoSintatico | IOException e1) {
+			} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
 				System.out.println("Erro = " + e1);
 			}
 			//setVisible(false);

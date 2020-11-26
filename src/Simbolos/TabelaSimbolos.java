@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabelaSimbolos {
-	
+
 	private List<Simbolos> pilhaSimbolos;
 
 	public TabelaSimbolos() {
@@ -45,9 +45,11 @@ public class TabelaSimbolos {
 	}
 
 	private boolean lookProgramName(String lexema) {
+
 		if (lexema.equals(pilhaSimbolos.get(0).getLexema())) {
 			return true;
 		}
+
 		return false;
 	}
 
