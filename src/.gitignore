@@ -64,3 +64,10 @@
 /Token.class
 /MaquinaVirtual$AnalisadorChamada.class
 /Simbolos.class
+/Constantes.class
+/GeradorCodigo.class
+/Semantico.class
+/MaquinaVirtual$NovoAbrir.class
+/MaquinaVirtual$NovoExecutar.class
+/LexicoNOVO.class
+/SintaticoNOVO.class

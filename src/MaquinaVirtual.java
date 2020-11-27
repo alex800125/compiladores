@@ -5,10 +5,6 @@ import javax.imageio.*;
 import java.io.*;
 import java.util.*;
 import java.awt.GridLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 import Excecoes.excecaoSemantico;
 import Excecoes.excecaoSintatico;
@@ -22,10 +18,13 @@ public class MaquinaVirtual extends JFrame {
 			btnDeBug = new JButton("DeBug"), // Escrever debug
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
 			btnAnalisador = new JButton("Analisador Do Codigo"), // proxima instruaao
-			btnSair = new JButton("Sair");
+			btnSair = new JButton("Sair"),
+			btnNovoAbrir = new JButton("Novo Abrir"),
+			btnNovoExecutar = new JButton("Novo Executar");
+	
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
-
+	//VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	protected JTable tabelaInstrucoes;
 	protected JScrollPane barraRolagemInstrucoes;
 	protected JTable tabelaPilha;
@@ -36,15 +35,41 @@ public class MaquinaVirtual extends JFrame {
 	protected JScrollPane barraRolagemSintatico;
 	protected JTable tabelaInstrucao2;
 	protected JScrollPane barraRolagemInstrucao2;
-
+	protected JTable tabelaInstrucaoLOCAL;
+	protected JScrollPane barraRolagemInstrucaoLOCAL;
+	//VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
+	//Variavekl
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
 			"CMA", "CEQ", "CDIF", "CMEQ", "CMAQ", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
 			"DALLOC", "CALL", "RETURN" };
-
-	protected int nlinha;
+	//Uso Global
+	public static String strLine;
+	public static int returnValue;
+	public static JFileChooser fileChooser;
+	public static File selectedFile;
+	public static BufferedReader br;
+	public static BufferedReader br2;
+	public static BufferedReader brLOCAL;
+	public static FileInputStream fstream;
+	public static DataInputStream in;
+	public static FileInputStream fstream2;
+	public static DataInputStream in2;
+	public static FileInputStream fstreamLOCAL;
+	public static DataInputStream inLOCAL;
+	public static int nlinha;
+	public static String strLine2;
+	public static String strLineLOCAL;
+	public static int nlinha2;
+	public static int nlinhaLOCAL;
+	public static Vector<Token> vetorTokens;
+	public static String ErroDoTryCath;
+	
+	//Uso Global
+	
+	
 	protected int S;
 	protected int Ji;
-
+	//VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	protected Vector<String> rowLinhaInstrucao = new Vector<String>();
 	protected Vector<Vector> rowDataInstrucao = new Vector<Vector>();
 	protected Vector<String> columnNamesInstrucao = new Vector<String>();
@@ -60,7 +85,13 @@ public class MaquinaVirtual extends JFrame {
 	protected Vector<String> rowLinhaInstrucao2 = new Vector<String>();
 	protected Vector<Vector> rowDataInstrucao2 = new Vector<Vector>();
 	protected Vector<String> columnNamesInstrucao2 = new Vector<String>();
-
+	protected Vector<String> rowLinhaInstrucaoLOCAL = new Vector<String>();
+	protected Vector<Vector> rowDataInstrucaoLOCAL = new Vector<Vector>();
+	protected Vector<String> columnNamesInstrucaoLOCAL = new Vector<String>();
+	//VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
+	
+	
+	
 	protected Vector<Integer> M = new Vector<Integer>(); // pilha
 	protected Vector<Integer> ChamadasCall = new Vector<Integer>(); // pilha
 
@@ -72,7 +103,7 @@ public class MaquinaVirtual extends JFrame {
 	protected JTextArea textEntrada = new JTextArea(10, 10);
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
-	protected JTextArea textErroSintatico = new JTextArea(5, 5);
+	protected static JTextArea textErroSintatico = new JTextArea(5, 5);
 
 	public MaquinaVirtual() {
 		super("Construcao Compiladores");
@@ -124,6 +155,7 @@ public class MaquinaVirtual extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 		}
 
+		//Interface grafica
 		btnAbrir.addActionListener(new Abrir());
 		btnExecutar.addActionListener(new Executar());
 		btnApagar.addActionListener(new Apagar());
@@ -131,12 +163,13 @@ public class MaquinaVirtual extends JFrame {
 		btnContinuar.addActionListener(new Continuar());
 		btnAnalisador.addActionListener(new AnalisadorChamada());
 		btnSair.addActionListener(new Sair());
-		
-		
+		btnNovoAbrir.addActionListener(new NovoAbrir());
+		btnNovoExecutar.addActionListener(new NovoExecutar());
+		//Interface grafica
 		JPanel pnlBotoes = new JPanel();
 		FlowLayout flwBotoes = new FlowLayout();
 		pnlBotoes.setLayout(flwBotoes);
-
+		//Interface grafica
 		pnlBotoes.add(btnAbrir);
 		pnlBotoes.add(btnExecutar);
 		pnlBotoes.add(btnApagar);
@@ -144,18 +177,20 @@ public class MaquinaVirtual extends JFrame {
 		pnlBotoes.add(btnContinuar);
 		pnlBotoes.add(btnAnalisador);
 		pnlBotoes.add(btnSair);
-		
+		pnlBotoes.add(btnNovoAbrir);
+		pnlBotoes.add(btnNovoExecutar);
+		//Interface grafica
 		JPanel pnlStatus = new JPanel();
 		GridLayout grdStatus = new GridLayout(1, 2);
 		pnlStatus.setLayout(grdStatus);
 		pnlStatus.add(statusBar1);
 		pnlStatus.add(statusBar2);
-
+		//Interface grafica
 		Container cntForm = this.getContentPane();
 		cntForm.setLayout(new BorderLayout());
 		cntForm.add(pnlBotoes, BorderLayout.NORTH);
 		cntForm.add(pnlStatus, BorderLayout.SOUTH);
-
+		//Interface grafica
 		GridLayout grdTabela = new GridLayout(0, 1); // tentar arrumar setsize
 		pnlTabela.setLayout(grdTabela);
 		pnlAmostraDados.setLayout(grdTabela);
@@ -187,7 +222,7 @@ public class MaquinaVirtual extends JFrame {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			statusBar2.setText("Coordenada: " + e.getX() + "," + e.getY());
+			 statusBar2.setText("Coordenada: " + e.getX() + "," + e.getY());
 		}
 
 		@Override
@@ -215,6 +250,142 @@ public class MaquinaVirtual extends JFrame {
 			// TODO Auto-generated method stub
 
 		}
+	}
+	protected class NovoAbrir implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			InicializadorArquivo();
+			try {
+				TabelaInstrucoes2();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			statusBar1.setText("Mensagem: Novo Abrir");
+		}
+		public void InicializadorArquivo() {
+
+			// System.out.println("InicializadorArquivo");
+			fileChooser = new JFileChooser();
+
+			returnValue = fileChooser.showOpenDialog(null);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+				selectedFile = fileChooser.getSelectedFile();
+
+				try {
+					fstream = new FileInputStream(selectedFile);
+					in = new DataInputStream(fstream);
+					br = new BufferedReader(new InputStreamReader(in));
+					fstream2 = new FileInputStream(selectedFile);
+					in2 = new DataInputStream(fstream2);
+					br2 = new BufferedReader(new InputStreamReader(in2));
+					fstreamLOCAL = new FileInputStream(selectedFile);
+					inLOCAL = new DataInputStream(fstreamLOCAL);
+					brLOCAL = new BufferedReader(new InputStreamReader(inLOCAL));
+					nlinha++;//optativo
+					strLine = br.readLine();
+					
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+
+		}
+		public void TabelaInstrucoes2() throws IOException {
+
+			rowDataInstrucaoLOCAL = new Vector<Vector>();
+			columnNamesInstrucaoLOCAL = new Vector<String>();
+
+			nlinhaLOCAL = 0;
+
+			while ((strLineLOCAL = brLOCAL.readLine()) != null) {
+				nlinhaLOCAL++;
+				
+				rowLinhaInstrucaoLOCAL = new Vector<String>();
+				rowLinhaInstrucaoLOCAL.addElement(String.valueOf(nlinhaLOCAL));
+
+				rowLinhaInstrucaoLOCAL.addElement(String.valueOf(strLineLOCAL));
+				
+				rowDataInstrucaoLOCAL.addElement(rowLinhaInstrucaoLOCAL);
+			}
+
+			columnNamesInstrucaoLOCAL.addElement("Linha");
+			columnNamesInstrucaoLOCAL.addElement("Codigo");
+
+
+			tabelaInstrucaoLOCAL = new JTable(rowDataInstrucaoLOCAL, columnNamesInstrucaoLOCAL);
+			barraRolagemInstrucaoLOCAL = new JScrollPane(tabelaInstrucaoLOCAL);
+//			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
+//			tabelaInstrucao2.setFillsViewportHeight(false);
+			tabelaInstrucaoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+			
+			
+			
+			pnlTabela.add(barraRolagemInstrucaoLOCAL);
+		}
+	}
+	protected class NovoExecutar implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			SintaticoNOVO SINOVO = new SintaticoNOVO();
+			try {
+				//dispose(); // close window
+				//setVisible(false); // hide window
+				SINOVO.analisadorSintatico();
+				
+			} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
+				System.out.println("Erro = " + e1);
+			}
+			TabelaSintatico();
+			MostarMensagem(ErroDoTryCath);
+			if (vetorTokens.size() != 0) {
+				tabelaInstrucaoLOCAL.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
+			}
+			
+			
+		}
+		public void TabelaSintatico() {
+
+			rowDataSintatico = new Vector<Vector>();
+			columnNamesSintatico = new Vector<String>();
+
+			for (int i = 0; i < vetorTokens.size(); i++) {
+				rowLinhaSintatico = new Vector<String>();
+
+				rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
+				rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()));
+				rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLexema()));
+
+				rowDataSintatico.addElement(rowLinhaSintatico);
+
+			}
+
+			columnNamesSintatico.addElement("Linha");
+			columnNamesSintatico.addElement("Lexema");
+			columnNamesSintatico.addElement("Simbolo");
+
+			tabelaSintatico = new JTable(rowDataSintatico, columnNamesSintatico);
+			barraRolagemSintatico = new JScrollPane(tabelaSintatico);
+//			tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
+//			tabelaSintatico.setFillsViewportHeight(false);
+			tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			pnlPilha.add(barraRolagemSintatico);
+			
+
+		}
+		public void MostarMensagem(String mensagem) {
+			//ErroDoTryCath = String.valueOf(mensagem);
+			JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
+			scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
+			pnlPartedeBaixo.add(scrollableTextErroSintatico);
+		}
+
+		
+			
 	}
 	
 	protected class AnalisadorChamada implements ActionListener {
