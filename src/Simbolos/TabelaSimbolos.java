@@ -15,15 +15,15 @@ public class TabelaSimbolos {
 		return pilhaSimbolos;
 	}
 
-	public Simbolos getSymbol(int index) {
+	public Simbolos getSimbolo(int index) {
 		return pilhaSimbolos.get(index);
 	}
 
-	public void insert(Simbolos Simbolos) {
+	public void inserir(Simbolos Simbolos) {
 		pilhaSimbolos.add(Simbolos);
 	}
 
-	public void insertTypeOnFunction(String type) {
+	public void inserirTipoFuncao(String type) {
 		Simbolos simbolo = pilhaSimbolos.get(pilhaSimbolos.size() - 1);
 
 		if (simbolo instanceof Funcao && simbolo.getType() == null) {
@@ -31,7 +31,7 @@ public class TabelaSimbolos {
 		}
 	}
 
-	public void insertTypeOnVariable(String type) {
+	public void inserirTipoVariavel(String type) {
 
 		for (int i = (pilhaSimbolos.size() - 1); i > 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel) {
@@ -44,7 +44,7 @@ public class TabelaSimbolos {
 		}
 	}
 
-	private boolean lookProgramName(String lexema) {
+	private boolean verificaNomePrograma(String lexema) {
 
 		if (lexema.equals(pilhaSimbolos.get(0).getLexema())) {
 			return true;
@@ -53,7 +53,7 @@ public class TabelaSimbolos {
 		return false;
 	}
 
-	public boolean search(String lexema) {
+	public boolean procurar(String lexema) {
 		int i;
 
 		for (i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
@@ -75,10 +75,10 @@ public class TabelaSimbolos {
 			}
 		}
 
-		return lookProgramName(lexema);
+		return verificaNomePrograma(lexema);
 	}
 
-	public int searchSymbol(String lexema) {
+	public int procurarSimbolo(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel || pilhaSimbolos.get(i) instanceof Funcao) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -89,7 +89,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public boolean searchVariable(String lexema) {
+	public boolean procurarVariavel(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -98,10 +98,10 @@ public class TabelaSimbolos {
 			}
 		}
 
-		return lookProgramName(lexema);
+		return verificaNomePrograma(lexema);
 	}
 
-	public boolean searchProcedure(String lexema) {
+	public boolean procurarProcedimento(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Procedimento) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -110,10 +110,10 @@ public class TabelaSimbolos {
 			}
 		}
 
-		return lookProgramName(lexema);
+		return verificaNomePrograma(lexema);
 	}
 
-	public int searchProcedureLabel(String lexema) {
+	public int procurarProcedimentoLabel(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Procedimento) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -125,7 +125,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public boolean searchFunction(String lexema) {
+	public boolean procurarFuncao(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Funcao) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -134,10 +134,10 @@ public class TabelaSimbolos {
 			}
 		}
 
-		return lookProgramName(lexema);
+		return verificaNomePrograma(lexema);
 	}
 
-	public int searchFunctionLabel(String lexema) {
+	public int procurarFuncaoLabel(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Funcao) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -149,7 +149,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public String searchTypeOfVariableOrFunction(String lexema) {
+	public String procurarTipoVariavelOuProcedimento(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel || pilhaSimbolos.get(i) instanceof Funcao) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -160,7 +160,7 @@ public class TabelaSimbolos {
 		return null;
 	}
 
-	public int searchPositionOfVariable(String variable) {
+	public int procurarPosicaoVariavel(String variable) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel) {
 				if (variable.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -171,7 +171,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public void cleanLevel() {
+	public void limparLevel() {
 		for (int i = (pilhaSimbolos.size() - 1); i > 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Funcao || pilhaSimbolos.get(i) instanceof Procedimento) {
 				if (pilhaSimbolos.get(i).isNotClosed()) {
@@ -188,6 +188,7 @@ public class TabelaSimbolos {
 //		debugTable();
 	}
 
+	// usado para exibir a pilha (só é usado para testes)
 	public void debugTable() {
 		for (int i = 0; i < pilhaSimbolos.size(); i++) {
 			System.out.println(pilhaSimbolos.get(i).getLexema() + " " + pilhaSimbolos.get(i).getType() + " "

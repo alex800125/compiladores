@@ -36,7 +36,7 @@ public class GeradorCodigo {
 				code = code.concat(Constantes.SUB).concat("\r\n");
 			} else if (aux[a].equals(Constantes.MULTIPLICACAO)) {
 				code = code.concat(Constantes.MULT).concat("\r\n");
-			} else if (aux[a].equals(Constantes.DIVISAO_SIMBOLO)) {
+			} else if (aux[a].equals(Constantes.DIVISAO_SINAL)) {
 				code = code.concat(Constantes.DIVI).concat("\r\n");
 			} else if (aux[a].equals(Constantes.E)) {
 				code = code.concat(Constantes.AND).concat("\r\n");
@@ -46,13 +46,13 @@ public class GeradorCodigo {
 				code = code.concat(Constantes.CME).concat("\r\n");
 			} else if (aux[a].equals(Constantes.MAIOR)) {
 				code = code.concat(Constantes.CMA).concat("\r\n");
-			} else if (aux[a].equals(Constantes.IGUAL_SIMBOLO)) {
+			} else if (aux[a].equals(Constantes.IGUAL_SINAL)) {
 				code = code.concat(Constantes.CEQ).concat("\r\n");
-			} else if (aux[a].equals(Constantes.DIFERENTE_SIMBOLO)) {
+			} else if (aux[a].equals(Constantes.DIFERENTE_SINAL)) {
 				code = code.concat(Constantes.CDIF).concat("\r\n");
-			} else if (aux[a].equals(Constantes.MENOR_IGUAL_SIMBOLO)) {
+			} else if (aux[a].equals(Constantes.MENOR_IGUAL_SINAL)) {
 				code = code.concat(Constantes.CMEQ).concat("\r\n");
-			} else if (aux[a].equals(Constantes.MAIOR_IGUAL_SIMBOLO)) {
+			} else if (aux[a].equals(Constantes.MAIOR_IGUAL_SINAL)) {
 				code = code.concat(Constantes.CMAQ).concat("\r\n");
 			} else if (aux[a].equals(Constantes.MENOS_UNARIO)) {
 				code = code.concat(Constantes.INV).concat("\r\n");

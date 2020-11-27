@@ -1,191 +1,117 @@
 
 public final class Constantes {
 
-	// --------- Simbolos existentes
-
-	public static String erro = "Erro";
-
-	public static String eof = "EOF";
-
-	public static String programa = "Sprograma";
-
-	public static String inicio = "Sinicio";
-
-	public static String fim = "Sfim";
-
-	public static String procedimento = "Sprocedimento";
-
-	public static String funcao = "Sfuncao";
-
-	public static String se = "Sse";
-
-	public static String entao = "Sentao";
-
-	public static String senao = "Ssenao";
-
-	public static String enquanto = "Senquanto";
-
-	public static String faca = "Sfaca";
-
-	public static String escreva = "Sescreva";
-
-	public static String leia = "Sleia";
-
-	public static String var = "Svar";
-
-	public static String inteiro = "Sinteiro";
-
-	public static String booleano = "Sbooleano";
-
-	public static String numero = "Snumero";
-
-	public static String ponto = "Sponto";
-
-	public static String ponto_virgula = "Sponto_virgula";
-
-	public static String virgula = "Svirgula";
-
-	public static String abre_parenteses = "Sabre_parenteses";
-
-	public static String fecha_parenteses = "Sfecha_parenteses";
-
-	public static String maior = "Smaior";
-
-	public static String maiorig = "Smaiorig";
-
-	public static String ig = "Sig";
-
-	public static String menor = "Smenor";
-
-	public static String menorig = "Smenorig";
-
-	public static String dif = "Sdif";
-
-	public static String mais = "Smais";
-
-	public static String menos = "Smenos";
-
-	public static String mult = "Smult";
-
-	public static String div = "Sdiv";
-
-	public static String e = "Se";
-
-	public static String ou = "Sou";
-
-	public static String nao = "Snao";
-
-	public static String doispontos = "Sdoispontos";
-
-	public static String atribuicao = "Satribuicao";
-
-	public static String identificador = "Sidentificador";
-
-	public static String verdadeiro = "Sverdadeiro";
-
-	public static String falso = "Sfalso";
-
-	// -------- Variaveis usadas na tabela de simbolos
-
-	public static String PROGRAMA = "programa";
-
-	public static String INICIO = "inicio";
-
-	public static String FIM = "fim";
-
-	public static String SE = "se";
-
-	public static String ENTAO = "entao";
-
-	public static String SENAO = "senao";
-
-	public static String ENQUANTO = "enquanto";
-
-	public static String FACA = "faca";
-
-	public static String ESCREVA = "escreva";
-
-	public static String LEIA = "leia";
-
-	public static String VAR = "var";
-
-	public static String NUMERO = "numero";
-
-	public static String PONTO = "ponto";
-
-	public static String PONTO_VIRGULA = "ponto_virgula";
-
-	public static String VIRGULA = "virgula";
-
-	public static String ABRE_PARENTESES = "(";
-
-	public static String FECHA_PARENTESES = ")";
-
-	public static String MAIOR = "maior";
-
-	public static String MAIORIG = "maiorig";
-
-	public static String IG = "ig";
-
-	public static String MENOR = "menor";
-
-	public static String MENORIG = "menorig";
-
-	public static String DIF = "dif";
-
-	public static String MAIS = "mais";
-
-	public static String MENOS = "menos";
-
-	public static String MULTIPLICACAO = "mult";
-
-	public static String DIV = "div";
-
-	public static String E = "e";
-
-	public static String OU = "ou";
-
-	public static String NAO = "nao";
-
-	public static String DOISPONTOS = "doispontos";
-
-	public static String ATRIBUICAO = "atribuicao";
-
-	public static String IDENTIFICADOR = "identificador";
-
-	public static String VARIAVEL = "variavel";
-
-	public static String FUNCAO = "funcao";
-
-	public static String PROCEDIMENTO = "procedimento";
-
-	public static String INTEIRO = "inteiro";
-
-	public static String BOOLEANO = "booleano";
-
-	public static String VERDADEIRO = "verdadeiro";
-
-	public static String FALSO = "falso";
+	/* -------- Outras constantes */
+
+	public static final String LABEL = "L";
+	public static final String EMPTY = "";
+	public static final String eof = "EOF";
 	
-	/* CONSTANTES PARA OS OPERADORES */
-	
+	/* --------- Simbolos */
+
+	public static final String erro = "Erro";
+	public static final String programa = "Sprograma";
+	public static final String inicio = "Sinicio";
+	public static final String fim = "Sfim";
+	public static final String procedimento = "Sprocedimento";
+	public static final String funcao = "Sfuncao";
+	public static final String se = "Sse";
+	public static final String entao = "Sentao";
+	public static final String senao = "Ssenao";
+	public static final String enquanto = "Senquanto";
+	public static final String faca = "Sfaca";
+	public static final String escreva = "Sescreva";
+	public static final String leia = "Sleia";
+	public static final String var = "Svar";
+	public static final String inteiro = "Sinteiro";
+	public static final String booleano = "Sbooleano";
+	public static final String numero = "Snumero";
+	public static final String ponto = "Sponto";
+	public static final String ponto_virgula = "Sponto_virgula";
+	public static final String virgula = "Svirgula";
+	public static final String abre_parenteses = "Sabre_parenteses";
+	public static final String fecha_parenteses = "Sfecha_parenteses";
+	public static final String maior = "Smaior";
+	public static final String maiorig = "Smaiorig";
+	public static final String ig = "Sig";
+	public static final String menor = "Smenor";
+	public static final String menorig = "Smenorig";
+	public static final String dif = "Sdif";
+	public static final String mais = "Smais";
+	public static final String menos = "Smenos";
+	public static final String mult = "Smult";
+	public static final String div = "Sdiv";
+	public static final String e = "Se";
+	public static final String ou = "Sou";
+	public static final String nao = "Snao";
+	public static final String doispontos = "Sdoispontos";
+	public static final String atribuicao = "Satribuicao";
+	public static final String identificador = "Sidentificador";
+	public static final String verdadeiro = "Sverdadeiro";
+	public static final String falso = "Sfalso";
+
+	/* -------- Lexemas */
+
+	public static final String PROGRAMA = "programa";
+	public static final String INICIO = "inicio";
+	public static final String FIM = "fim";
+	public static final String SE = "se";
+	public static final String ENTAO = "entao";
+	public static final String SENAO = "senao";
+	public static final String ENQUANTO = "enquanto";
+	public static final String FACA = "faca";
+	public static final String ESCREVA = "escreva";
+	public static final String LEIA = "leia";
+	public static final String VAR = "var";
+	public static final String NUMERO = "numero";
+	public static final String PONTO = "ponto";
+	public static final String PONTO_VIRGULA = "ponto_virgula";
+	public static final String VIRGULA = "virgula";
+	public static final String ABRE_PARENTESES = "(";
+	public static final String FECHA_PARENTESES = ")";
+	public static final String MAIOR = "maior";
+	public static final String MAIORIG = "maiorig";
+	public static final String IG = "ig";
+	public static final String MENOR = "menor";
+	public static final String MENORIG = "menorig";
+	public static final String DIF = "dif";
+	public static final String MAIS = "mais";
+	public static final String MENOS = "menos";
+	public static final String MULTIPLICACAO = "mult";
+	public static final String DIV = "div";
+	public static final String E = "e";
+	public static final String OU = "ou";
+	public static final String NAO = "nao";
+	public static final String DOISPONTOS = "doispontos";
+	public static final String ATRIBUICAO = "atribuicao";
+	public static final String IDENTIFICADOR = "identificador";
+	public static final String VARIAVEL = "variavel";
+	public static final String FUNCAO = "funcao";
+	public static final String PROCEDIMENTO = "procedimento";
+	public static final String INTEIRO = "inteiro";
+	public static final String BOOLEANO = "booleano";
+	public static final String VERDADEIRO = "verdadeiro";
+	public static final String FALSO = "falso";
+
+	/* -------- Sinais dos operadores */
+
 	public static final String MAIS_UNARIO = "+u";
 	public static final String MENOS_UNARIO = "-u";
-	public static final String MULTIPLICACAO_SIMBOLO = "*";
-	public static final String DIVISAO_SIMBOLO = "div";
-	public static final String MAIS_SIMBOLO = "+";
-	public static final String MENOS_SIMBOLO = "-";
-	public static final String MAIOR_SIMBOLO = ">";
-	public static final String MENOR_SIMBOLO = "<";
-	public static final String MENOR_IGUAL_SIMBOLO = "<=";
-	public static final String MAIOR_IGUAL_SIMBOLO = ">=";
-	public static final String IGUAL_SIMBOLO = "=";
-	public static final String DIFERENTE_SIMBOLO = "!=";
-	public static final String E_SIMBOLO = "e";
-	public static final String OU_SIMBOLO = "ou";
+	public static final String MULTIPLICACAO_SINAL = "*";
+	public static final String DIVISAO_SINAL = "div";
+	public static final String MAIS_SINAL = "+";
+	public static final String MENOS_SINAL = "-";
+	public static final String MAIOR_SINAL = ">";
+	public static final String MENOR_SINAL = "<";
+	public static final String MENOR_IGUAL_SINAL = "<=";
+	public static final String MAIOR_IGUAL_SINAL = ">=";
+	public static final String IGUAL_SINAL = "=";
+	public static final String DIFERENTE_SINAL = "!=";
+	public static final String E_SINAL = "e";
+	public static final String OU_SINAL = "ou";
 
-	/* CONSTANTES CÓDIGO DE MÁQUINA */
-	
+	/* -------- Linguagem usada pela Maquina Virtual */
+
 	public static final String ALLOC = "ALLOC";
 	public static final String DALLOC = "DALLOC";
 	public static final String LDV = "LDV";
@@ -215,9 +141,5 @@ public final class Constantes {
 	public static final String CALL = "CALL";
 	public static final String RD = "RD";
 	public static final String PRN = "PRN";
-	
-	public static final String LABEL = "L";
-	
-	public static final String EMPTY = "";
-	
+
 }
