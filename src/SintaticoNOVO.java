@@ -76,7 +76,8 @@ public class SintaticoNOVO extends MaquinaVirtual{
 
 								montarTabelas();
 								// Seta a cor como verde, que significa que tudo ocorreu bem
-								textErroSintatico.setBackground(Color.GREEN);
+								CorDoFundo = Color.GREEN;
+								
 								MostarMensagem("Fim do programa, sucesso");
 
 							} else {
@@ -99,12 +100,13 @@ public class SintaticoNOVO extends MaquinaVirtual{
 		} catch (excecaoSintatico | excecaoSemantico e) {
 			System.out.println(e);
 			montarTabelas();
-			textErroSintatico.setBackground(Color.RED);
+			CorDoFundo = Color.RED;
+			
 			MostarMensagem(String.valueOf(e));
 
 		}
-		//dispose(); // close window
-		//setVisible(false); // hide window
+		dispose(); // close window
+		setVisible(false); // hide window
 		System.out.println("Fim do sintatico");
 	}
 
@@ -657,18 +659,20 @@ public class SintaticoNOVO extends MaquinaVirtual{
 	// ----------------------------------------------------------------------------
 
 	private void montarTabelas() throws IOException {
-		TabelaInstrucoes2();
-		TabelaSintatico();
+		//TabelaInstrucoes2();
+		//TabelaSintatico();
 		MaquinaVirtual.vetorTokens = this.vetorTokens;
 	}
 
 	public void MostarMensagem(String mensagem) {
 		ErroDoTryCath = String.valueOf(mensagem);
+		/*
 		JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
 		scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
 		pnlPartedeBaixo.add(scrollableTextErroSintatico);
+		*/
 	}
 
 	public void TabelaSintatico() {

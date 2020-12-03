@@ -143,7 +143,8 @@ public class Semantico {
 			return true;
 		}
 	}
-
+	//pode
+	//erro de retorno de função 
 	/* Métodos de recuperação */
 	public String getLexemaOfSymbol(int index) {
 		return tabelaDeSimbolos.getSimbolo(index).getLexema();

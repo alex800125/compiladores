@@ -37,6 +37,8 @@ public class MaquinaVirtual extends JFrame {
 	protected JScrollPane barraRolagemInstrucao2;
 	protected JTable tabelaInstrucaoLOCAL;
 	protected JScrollPane barraRolagemInstrucaoLOCAL;
+	protected JTable tabelaSintaticoLOCAL;
+	protected JScrollPane barraRolagemSintaticoLOCAL;
 	//VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	//Variavekl
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
@@ -63,6 +65,7 @@ public class MaquinaVirtual extends JFrame {
 	public static int nlinhaLOCAL;
 	public static Vector<Token> vetorTokens;
 	public static String ErroDoTryCath;
+	public static Color CorDoFundo;
 	
 	//Uso Global
 	
@@ -88,6 +91,9 @@ public class MaquinaVirtual extends JFrame {
 	protected Vector<String> rowLinhaInstrucaoLOCAL = new Vector<String>();
 	protected Vector<Vector> rowDataInstrucaoLOCAL = new Vector<Vector>();
 	protected Vector<String> columnNamesInstrucaoLOCAL = new Vector<String>();
+	protected Vector<String> rowLinhaSintaticoLOCAL = new Vector<String>();
+	protected Vector<Vector> rowDataSintaticoLOCAL = new Vector<Vector>();
+	protected Vector<String> columnNamesSintaticoLOCAL = new Vector<String>();
 	//VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	
 	
@@ -103,7 +109,7 @@ public class MaquinaVirtual extends JFrame {
 	protected JTextArea textEntrada = new JTextArea(10, 10);
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
-	protected static JTextArea textErroSintatico = new JTextArea(5, 5);
+	protected JTextArea textErroSintatico = new JTextArea(5, 5);
 
 	public MaquinaVirtual() {
 		super("Construcao Compiladores");
@@ -253,6 +259,7 @@ public class MaquinaVirtual extends JFrame {
 	}
 	protected class NovoAbrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			
 			InicializadorArquivo();
 			try {
 				TabelaInstrucoes2();
@@ -297,6 +304,9 @@ public class MaquinaVirtual extends JFrame {
 
 			rowDataInstrucaoLOCAL = new Vector<Vector>();
 			columnNamesInstrucaoLOCAL = new Vector<String>();
+			rowDataInstrucao= new Vector<Vector>();
+			columnNamesInstrucao = new Vector<String>();
+
 
 			nlinhaLOCAL = 0;
 
@@ -309,10 +319,22 @@ public class MaquinaVirtual extends JFrame {
 				rowLinhaInstrucaoLOCAL.addElement(String.valueOf(strLineLOCAL));
 				
 				rowDataInstrucaoLOCAL.addElement(rowLinhaInstrucaoLOCAL);
+				
+				rowLinhaInstrucao= new Vector<String>();
+				rowLinhaInstrucao.addElement(String.valueOf(nlinhaLOCAL));
+
+				rowLinhaInstrucao.addElement(String.valueOf(strLineLOCAL));
+				
+				rowDataInstrucao.addElement(rowLinhaInstrucao);
+				
+
 			}
 
 			columnNamesInstrucaoLOCAL.addElement("Linha");
 			columnNamesInstrucaoLOCAL.addElement("Codigo");
+			columnNamesInstrucao.addElement("Linha");
+			columnNamesInstrucao.addElement("Codigo");
+
 
 
 			tabelaInstrucaoLOCAL = new JTable(rowDataInstrucaoLOCAL, columnNamesInstrucaoLOCAL);
@@ -320,15 +342,27 @@ public class MaquinaVirtual extends JFrame {
 //			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
 //			tabelaInstrucao2.setFillsViewportHeight(false);
 			tabelaInstrucaoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			
+			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
+			barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
+//			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
+//			tabelaInstrucao2.setFillsViewportHeight(false);
+			tabelaInstrucoes.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			
+
 
 			
 			
 			
-			pnlTabela.add(barraRolagemInstrucaoLOCAL);
+			pnlTabela.add(barraRolagemInstrucoes);
 		}
+		
 	}
 	protected class NovoExecutar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			
+			
+			
 			SintaticoNOVO SINOVO = new SintaticoNOVO();
 			try {
 				//dispose(); // close window
@@ -339,39 +373,43 @@ public class MaquinaVirtual extends JFrame {
 				System.out.println("Erro = " + e1);
 			}
 			TabelaSintatico();
+			
 			MostarMensagem(ErroDoTryCath);
 			if (vetorTokens.size() != 0) {
 				tabelaInstrucaoLOCAL.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
 			}
+			textErroSintatico.setBackground(CorDoFundo);
 			
 			
+			pnlTabela.add(barraRolagemInstrucaoLOCAL);
+			pnlTabela.remove(barraRolagemInstrucoes);
 		}
 		public void TabelaSintatico() {
 
-			rowDataSintatico = new Vector<Vector>();
-			columnNamesSintatico = new Vector<String>();
+			rowDataSintaticoLOCAL = new Vector<Vector>();
+			columnNamesSintaticoLOCAL = new Vector<String>();
 
 			for (int i = 0; i < vetorTokens.size(); i++) {
-				rowLinhaSintatico = new Vector<String>();
+				rowLinhaSintaticoLOCAL = new Vector<String>();
 
-				rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
-				rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()));
-				rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLexema()));
+				rowLinhaSintaticoLOCAL.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
+				rowLinhaSintaticoLOCAL.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()));
+				rowLinhaSintaticoLOCAL.addElement(String.valueOf(vetorTokens.get(i).getLexema()));
 
-				rowDataSintatico.addElement(rowLinhaSintatico);
+				rowDataSintaticoLOCAL.addElement(rowLinhaSintaticoLOCAL);
 
 			}
 
-			columnNamesSintatico.addElement("Linha");
-			columnNamesSintatico.addElement("Lexema");
-			columnNamesSintatico.addElement("Simbolo");
+			columnNamesSintaticoLOCAL.addElement("Linha");
+			columnNamesSintaticoLOCAL.addElement("Lexema");
+			columnNamesSintaticoLOCAL.addElement("Simbolo");
 
-			tabelaSintatico = new JTable(rowDataSintatico, columnNamesSintatico);
-			barraRolagemSintatico = new JScrollPane(tabelaSintatico);
-//			tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
-//			tabelaSintatico.setFillsViewportHeight(false);
-			tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			pnlPilha.add(barraRolagemSintatico);
+			tabelaSintaticoLOCAL = new JTable(rowDataSintaticoLOCAL, columnNamesSintaticoLOCAL);
+			barraRolagemSintaticoLOCAL = new JScrollPane(tabelaSintaticoLOCAL);
+//			tabelaSintaticoLOCAL.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
+//			tabelaSintaticoLOCAL.setFillsViewportHeight(false);
+			tabelaSintaticoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			pnlPilha.add(barraRolagemSintaticoLOCAL);
 			
 
 		}
@@ -641,6 +679,7 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class Apagar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			InterfaceAbrir();
 			tabelaInstrucoes.removeAll();
 			barraRolagemInstrucoes.removeAll();
 			tabelaPilha.removeAll();
@@ -668,7 +707,104 @@ public class MaquinaVirtual extends JFrame {
 
 
 			
+			tabelaInstrucoes.removeAll();
+			barraRolagemInstrucoes.removeAll();
+			tabelaPilha.removeAll();
+			barraRolagemPilha.removeAll();
+			//tabelaLexema.removeAll();
+			//barraRolagemLexema.removeAll();
+			//tabelaSintatico.removeAll();
+			//barraRolagemSintatico.removeAll();
+			//tabelaInstrucao2.removeAll();
+			//barraRolagemInstrucao2.removeAll();
+			tabelaInstrucaoLOCAL.removeAll();
+			barraRolagemInstrucaoLOCAL.removeAll();
+			tabelaSintaticoLOCAL.removeAll();
+			barraRolagemSintaticoLOCAL.removeAll();
+			
+			rowLinhaInstrucao.removeAllElements();
+			rowDataInstrucao.removeAllElements();
+			columnNamesInstrucao.removeAllElements();
+			rowLinhaPilha.removeAllElements();
+			rowDataPilha.removeAllElements();
+			columnNamesPilha.removeAllElements();
+			rowLinhaLexema.removeAllElements();
+			rowDataLexema.removeAllElements();
+			columnNamesLexema.removeAllElements();
+			rowLinhaSintatico.removeAllElements();
+			rowDataSintatico.removeAllElements();
+			columnNamesSintatico.removeAllElements();
+			rowLinhaInstrucao2.removeAllElements();
+			rowDataInstrucao2.removeAllElements();
+			columnNamesInstrucao2.removeAllElements();
+			rowLinhaInstrucaoLOCAL.removeAllElements();
+			rowDataInstrucaoLOCAL.removeAllElements();
+			columnNamesInstrucaoLOCAL.removeAllElements();
+			rowLinhaSintaticoLOCAL.removeAllElements();
+			rowDataSintaticoLOCAL.removeAllElements();
+			columnNamesSintaticoLOCAL.removeAllElements();
+			
+			
+			pnlTabela.removeAll();
+			pnlAmostraDados.removeAll();
+			pnlPilha.removeAll();
+			pnlPartedeBaixo.removeAll();
+
+			textEntrada.removeAll();
+			texSaida.removeAll();
+			texBreakPoint.removeAll();
+			textErroSintatico.removeAll();
+
+			
 			statusBar1.setText("Mensagem: Limpeza Geral");
+		}
+		void InterfaceAbrir() {
+			// Adiciona os campos da tabela
+			columnNamesInstrucao.addElement("Linha");
+			columnNamesInstrucao.addElement("Instrucao");
+			columnNamesInstrucao.addElement("Atributo #1");
+			columnNamesInstrucao.addElement("Atributo #2");
+			columnNamesInstrucao.addElement("Comentario");
+			columnNamesPilha.addElement("Endereco");
+			columnNamesPilha.addElement("Valor1");
+
+			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
+			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
+			barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
+			tabelaInstrucoes.setPreferredScrollableViewportSize(tabelaInstrucoes.getPreferredSize());
+			tabelaInstrucoes.setFillsViewportHeight(false);
+			pnlTabela.add(barraRolagemInstrucoes);
+
+			// Tabela referente a pilha
+			rowDataPilha.add(rowLinhaPilha);
+			tabelaPilha = new JTable(rowDataPilha, columnNamesPilha);
+			barraRolagemPilha = new JScrollPane(tabelaPilha);
+			tabelaPilha.setPreferredScrollableViewportSize(tabelaPilha.getPreferredSize());
+			tabelaPilha.setFillsViewportHeight(false);
+			pnlPilha.add(barraRolagemPilha);
+
+			// Entrada opcional
+
+			JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
+			scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			textEntrada.setText("Entrada"); // colocar codigo aqui
+			pnlAmostraDados.add(scrollableTextEntrada);
+
+			// saida
+
+			JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
+			scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			texSaida.setText("Saida"); // colocar codigo aqui
+			pnlAmostraDados.add(scrollableTextSaida);
+
+			// break
+			JScrollPane scrollableTextBreakPoint = new JScrollPane(texBreakPoint);
+			scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+			scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+			texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
+			pnlAmostraDados.add(scrollableTextBreakPoint);
 		}
 	}
 
