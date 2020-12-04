@@ -11,16 +11,15 @@ import javax.swing.JTable;
 import java.awt.Color;
 import java.io.BufferedReader;
 
-public class Sintatico extends MaquinaVirtual{
+public class Sintatico extends MaquinaVirtual {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	//Importando variaveis
-	protected BufferedReader br2 =  MaquinaVirtual.br2;
+	// Importando variaveis
+	protected BufferedReader br2 = MaquinaVirtual.br2;
 
 	Lexico lexico = new Lexico();
-//	Lexico lexico = new Lexico();
 	Semantico semantico = new Semantico();
 	GeradorCodigo geradorCodigo = new GeradorCodigo();
 	Token token = null;
@@ -70,6 +69,9 @@ public class Sintatico extends MaquinaVirtual{
 								geradorCodigo.createCode(Constantes.HLT, Constantes.EMPTY, Constantes.EMPTY);
 								geradorCodigo.createFile();
 
+								System.out.println("FIM DO CODIGO - cleanTableLevel - Debug:");
+//								semantico.debugTable();
+								System.out.println("Fim - Debug");
 								semantico.cleanTableLevel();
 
 								System.out.println("Fim do programa, sucesso");
@@ -77,7 +79,7 @@ public class Sintatico extends MaquinaVirtual{
 								montarTabelas();
 								// Seta a cor como verde, que significa que tudo ocorreu bem
 								CorDoFundo = Color.GREEN;
-								
+
 								MostarMensagem("Fim do programa, sucesso");
 
 							} else {
@@ -101,7 +103,7 @@ public class Sintatico extends MaquinaVirtual{
 			System.out.println(e);
 			montarTabelas();
 			CorDoFundo = Color.RED;
-			
+
 			MostarMensagem(String.valueOf(e));
 
 		}
@@ -335,7 +337,8 @@ public class Sintatico extends MaquinaVirtual{
 			getToken();
 			if (token.getSimbolo().equals(Constantes.identificador)) {
 				semantico.searchVariable(token);
-				geradorCodigo.createCode(Constantes.STR, semantico.posicaoVariavel(token.getLexema()), Constantes.EMPTY);
+				geradorCodigo.createCode(Constantes.STR, semantico.posicaoVariavel(token.getLexema()),
+						Constantes.EMPTY);
 				getToken();
 				if (token.getSimbolo().equals(Constantes.fecha_parenteses)) {
 					getToken();
@@ -497,6 +500,9 @@ public class Sintatico extends MaquinaVirtual{
 		} else {
 			throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 		}
+		System.out.println("analisaDeclaracaoProcedimento - cleanTableLevel - Debug:");
+//		semantico.debugTable();
+		System.out.println("Fim - Debug");
 		semantico.cleanTableLevel();
 
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
@@ -554,6 +560,9 @@ public class Sintatico extends MaquinaVirtual{
 			throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 		}
 
+		System.out.println("analisaDeclaracaoFuncao - cleanTableLevel - Debug:");
+//		semantico.debugTable();
+		System.out.println("Fim - Debug");
 		semantico.cleanTableLevel();
 		flagListaFuncoes.remove(flagListaFuncoes.size() - 1);
 		semantico.thisFunctionHasReturn(nameOfFunction.get(nameOfFunction.size() - 1));
@@ -659,20 +668,22 @@ public class Sintatico extends MaquinaVirtual{
 	// ----------------------------------------------------------------------------
 
 	private void montarTabelas() throws IOException {
-		//TabelaInstrucoes2();
-		//TabelaSintatico();
+		// TabelaInstrucoes2();
+		// TabelaSintatico();
 		MaquinaVirtual.vetorTokens = this.vetorTokens;
 	}
 
 	public void MostarMensagem(String mensagem) {
 		ErroDoTryCath = String.valueOf(mensagem);
 		/*
-		JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
-		scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
-		pnlPartedeBaixo.add(scrollableTextErroSintatico);
-		*/
+		 * JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
+		 * scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.
+		 * HORIZONTAL_SCROLLBAR_ALWAYS);
+		 * scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.
+		 * VERTICAL_SCROLLBAR_ALWAYS);
+		 * textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
+		 * pnlPartedeBaixo.add(scrollableTextErroSintatico);
+		 */
 	}
 
 	public void TabelaSintatico() {

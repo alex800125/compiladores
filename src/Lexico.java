@@ -14,11 +14,11 @@ public class Lexico {
 	protected Vector<String> MLexama = new Vector<String>();
 	protected Vector<String> MSimbolo = new Vector<String>();
 	protected Vector<String> MErro = new Vector<String>();
-	//Importando variveis
+	// Importando variveis
 	protected BufferedReader br = MaquinaVirtual.br;
 
-	protected String strLine =  MaquinaVirtual.strLine;
-	
+	protected String strLine = MaquinaVirtual.strLine;
+
 	String mensagemErro = "";
 	boolean erroDetectado = false;
 	boolean fimDoArquivo = false;
@@ -27,11 +27,10 @@ public class Lexico {
 	int nlinha = 0;
 
 	public void InicializadorArquivo() {
-		
-		nlinha++;
-		
-	}
 
+		nlinha++;
+
+	}
 
 	public Token AnalisadorLexico() throws IOException {
 

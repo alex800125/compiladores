@@ -143,8 +143,7 @@ public class Semantico {
 			return true;
 		}
 	}
-	//pode
-	//erro de retorno de função 
+
 	/* Métodos de recuperação */
 	public String getLexemaOfSymbol(int index) {
 		return tabelaDeSimbolos.getSimbolo(index).getLexema();
@@ -325,7 +324,7 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações aritméticas(+ | - | * | div) devem envolver duas variáveis inteiras.\n" + "Linha: "
+						"Operações aritméticas devem envolver variáveis inteiras.\n" + "Linha: "
 								+ line);
 			} else if (verificaOperadorRelacional(operator)) {
 				if (firstType == "0" && secondType == "0") {
@@ -333,7 +332,7 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações relacionais(!= | = | < | <= | > | >=) devem envolver duas variáveis inteiras.\n"
+						"Operações relacionais (!= | = | < | <= | > | >=) devem envolver variáveis inteiras.\n"
 								+ "Linha: " + line);
 			} else {
 				if (firstType == "1" && secondType == "1") {
@@ -341,7 +340,7 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações lógicas(e | ou) devem envolver duas variáveis booleanas.\n" + "Linha: " + line);
+						"Operações lógicas (e | ou) devem envolver variáveis booleanas.\n" + "Linha: " + line);
 			}
 		} else {
 			if (verificaOperadorUnarioMatematico(operator)) {
@@ -350,7 +349,7 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações envolvendo operadores unários(+ | -) devem ser com variáveis inteiras.\n" + "Linha: "
+						"Operações envolvendo operadores unários (+ | -) devem ser com variáveis inteiras.\n" + "Linha: "
 								+ line);
 			} else {
 				if (firstType == "1") {
@@ -358,7 +357,7 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações envolvendo operador unário(NÃO) devem ser com variáveis booleanas.\n" + "Linha: "
+						"Operações envolvendo operador unário (NÃO) devem ser com variáveis booleanas.\n" + "Linha: "
 								+ line);
 			}
 		}

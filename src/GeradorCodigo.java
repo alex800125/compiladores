@@ -18,8 +18,12 @@ public class GeradorCodigo {
 
 	public void createCode(String expressionPosFix) {
 		String[] aux = expressionPosFix.split(" ");
+		
 
 		for (int a = 0; a < aux.length; a++) {
+			
+			debugCode();
+			
 			if (aux[a].contains("p")) {
 
 				String[] value = aux[a].split("p");
@@ -30,21 +34,21 @@ public class GeradorCodigo {
 				String[] value = aux[a].split("funcao");
 				code = code.concat(Constantes.CALL + " ").concat(Constantes.LABEL + value[1]).concat("\r\n");
 				
-			} else if (aux[a].equals(Constantes.MAIS)) {
+			} else if (aux[a].equals(Constantes.MAIS_SINAL)) {
 				code = code.concat(Constantes.ADD).concat("\r\n");
-			} else if (aux[a].equals(Constantes.MENOS)) {
+			} else if (aux[a].equals(Constantes.MENOS_SINAL)) {
 				code = code.concat(Constantes.SUB).concat("\r\n");
-			} else if (aux[a].equals(Constantes.MULTIPLICACAO)) {
+			} else if (aux[a].equals(Constantes.MULTIPLICACAO_SINAL)) {
 				code = code.concat(Constantes.MULT).concat("\r\n");
 			} else if (aux[a].equals(Constantes.DIVISAO_SINAL)) {
 				code = code.concat(Constantes.DIVI).concat("\r\n");
-			} else if (aux[a].equals(Constantes.E)) {
+			} else if (aux[a].equals(Constantes.E_SINAL)) {
 				code = code.concat(Constantes.AND).concat("\r\n");
-			} else if (aux[a].equals(Constantes.OU)) {
+			} else if (aux[a].equals(Constantes.OU_SINAL)) {
 				code = code.concat(Constantes.OR).concat("\r\n");
-			} else if (aux[a].equals(Constantes.MENOR)) {
+			} else if (aux[a].equals(Constantes.MENOR_SINAL)) {
 				code = code.concat(Constantes.CME).concat("\r\n");
-			} else if (aux[a].equals(Constantes.MAIOR)) {
+			} else if (aux[a].equals(Constantes.MAIOR_SINAL)) {
 				code = code.concat(Constantes.CMA).concat("\r\n");
 			} else if (aux[a].equals(Constantes.IGUAL_SINAL)) {
 				code = code.concat(Constantes.CEQ).concat("\r\n");
@@ -112,7 +116,7 @@ public class GeradorCodigo {
 	}
 
 	public void debugCode() {
-		System.out.println(this.code);
+		System.out.println("Code = " + this.code);
 	}
 
 }
