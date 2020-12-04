@@ -17,7 +17,7 @@ public class MaquinaVirtual extends JFrame {
 			btnApagar = new JButton("Apagar"), // apagar escritas
 			btnDeBug = new JButton("DeBug"), // Escrever debug
 			btnContinuar = new JButton("Continuar"), // proxima instruaao
-			btnAnalisador = new JButton("Analisador Do Codigo"), // proxima instruaao
+			//btnAnalisador = new JButton("Analisador Do Codigo"), // proxima instruaao
 			btnSair = new JButton("Sair"),
 			btnNovoAbrir = new JButton("Novo Abrir"),
 			btnNovoExecutar = new JButton("Novo Executar");
@@ -167,7 +167,7 @@ public class MaquinaVirtual extends JFrame {
 		btnApagar.addActionListener(new Apagar());
 		btnDeBug.addActionListener(new DeBug());
 		btnContinuar.addActionListener(new Continuar());
-		btnAnalisador.addActionListener(new AnalisadorChamada());
+		//btnAnalisador.addActionListener(new AnalisadorChamada());
 		btnSair.addActionListener(new Sair());
 		btnNovoAbrir.addActionListener(new NovoAbrir());
 		btnNovoExecutar.addActionListener(new NovoExecutar());
@@ -181,7 +181,7 @@ public class MaquinaVirtual extends JFrame {
 		pnlBotoes.add(btnApagar);
 		pnlBotoes.add(btnDeBug);
 		pnlBotoes.add(btnContinuar);
-		pnlBotoes.add(btnAnalisador);
+		//pnlBotoes.add(btnAnalisador);
 		pnlBotoes.add(btnSair);
 		pnlBotoes.add(btnNovoAbrir);
 		pnlBotoes.add(btnNovoExecutar);
@@ -363,7 +363,7 @@ public class MaquinaVirtual extends JFrame {
 			
 			
 			
-			SintaticoNOVO SINOVO = new SintaticoNOVO();
+			Sintatico SINOVO = new Sintatico();
 			try {
 				//dispose(); // close window
 				//setVisible(false); // hide window
@@ -425,7 +425,7 @@ public class MaquinaVirtual extends JFrame {
 		
 			
 	}
-	
+	/*
 	protected class AnalisadorChamada implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			Sintatico SI = new Sintatico();
@@ -442,6 +442,7 @@ public class MaquinaVirtual extends JFrame {
 			statusBar1.setText("Mensagem: Analisador Do Codigo");
 		}
 	}
+	*/
 
 	protected class Abrir implements ActionListener {
 		public void actionPerformed(ActionEvent e) {

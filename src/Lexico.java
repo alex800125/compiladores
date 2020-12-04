@@ -14,10 +14,11 @@ public class Lexico {
 	protected Vector<String> MLexama = new Vector<String>();
 	protected Vector<String> MSimbolo = new Vector<String>();
 	protected Vector<String> MErro = new Vector<String>();
+	//Importando variveis
+	protected BufferedReader br = MaquinaVirtual.br;
 
-	BufferedReader br;
-	BufferedReader br2;
-	String strLine = null;
+	protected String strLine =  MaquinaVirtual.strLine;
+	
 	String mensagemErro = "";
 	boolean erroDetectado = false;
 	boolean fimDoArquivo = false;
@@ -25,34 +26,12 @@ public class Lexico {
 	int countCaracter = -1;
 	int nlinha = 0;
 
-	public BufferedReader InicializadorArquivo() {
-
-		// System.out.println("InicializadorArquivo");
-		JFileChooser fileChooser = new JFileChooser();
-
-		int returnValue = fileChooser.showOpenDialog(null);
-		if (returnValue == JFileChooser.APPROVE_OPTION) {
-
-			File selectedFile = fileChooser.getSelectedFile();
-
-			try {
-				FileInputStream fstream = new FileInputStream(selectedFile);
-				DataInputStream in = new DataInputStream(fstream);
-				br = new BufferedReader(new InputStreamReader(in));
-
-				FileInputStream fstream2 = new FileInputStream(selectedFile);
-				DataInputStream in2 = new DataInputStream(fstream2);
-				br2 = new BufferedReader(new InputStreamReader(in2));
-				nlinha++;
-				strLine = br.readLine();
-				return br2;
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				return null;
-			}
-		}
-		return null;
+	public void InicializadorArquivo() {
+		
+		nlinha++;
+		
 	}
+
 
 	public Token AnalisadorLexico() throws IOException {
 

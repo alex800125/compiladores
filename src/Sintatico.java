@@ -11,17 +11,20 @@ import javax.swing.JTable;
 import java.awt.Color;
 import java.io.BufferedReader;
 
-public class Sintatico extends MaquinaVirtual {
+public class Sintatico extends MaquinaVirtual{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	//Importando variaveis
+	protected BufferedReader br2 =  MaquinaVirtual.br2;
 
 	Lexico lexico = new Lexico();
+//	Lexico lexico = new Lexico();
 	Semantico semantico = new Semantico();
 	GeradorCodigo geradorCodigo = new GeradorCodigo();
 	Token token = null;
-	BufferedReader br2;
+
 	protected Vector<Token> vetorTokens = new Vector<Token>();
 
 	// São as posições na memória que está alocado a variável
@@ -45,7 +48,7 @@ public class Sintatico extends MaquinaVirtual {
 		try {
 			flagListaFuncoes.add(false);
 			flagListaProcedimento.add(false);
-			br2 = lexico.InicializadorArquivo();
+			lexico.InicializadorArquivo();
 
 			getToken();
 			if (token.getSimbolo().equals(Constantes.programa)) {
@@ -73,7 +76,8 @@ public class Sintatico extends MaquinaVirtual {
 
 								montarTabelas();
 								// Seta a cor como verde, que significa que tudo ocorreu bem
-								textErroSintatico.setBackground(Color.GREEN);
+								CorDoFundo = Color.GREEN;
+								
 								MostarMensagem("Fim do programa, sucesso");
 
 							} else {
@@ -96,11 +100,13 @@ public class Sintatico extends MaquinaVirtual {
 		} catch (excecaoSintatico | excecaoSemantico e) {
 			System.out.println(e);
 			montarTabelas();
-			textErroSintatico.setBackground(Color.RED);
+			CorDoFundo = Color.RED;
+			
 			MostarMensagem(String.valueOf(e));
 
 		}
-
+		dispose(); // close window
+		setVisible(false); // hide window
 		System.out.println("Fim do sintatico");
 	}
 
@@ -653,18 +659,20 @@ public class Sintatico extends MaquinaVirtual {
 	// ----------------------------------------------------------------------------
 
 	private void montarTabelas() throws IOException {
-		TabelaInstrucoes2();
-		TabelaSintatico();
-
+		//TabelaInstrucoes2();
+		//TabelaSintatico();
+		MaquinaVirtual.vetorTokens = this.vetorTokens;
 	}
 
 	public void MostarMensagem(String mensagem) {
-
+		ErroDoTryCath = String.valueOf(mensagem);
+		/*
 		JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
 		scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
 		pnlPartedeBaixo.add(scrollableTextErroSintatico);
+		*/
 	}
 
 	public void TabelaSintatico() {
