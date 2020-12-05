@@ -103,7 +103,7 @@ public class GeradorCodigo {
 	
 	public void createFile() {
 		try {
-			File directory = new File("code.txt");
+			File directory = new File(MaquinaVirtual.NomeDoArquivoTXT+ "code.txt");
 			directory.createNewFile();
 
 			FileWriter file = new FileWriter(directory);

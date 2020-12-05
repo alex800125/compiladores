@@ -11,7 +11,7 @@ import javax.swing.JTable;
 import java.awt.Color;
 import java.io.BufferedReader;
 
-public class Sintatico extends MaquinaVirtual {
+public class Sintatico /* extends MaquinaVirtia */ {
 	/**
 	 * 
 	 */
@@ -78,7 +78,7 @@ public class Sintatico extends MaquinaVirtual {
 
 								montarTabelas();
 								// Seta a cor como verde, que significa que tudo ocorreu bem
-								CorDoFundo = Color.GREEN;
+								MaquinaVirtual.CorDoFundo  = Color.GREEN;
 
 								MostarMensagem("Fim do programa, sucesso");
 
@@ -102,13 +102,13 @@ public class Sintatico extends MaquinaVirtual {
 		} catch (excecaoSintatico | excecaoSemantico e) {
 			System.out.println(e);
 			montarTabelas();
-			CorDoFundo = Color.RED;
+			MaquinaVirtual.CorDoFundo = Color.RED;
 
 			MostarMensagem(String.valueOf(e));
 
 		}
-		dispose(); // close window
-		setVisible(false); // hide window
+		//dispose(); // close window
+		//setVisible(false); // hide window
 		System.out.println("Fim do sintatico");
 	}
 
@@ -674,7 +674,7 @@ public class Sintatico extends MaquinaVirtual {
 	}
 
 	public void MostarMensagem(String mensagem) {
-		ErroDoTryCath = String.valueOf(mensagem);
+		MaquinaVirtual.ErroDoTryCath = String.valueOf(mensagem);
 		/*
 		 * JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
 		 * scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.
@@ -687,7 +687,7 @@ public class Sintatico extends MaquinaVirtual {
 	}
 
 	public void TabelaSintatico() {
-
+/*
 		rowDataSintatico = new Vector<Vector>();
 		columnNamesSintatico = new Vector<String>();
 
@@ -712,11 +712,11 @@ public class Sintatico extends MaquinaVirtual {
 //		tabelaSintatico.setFillsViewportHeight(false);
 		tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		pnlPilha.add(barraRolagemSintatico);
-
+*/
 	}
 
 	public void TabelaInstrucoes2() throws IOException {
-
+/*
 		rowDataInstrucao2 = new Vector<Vector>();
 		columnNamesInstrucao2 = new Vector<String>();
 
@@ -748,5 +748,7 @@ public class Sintatico extends MaquinaVirtual {
 			tabelaInstrucao2.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
 		}
 		pnlTabela.add(barraRolagemInstrucao2);
+		*/
 	}
+	
 }
