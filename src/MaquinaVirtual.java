@@ -609,14 +609,19 @@ public class MaquinaVirtual extends JFrame {
 							if ((instrucao.equals("CALL"))) {
 								ChamadasCall.add(LinhaAtual);
 							}
-							LinhaAtual = t;
+							
+							if (instrucao.equals("JMPF")) {
+								if (M.get(TopoPilha) == 0) {
+									LinhaAtual = t;
+								}
+								M.remove(TopoPilha);
+								TopoPilha = TopoPilha - 1;
+							} else {
+								LinhaAtual = t;
+							}
 						}
 					}
 
-					if (instrucao.equals("JMPF")) {
-						M.remove(TopoPilha);
-						TopoPilha = TopoPilha - 1;
-					}
 
 				} else if (instrucao.equals("RETURN")) {
 
@@ -812,17 +817,20 @@ public class MaquinaVirtual extends JFrame {
 					String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
 
 					if (atributo_1.equals(linha)) {
-//							System.out.println("Linha " + linha + " | N = " + i);
 						if ((instrucao.equals("CALL"))) {
 							ChamadasCall.add(LinhaAtual);
 						}
-						LinhaAtual = t;
+						
+						if (instrucao.equals("JMPF")) {
+							if (M.get(TopoPilha) == 0) {
+								LinhaAtual = t;
+							}
+							M.remove(TopoPilha);
+							TopoPilha = TopoPilha - 1;
+						} else {
+							LinhaAtual = t;
+						}
 					}
-				}
-
-				if (instrucao.equals("JMPF")) {
-					M.remove(TopoPilha);
-					TopoPilha = TopoPilha - 1;
 				}
 
 			} else if (instrucao.equals("RETURN")) {
