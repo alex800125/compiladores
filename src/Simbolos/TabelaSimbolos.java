@@ -11,7 +11,7 @@ public class TabelaSimbolos {
 		pilhaSimbolos = new ArrayList<Simbolos>();
 	}
 
-	public List<Simbolos> getStackOfSymbols() {
+	public List<Simbolos> getStackDeSimbolos() {
 		return pilhaSimbolos;
 	}
 
@@ -27,7 +27,7 @@ public class TabelaSimbolos {
 		Simbolos simbolo = pilhaSimbolos.get(pilhaSimbolos.size() - 1);
 
 		if (simbolo instanceof Funcao && simbolo.getType() == null) {
-			pilhaSimbolos.get(pilhaSimbolos.size() - 1).setType(type);
+			pilhaSimbolos.get(pilhaSimbolos.size() - 1).setTipo(type);
 		}
 	}
 
@@ -36,7 +36,7 @@ public class TabelaSimbolos {
 		for (int i = (pilhaSimbolos.size() - 1); i > 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel) {
 				if (pilhaSimbolos.get(i).getType() == null) {
-					pilhaSimbolos.get(i).setType(type);
+					pilhaSimbolos.get(i).setTipo(type);
 				}
 			} else {
 				break;
@@ -89,7 +89,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public boolean procurarVariavel(String lexema) {
+	public boolean procuraVariavel(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -125,7 +125,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public boolean procurarFuncao(String lexema) {
+	public boolean procuraFuncao(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Funcao) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
@@ -164,7 +164,7 @@ public class TabelaSimbolos {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel) {
 				if (variable.equals(pilhaSimbolos.get(i).getLexema())) {
-					return pilhaSimbolos.get(i).getPosition();
+					return pilhaSimbolos.get(i).getPosicao();
 				}
 			}
 		}
@@ -174,8 +174,8 @@ public class TabelaSimbolos {
 	public void limparLevel() {
 		for (int i = (pilhaSimbolos.size() - 1); i > 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Funcao || pilhaSimbolos.get(i) instanceof Procedimento) {
-				if (pilhaSimbolos.get(i).isNotClosed()) {
-					pilhaSimbolos.get(i).setClosed(true);
+				if (pilhaSimbolos.get(i).naoEstaFechado()) {
+					pilhaSimbolos.get(i).setFechado(true);
 					break;
 				} else {
 					pilhaSimbolos.remove(i);
@@ -192,7 +192,7 @@ public class TabelaSimbolos {
 	public void debugTable() {
 		for (int i = 0; i < pilhaSimbolos.size(); i++) {
 			System.out.println(pilhaSimbolos.get(i).getLexema() + " " + pilhaSimbolos.get(i).getType() + " "
-					+ pilhaSimbolos.get(i).getPosition());
+					+ pilhaSimbolos.get(i).getPosicao());
 		}
 	}
 

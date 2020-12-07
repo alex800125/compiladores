@@ -51,7 +51,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 			getToken();
 			if (token.getSimbolo().equals(Constantes.programa)) {
-				geradorCodigo.createCode(Constantes.START, Constantes.EMPTY, Constantes.EMPTY);
+				geradorCodigo.criarCodigo(Constantes.START, Constantes.EMPTY, Constantes.EMPTY);
 				getToken();
 				if (token.getSimbolo().equals(Constantes.identificador)) {
 					semantico.inserePrograma(token);
@@ -66,13 +66,13 @@ public class Sintatico /* extends MaquinaVirtia */ {
 							token = lexico.AnalisadorLexico();
 							if (token.getSimbolo().equals(Constantes.eof)) {
 
-								geradorCodigo.createCode(Constantes.HLT, Constantes.EMPTY, Constantes.EMPTY);
-								geradorCodigo.createFile();
+								geradorCodigo.criarCodigo(Constantes.HLT, Constantes.EMPTY, Constantes.EMPTY);
+								geradorCodigo.gerarArquivo();
 
 								System.out.println("FIM DO CODIGO - cleanTableLevel - Debug:");
 //								semantico.debugTable();
 								System.out.println("Fim - Debug");
-								semantico.cleanTableLevel();
+								semantico.limparTabela();
 
 								System.out.println("Fim do programa, sucesso");
 
@@ -125,7 +125,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 				&& (!flagListaFuncoes.get(flagListaFuncoes.size() - 1))) {
 			if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
 				posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
-				geradorCodigo.createCode(Constantes.DALLOC, -1);
+				geradorCodigo.criarCodigo(Constantes.DALLOC, -1);
 				variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 			} else {
 				variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
@@ -155,7 +155,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		countVariable = 0;
 
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
-			geradorCodigo.createCode(Constantes.ALLOC, variaveisAlocadas.get(variaveisAlocadas.size() - 1));
+			geradorCodigo.criarCodigo(Constantes.ALLOC, variaveisAlocadas.get(variaveisAlocadas.size() - 1));
 		}
 	}
 
@@ -163,8 +163,8 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		do {
 			if (token.getSimbolo().equals(Constantes.identificador)) {
 
-				semantico.searchInTableOfSymbols(token);
-				semantico.insertVariable(token, posicao);
+				semantico.procuraTabelaSimbolos(token);
+				semantico.inserirVariavel(token, posicao);
 				countVariable++;
 				posicao++;
 
@@ -195,7 +195,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		if (!(token.getSimbolo().equals(Constantes.inteiro)) && !(token.getSimbolo().equals(Constantes.booleano))) {
 			throw new excecaoSintatico(Constantes.inteiro, Constantes.booleano, token.getSimbolo(), token.getLinha());
 		} else {
-			semantico.insertTypeOnVariable(token);
+			semantico.inserirTipoEmVariavel(token);
 		}
 		getToken();
 	}
@@ -205,7 +205,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		if ((token.getSimbolo().equals(Constantes.procedimento)) || (token.getSimbolo().equals(Constantes.funcao))) {
 			auxrot = label;
-			geradorCodigo.createCode(Constantes.JMP, Constantes.LABEL + label, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.JMP, Constantes.LABEL + label, Constantes.EMPTY);
 			label++;
 			flag = 1;
 		}
@@ -226,7 +226,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		}
 
 		if (flag == 1) {
-			geradorCodigo.createCode(Constantes.LABEL + auxrot, Constantes.NULL, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.LABEL + auxrot, Constantes.NULL, Constantes.EMPTY);
 		}
 
 	}
@@ -274,7 +274,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		getToken();
 
 		if (token.getSimbolo().equals(Constantes.atribuicao)) {
-			semantico.searchVariableOrFunction(aux);
+			semantico.procuraVariavelOuFuncao(aux);
 			analisaAtribuicao(aux);
 		} else {
 			chamadaProcedimento(aux);
@@ -285,12 +285,12 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		getToken();
 		analisaExpressao();
 
-		String aux = semantico.expressionToPostfix(expressao);
+		String aux = semantico.expressaoToPostfix(expressao);
 
 		String newExpression = semantico.formatarExpressao(aux);
-		geradorCodigo.createCode(newExpression);
+		geradorCodigo.criarCodigo(newExpression);
 
-		String type = semantico.returnTypeOfExpression(aux);
+		String type = semantico.retornaTipoDaExpressao(aux);
 		semantico.quemMeChamou(type, attributionToken.getLexema());
 
 		expressao.clear();
@@ -302,28 +302,28 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		if (nameOfFunction.size() > 0) {
 			if (!((nameOfFunction.get(nameOfFunction.size() - 1)).equals(attributionToken.getLexema()))) {
-				geradorCodigo.createCode(Constantes.STR, semantico.posicaoVariavel(attributionToken.getLexema()),
+				geradorCodigo.criarCodigo(Constantes.STR, semantico.posicaoVariavel(attributionToken.getLexema()),
 						Constantes.EMPTY);
 			}
 		} else {
-			geradorCodigo.createCode(Constantes.STR, semantico.posicaoVariavel(attributionToken.getLexema()),
+			geradorCodigo.criarCodigo(Constantes.STR, semantico.posicaoVariavel(attributionToken.getLexema()),
 					Constantes.EMPTY);
 		}
 	}
 
 	private void chamadaProcedimento(Token auxToken) throws excecaoSemantico {
-		semantico.searchProcedure(auxToken);
+		semantico.procuraProcedimento(auxToken);
 		// se houver erro, dentro do semântico lancará a exceção. Caso seja um
 		// procedimento
 		// válido, continuará a excecução
 
-		int labelResult = semantico.searchProcedureLabel(auxToken);
-		geradorCodigo.createCode(Constantes.CALL, Constantes.LABEL + labelResult, Constantes.EMPTY);
+		int labelResult = semantico.procuraProcedimentoLabel(auxToken);
+		geradorCodigo.criarCodigo(Constantes.CALL, Constantes.LABEL + labelResult, Constantes.EMPTY);
 	}
 
 	private void chamadaFuncao(int index) throws excecaoSemantico, IOException, excecaoSintatico {
-		String symbolLexema = semantico.getLexemaOfSymbol(index);
-		semantico.searchFunction(new Token(Constantes.EMPTY, symbolLexema, token.getLinha()));
+		String simboloLexema = semantico.getLexemaDoSimbolo(index);
+		semantico.procurarVersao(new Token(Constantes.EMPTY, simboloLexema, token.getLinha()));
 		// se houver erro, dentro do semântico lancará a exceção. Caso seja uma funcao
 		// válida, continuará a excecução
 
@@ -331,13 +331,13 @@ public class Sintatico /* extends MaquinaVirtia */ {
 	}
 
 	private void analisaLeia() throws excecaoSintatico, IOException, excecaoSemantico {
-		geradorCodigo.createCode(Constantes.RD, Constantes.EMPTY, Constantes.EMPTY);
+		geradorCodigo.criarCodigo(Constantes.RD, Constantes.EMPTY, Constantes.EMPTY);
 		getToken();
 		if (token.getSimbolo().equals(Constantes.abre_parenteses)) {
 			getToken();
 			if (token.getSimbolo().equals(Constantes.identificador)) {
-				semantico.searchVariable(token);
-				geradorCodigo.createCode(Constantes.STR, semantico.posicaoVariavel(token.getLexema()),
+				semantico.procuraVariavel(token);
+				geradorCodigo.criarCodigo(Constantes.STR, semantico.posicaoVariavel(token.getLexema()),
 						Constantes.EMPTY);
 				getToken();
 				if (token.getSimbolo().equals(Constantes.fecha_parenteses)) {
@@ -359,21 +359,21 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			getToken();
 			if (token.getSimbolo().equals(Constantes.identificador)) {
 
-				boolean isFunction = semantico.searchVariableOrFunction(token);
+				boolean eFuncao = semantico.procuraVariavelOuFuncao(token);
 
-				if (isFunction) {
-					int labelResult = semantico.searchFunctionLabel(token);
-					geradorCodigo.createCode(Constantes.CALL, Constantes.LABEL + labelResult, Constantes.EMPTY);
+				if (eFuncao) {
+					int resultadoLabel = semantico.procurarFuncaoLabel(token);
+					geradorCodigo.criarCodigo(Constantes.CALL, Constantes.LABEL + resultadoLabel, Constantes.EMPTY);
 				} else {
 					// LDV de Variável para o PRN
 					String positionOfVariable = semantico.posicaoVariavel(token.getLexema());
-					geradorCodigo.createCode(Constantes.LDV, positionOfVariable, Constantes.EMPTY);
+					geradorCodigo.criarCodigo(Constantes.LDV, positionOfVariable, Constantes.EMPTY);
 				}
 
 				getToken();
 
 				if (token.getSimbolo().equals(Constantes.fecha_parenteses)) {
-					geradorCodigo.createCode(Constantes.PRN, Constantes.EMPTY, Constantes.EMPTY);
+					geradorCodigo.criarCodigo(Constantes.PRN, Constantes.EMPTY, Constantes.EMPTY);
 					getToken();
 				} else {
 					throw new excecaoSintatico(Constantes.fecha_parenteses, token.getSimbolo(), token.getLinha());
@@ -390,31 +390,31 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		int auxrot1, auxrot2;
 
 		auxrot1 = label;
-		geradorCodigo.createCode(Constantes.LABEL + label, Constantes.NULL, Constantes.EMPTY);
+		geradorCodigo.criarCodigo(Constantes.LABEL + label, Constantes.NULL, Constantes.EMPTY);
 		label++;
 
 		getToken();
 		analisaExpressao();
 
-		String aux = semantico.expressionToPostfix(expressao);
+		String aux = semantico.expressaoToPostfix(expressao);
 
-		String newExpression = semantico.formatarExpressao(aux);
-		geradorCodigo.createCode(newExpression);
+		String novaExpressao = semantico.formatarExpressao(aux);
+		geradorCodigo.criarCodigo(novaExpressao);
 
-		String type = semantico.returnTypeOfExpression(aux);
-		semantico.quemMeChamou(type, Constantes.ENQUANTO);
+		String tipo = semantico.retornaTipoDaExpressao(aux);
+		semantico.quemMeChamou(tipo, Constantes.ENQUANTO);
 		expressao.clear();
 
 		if (token.getSimbolo().equals(Constantes.faca)) {
 			auxrot2 = label;
-			geradorCodigo.createCode(Constantes.JMPF, Constantes.LABEL + label, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.JMPF, Constantes.LABEL + label, Constantes.EMPTY);
 			label++;
 
 			getToken();
 			analisaComandoSimples();
 
-			geradorCodigo.createCode(Constantes.JMP, Constantes.LABEL + auxrot1, Constantes.EMPTY);
-			geradorCodigo.createCode(Constantes.LABEL + auxrot2, Constantes.NULL, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.JMP, Constantes.LABEL + auxrot1, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.LABEL + auxrot2, Constantes.NULL, Constantes.EMPTY);
 		} else {
 			throw new excecaoSintatico(Constantes.faca, token.getSimbolo(), token.getLinha());
 		}
@@ -432,18 +432,18 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		getToken();
 		analisaExpressao();
 
-		String aux = semantico.expressionToPostfix(expressao);
+		String aux = semantico.expressaoToPostfix(expressao);
 
 		String newExpression = semantico.formatarExpressao(aux);
-		geradorCodigo.createCode(newExpression);
+		geradorCodigo.criarCodigo(newExpression);
 
-		String type = semantico.returnTypeOfExpression(aux);
+		String type = semantico.retornaTipoDaExpressao(aux);
 		semantico.quemMeChamou(type, Constantes.SE);
 		expressao.clear();
 
 		if (token.getSimbolo().equals(Constantes.entao)) {
 			auxrot1 = label;
-			geradorCodigo.createCode(Constantes.JMPF, Constantes.LABEL + label, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.JMPF, Constantes.LABEL + label, Constantes.EMPTY);
 			label++;
 
 			if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)) {
@@ -455,10 +455,10 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			analisaComandoSimples();
 			if (token.getSimbolo().equals(Constantes.senao)) {
 				auxrot2 = label;
-				geradorCodigo.createCode(Constantes.JMP, Constantes.LABEL + label, Constantes.EMPTY);
+				geradorCodigo.criarCodigo(Constantes.JMP, Constantes.LABEL + label, Constantes.EMPTY);
 				label++;
 
-				geradorCodigo.createCode(Constantes.LABEL + auxrot1, Constantes.NULL, Constantes.EMPTY);
+				geradorCodigo.criarCodigo(Constantes.LABEL + auxrot1, Constantes.NULL, Constantes.EMPTY);
 
 				if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)) {
 					semantico.inserirTokenListaFuncao(
@@ -467,9 +467,9 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 				getToken();
 				analisaComandoSimples();
-				geradorCodigo.createCode(Constantes.LABEL + auxrot2, Constantes.NULL, Constantes.EMPTY);
+				geradorCodigo.criarCodigo(Constantes.LABEL + auxrot2, Constantes.NULL, Constantes.EMPTY);
 			} else {
-				geradorCodigo.createCode(Constantes.LABEL + auxrot1, Constantes.NULL, Constantes.EMPTY);
+				geradorCodigo.criarCodigo(Constantes.LABEL + auxrot1, Constantes.NULL, Constantes.EMPTY);
 			}
 		} else {
 			throw new excecaoSintatico(Constantes.entao, token.getSimbolo(), token.getLinha());
@@ -485,10 +485,10 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		getToken();
 		if (token.getSimbolo().equals(Constantes.identificador)) {
-			semantico.searchProcedureWithTheSameName(token);
-			semantico.insertProcOrFunc(token, Constantes.PROCEDIMENTO, label);
+			semantico.procuraProcedimentoComMesmoNome(token);
+			semantico.inserirProcedimentoOuFuncao(token, Constantes.PROCEDIMENTO, label);
 
-			geradorCodigo.createCode(Constantes.LABEL + label, Constantes.NULL, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.LABEL + label, Constantes.NULL, Constantes.EMPTY);
 			label++;
 
 			getToken();
@@ -503,17 +503,17 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		System.out.println("analisaDeclaracaoProcedimento - cleanTableLevel - Debug:");
 //		semantico.debugTable();
 		System.out.println("Fim - Debug");
-		semantico.cleanTableLevel();
+		semantico.limparTabela();
 
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
 			posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
-			geradorCodigo.createCode(Constantes.DALLOC, -1);
+			geradorCodigo.criarCodigo(Constantes.DALLOC, -1);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		} else {
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		}
 
-		geradorCodigo.createCode(Constantes.RETURN, Constantes.EMPTY, Constantes.EMPTY);
+		geradorCodigo.criarCodigo(Constantes.RETURN, Constantes.EMPTY, Constantes.EMPTY);
 
 		flagListaProcedimento.remove(flagListaProcedimento.size() - 1);
 	}
@@ -523,14 +523,14 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		getToken();
 		if (token.getSimbolo().equals(Constantes.identificador)) {
-			semantico.searchFunctionWithTheSameName(token);
-			semantico.insertProcOrFunc(token, Constantes.FUNCAO, label);
+			semantico.procuraFuncoesComMesmoNome(token);
+			semantico.inserirProcedimentoOuFuncao(token, Constantes.FUNCAO, label);
 
-			geradorCodigo.createCode(Constantes.LABEL + label, Constantes.NULL, Constantes.EMPTY);
+			geradorCodigo.criarCodigo(Constantes.LABEL + label, Constantes.NULL, Constantes.EMPTY);
 			label++;
 
 			nameOfFunction.add(token.getLexema());
-			semantico.setLine(token.getLinha());
+			semantico.setLinha(token.getLinha());
 
 			getToken();
 
@@ -539,9 +539,9 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 				if (token.getSimbolo().equals(Constantes.inteiro) || token.getSimbolo().equals(Constantes.booleano)) {
 					if (token.getSimbolo().equals(Constantes.inteiro)) {
-						semantico.insertTypeOnFunction(Constantes.INTEIRO);
+						semantico.inserirTipoEmFuncao(Constantes.INTEIRO);
 					} else {
-						semantico.insertTypeOnFunction(Constantes.BOOLEANO);
+						semantico.inserirTipoEmFuncao(Constantes.BOOLEANO);
 					}
 					getToken();
 
@@ -563,20 +563,20 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		System.out.println("analisaDeclaracaoFuncao - cleanTableLevel - Debug:");
 //		semantico.debugTable();
 		System.out.println("Fim - Debug");
-		semantico.cleanTableLevel();
+		semantico.limparTabela();
 		flagListaFuncoes.remove(flagListaFuncoes.size() - 1);
-		semantico.thisFunctionHasReturn(nameOfFunction.get(nameOfFunction.size() - 1));
+		semantico.verificaSeAFuncaoTemRetorno(nameOfFunction.get(nameOfFunction.size() - 1));
 		nameOfFunction.remove(nameOfFunction.size() - 1);
 
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
 			posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
-			geradorCodigo.createCode(Constantes.RETURN, -1);
+			geradorCodigo.criarCodigo(Constantes.RETURN, -1);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		} else {
-			geradorCodigo.createCode(Constantes.RETURN, 0);
+			geradorCodigo.criarCodigo(Constantes.RETURN, 0);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		}
-		semantico.clearFunctionList();
+		semantico.limparListaFuncao();
 	}
 
 	private void analisaExpressao() throws excecaoSintatico, IOException, excecaoSemantico {
@@ -620,8 +620,8 @@ public class Sintatico /* extends MaquinaVirtia */ {
 	private void analisaFator() throws excecaoSintatico, IOException, excecaoSemantico {
 		if (token.getSimbolo().equals(Constantes.identificador)) {
 
-			int index = semantico.searchSymbol(token);
-			if (semantico.isValidFunction(index)) {
+			int index = semantico.procurarSimbolo(token);
+			if (semantico.funcaoEValida(index)) {
 				expressao.add(token);
 				chamadaFuncao(index);
 			} else {

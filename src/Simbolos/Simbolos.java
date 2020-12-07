@@ -2,37 +2,37 @@ package Simbolos;
 
 public class Simbolos {
 	private String lexema;
-	private boolean closed;
-	private String type;
+	private boolean fechado;
+	private String tipo;
 	private int label;
-	private int position;
+	private int posicao;
 	
 	public Simbolos(String lexema, int label, int position) {
 		this.setLexema(lexema);
-		this.setClosed(false);
-		this.setType(null);
+		this.setFechado(false);
+		this.setTipo(null);
 		this.setLabel(label);
-		this.setPosition(position);
+		this.setPosicao(position);
 	}
 	
-	public boolean isClosed() {
-		return closed;
+	public boolean estaFechado() {
+		return fechado;
 	}
 	
-	public boolean isNotClosed() {
-		return !closed;
+	public boolean naoEstaFechado() {
+		return !fechado;
 	}
 
-	public void setClosed(boolean closed) {
-		this.closed = closed;
+	public void setFechado(boolean fechado) {
+		this.fechado = fechado;
 	}
 	
 	public String getType() {
-		return type;
+		return tipo;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getLexema() {
@@ -51,11 +51,11 @@ public class Simbolos {
 		this.label = label;
 	}
 
-	public int getPosition() {
-		return position;
+	public int getPosicao() {
+		return posicao;
 	}
 
-	public void setPosition(int position) {
-		this.position = position;
+	public void setPosicao(int posicao) {
+		this.posicao = posicao;
 	}
 }
