@@ -100,7 +100,7 @@ public class GeradorCodigo {
 
 	public void gerarArquivo() {
 		try {
-			File path = new File("code.txt");
+			File path = new File(MaquinaVirtual.NomeDoArquivoTXT.replace(".txt", "")+ " " +"CodigoGerado.txt");
 			path.createNewFile();
 
 			FileWriter arquivo = new FileWriter(path);

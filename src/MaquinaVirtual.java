@@ -18,7 +18,9 @@ public class MaquinaVirtual extends JFrame {
 			btnDeBug = new JButton("Debug"), // Escrever debug
 			btnContinuar = new JButton("Continuar"), // proxima instrucao
 			btnSair = new JButton("Sair"), // Sair
-			btnAbrirCodigo = new JButton("Abrir Codigo"), btnExecutarCodigo = new JButton("Executar Codigo");
+			btnAbrirCodigo = new JButton("Abrir Codigo"), btnExecutarCodigo = new JButton("Executar Codigo"),
+			btnNovoSalvarExecutar = new JButton(" Salvar e Executar"),
+			bntAbrirCodigoGerado = new JButton("Abrir Codigo Gerado");
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
 	// VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
@@ -64,6 +66,11 @@ public class MaquinaVirtual extends JFrame {
 	public static Vector<Token> vetorTokens;
 	public static String ErroDoTryCath;
 	public static Color CorDoFundo;
+	public static String NomeDoArquivoTXT;
+	protected String[] linha;
+	protected String[] argumento;
+	protected String[] linhaComentario;
+	protected JFileChooser fileChooserParaAssembly;
 
 	protected int S;
 	protected int Ji;
@@ -163,6 +170,8 @@ public class MaquinaVirtual extends JFrame {
 		btnDeBug.addActionListener(new DeBug());
 		btnContinuar.addActionListener(new Continuar());
 		btnSair.addActionListener(new Sair());
+		btnNovoSalvarExecutar.addActionListener(new NovoSalvarExecutar());
+		bntAbrirCodigoGerado.addActionListener(new AbrirCodigoGerado());
 
 		// Grid Superior, onde fica os botões
 		JPanel pnlBotoes = new JPanel();
@@ -172,6 +181,8 @@ public class MaquinaVirtual extends JFrame {
 		// Adicionando botões ao grid superior
 		pnlBotoes.add(btnAbrirCodigo);
 		pnlBotoes.add(btnExecutarCodigo);
+		pnlBotoes.add(btnNovoSalvarExecutar);
+		pnlBotoes.add(bntAbrirCodigoGerado);
 		pnlBotoes.add(btnAbrirAssembly);
 		pnlBotoes.add(btnExecutarAssembly);
 		pnlBotoes.add(btnApagar);
@@ -206,6 +217,18 @@ public class MaquinaVirtual extends JFrame {
 
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
+
+		btnAbrirCodigo.setEnabled(true);
+		btnExecutarCodigo.setEnabled(false);
+		btnNovoSalvarExecutar.setEnabled(false);
+		bntAbrirCodigoGerado.setEnabled(false);
+		btnAbrirAssembly.setEnabled(true);
+		btnExecutarAssembly.setEnabled(false);
+		btnApagar.setEnabled(true);
+		btnDeBug.setEnabled(false);
+		btnContinuar.setEnabled(false);
+		btnSair.setEnabled(true);
+
 	}
 
 	protected class MeuJPanel extends JPanel implements MouseListener, MouseMotionListener {
@@ -255,7 +278,21 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class AbrirCodigo implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(true);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(false);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(false);
+			btnContinuar.setEnabled(false);
+			btnSair.setEnabled(true);
 
+			Apagar NovoApagar = new Apagar();
+			NovoApagar.ApagaTudo();
+			fileChooser = new JFileChooser();
+			returnValue = fileChooser.showOpenDialog(null);
 			InicializadorArquivo();
 			try {
 				TabelaInstrucoes2();
@@ -270,10 +307,10 @@ public class MaquinaVirtual extends JFrame {
 		public void InicializadorArquivo() {
 
 			// System.out.println("InicializadorArquivo");
-			fileChooser = new JFileChooser();
+			// returnValue = fileChooser.showOpenDialog(null);
 
-			returnValue = fileChooser.showOpenDialog(null);
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				NomeDoArquivoTXT = fileChooser.getSelectedFile().toString();
 
 				selectedFile = fileChooser.getSelectedFile();
 
@@ -345,9 +382,21 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class ExecutarCodigo implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(true);
+			btnNovoSalvarExecutar.setEnabled(true);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(false);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(false);
+			btnContinuar.setEnabled(false);
+			btnSair.setEnabled(true);
 
 			Sintatico SINOVO = new Sintatico();
 			try {
+				// dispose(); // close window
+				// setVisible(false); // hide window
 				SINOVO.analisadorSintatico();
 
 			} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
@@ -355,14 +404,6 @@ public class MaquinaVirtual extends JFrame {
 			}
 			TabelaSintatico();
 
-			MostarMensagem(ErroDoTryCath);
-			if (vetorTokens.size() != 0) {
-				tabelaInstrucaoLOCAL.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
-			}
-			textErroSintatico.setBackground(CorDoFundo);
-
-			pnlTabela.add(barraRolagemInstrucaoLOCAL);
-			pnlTabela.remove(barraRolagemInstrucoes);
 		}
 
 		public void TabelaSintatico() {
@@ -387,11 +428,40 @@ public class MaquinaVirtual extends JFrame {
 
 			tabelaSintaticoLOCAL = new JTable(rowDataSintaticoLOCAL, columnNamesSintaticoLOCAL);
 			barraRolagemSintaticoLOCAL = new JScrollPane(tabelaSintaticoLOCAL);
-//			tabelaSintaticoLOCAL.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
-//			tabelaSintaticoLOCAL.setFillsViewportHeight(false);
 			tabelaSintaticoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			pnlPilha.add(barraRolagemSintaticoLOCAL);
 
+			MostarMensagem(ErroDoTryCath);
+			if (vetorTokens.size() != 0) {
+				tabelaInstrucaoLOCAL.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
+			}
+			textErroSintatico.setBackground(CorDoFundo);
+			if (CorDoFundo == Color.GREEN) {
+				btnAbrirCodigo.setEnabled(true);
+				btnExecutarCodigo.setEnabled(true);
+				btnNovoSalvarExecutar.setEnabled(true);
+				bntAbrirCodigoGerado.setEnabled(true);
+				btnAbrirAssembly.setEnabled(true);
+				btnExecutarAssembly.setEnabled(false);
+				btnApagar.setEnabled(true);
+				btnDeBug.setEnabled(false);
+				btnContinuar.setEnabled(false);
+				btnSair.setEnabled(true);
+			} else {
+				btnAbrirCodigo.setEnabled(true);
+				btnExecutarCodigo.setEnabled(true);
+				btnNovoSalvarExecutar.setEnabled(true);
+				bntAbrirCodigoGerado.setEnabled(false);
+				btnAbrirAssembly.setEnabled(true);
+				btnExecutarAssembly.setEnabled(false);
+				btnApagar.setEnabled(true);
+				btnDeBug.setEnabled(false);
+				btnContinuar.setEnabled(false);
+				btnSair.setEnabled(true);
+			}
+
+			pnlTabela.add(barraRolagemInstrucaoLOCAL);
+			pnlTabela.remove(barraRolagemInstrucoes);
 		}
 
 		public void MostarMensagem(String mensagem) {
@@ -404,131 +474,226 @@ public class MaquinaVirtual extends JFrame {
 		}
 	}
 
-	protected class AbrirAssembly implements ActionListener {
+	protected class NovoSalvarExecutar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			String[] linha;
-			String[] argumento;
-			String[] linhaComentario;
-			nlinha = 0;
+			Apagar ApagarNovo = new Apagar();
+			AbrirCodigo AbrirCodigoChamada = new AbrirCodigo();
+			ExecutarCodigo ExecutarCodigoChamada = new ExecutarCodigo();
+			if (barraRolagemInstrucaoLOCAL != null) {
+				String LinhaDaTabela = (String) tabelaInstrucaoLOCAL.getModel().getValueAt(0, 1) + "\r\n";
+				for (int LinhaAtual = 1; LinhaAtual < tabelaInstrucaoLOCAL.getRowCount(); LinhaAtual++) {
+					LinhaDaTabela = LinhaDaTabela
+							.concat((String) tabelaInstrucaoLOCAL.getModel().getValueAt(LinhaAtual, 1) + "\r\n");
+				}
+				createFile(LinhaDaTabela);
 
-			JFileChooser fileChooser = new JFileChooser();
-			int returnValue = fileChooser.showOpenDialog(null);
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-
-				File selectedFile = fileChooser.getSelectedFile();
-
+				ApagarNovo.ApagaTudo();
+				AbrirCodigoChamada.InicializadorArquivo();
 				try {
-					FileInputStream fstream = new FileInputStream(selectedFile);
-					DataInputStream in = new DataInputStream(fstream);
-					BufferedReader br = new BufferedReader(new InputStreamReader(in));
-					String strLine;
-
-					while ((strLine = br.readLine()) != null) {
-						nlinha++;
-						int posicao = 0;
-						int posicaoLc = 0;
-						boolean isInstruction = false;
-						String comentario = "";
-						rowLinhaInstrucao = new Vector<String>(); // representa cada linha da tabela
-
-						linha = strLine.split(" "); // separa a linha pra cada espaco que existe
-
-						for (String l : linha) {
-							// se é o primeiro item, verifica se é uma linha ou uma instrucao
-							if (posicao == 0) {
-								for (int i = 0; i < Linguagem.length; i++) {
-									if (Linguagem[i].equals(l)) {
-										isInstruction = true;
-									}
-								}
-								// se for uma instrucao, deixa o espaco na tabela da linha em branco
-								if (isInstruction) {
-									rowLinhaInstrucao.add("");
-									rowLinhaInstrucao.add(l);
-									posicao++;
-								} else {
-									rowLinhaInstrucao.add(l);
-								}
-							} else {
-								if (l.contains(",")) {
-									argumento = l.split(",");
-									for (String a : argumento) {
-										rowLinhaInstrucao.add(a);
-									}
-									posicao++;
-								} else if (l.contains(";")) {
-									comentario = "";
-									if (posicao == 1) {
-										rowLinhaInstrucao.add("");
-										rowLinhaInstrucao.add("");
-										rowLinhaInstrucao.add("");
-
-										linhaComentario = strLine.split(";");
-										for (String lc : linhaComentario) {
-											if (posicaoLc != 0)
-												comentario = comentario + lc;
-
-											posicaoLc++;
-										}
-										rowLinhaInstrucao.add(comentario);
-									}
-									if (posicao == 2) {
-										rowLinhaInstrucao.add("");
-										rowLinhaInstrucao.add("");
-
-										linhaComentario = strLine.split(";");
-										for (String lc : linhaComentario) {
-											if (posicaoLc != 0)
-												comentario = comentario + lc;
-
-											posicaoLc++;
-										}
-										rowLinhaInstrucao.add(comentario);
-									}
-									if (posicao == 3) {
-										rowLinhaInstrucao.add("");
-
-										linhaComentario = strLine.split(";");
-										for (String lc : linhaComentario) {
-											if (posicaoLc != 0)
-												comentario = comentario + lc;
-
-											posicaoLc++;
-										}
-										rowLinhaInstrucao.add(comentario);
-									}
-									if (posicao == 4) {
-										linhaComentario = strLine.split(";");
-										for (String lc : linhaComentario) {
-											if (posicaoLc != 0)
-												comentario = comentario + lc;
-
-											posicaoLc++;
-										}
-										rowLinhaInstrucao.add(comentario);
-									}
-								} else {
-									rowLinhaInstrucao.add(l);
-								}
-
-							}
-
-							posicao++;
-						}
-
-						// adicionar ao Data da tabela a linha com os itens
-						rowDataInstrucao.addElement(rowLinhaInstrucao);
-					}
-
-					in.close();
-				} catch (Exception e1) { // Catch exception if any
-					System.err.println("Error: " + e1.getMessage());
+					AbrirCodigoChamada.TabelaInstrucoes2();
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
 				}
 
-				InterfaceAbrir();
+				Sintatico SintaticoChamada = new Sintatico();
+				try {
+
+					SintaticoChamada.analisadorSintatico();
+
+				} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
+					System.out.println("Erro = " + e1);
+				}
+				ExecutarCodigoChamada.TabelaSintatico();
+			}
+
+		}
+
+		public void createFile(String code) {
+			try {
+				File directory = new File(NomeDoArquivoTXT);
+				directory.createNewFile();
+
+				FileWriter file = new FileWriter(directory);
+				file.write(code);
+				file.close();
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	protected class AbrirCodigoGerado implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(false);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(false);
+			btnExecutarAssembly.setEnabled(true);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(true);
+			btnContinuar.setEnabled(false);
+			btnSair.setEnabled(true);
+			AbrirAssembly AbrirAssemblyChamada = new AbrirAssembly();
+			Apagar ApagarNovo = new Apagar();
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				fileChooserParaAssembly = new JFileChooser();
+				fileChooserParaAssembly
+						.setSelectedFile(new File(NomeDoArquivoTXT.replace(".txt", "") + " " + "CodigoGerado.txt"));
+
+				if (returnValue == fileChooserParaAssembly.APPROVE_OPTION) {
+					ApagarNovo.ApagaTudo();
+					AbrirAssemblyChamada.AbriCodigoAssemly(fileChooserParaAssembly.getSelectedFile());
+				}
+
+			}
+		}
+
+	}
+
+	protected class AbrirAssembly implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(false);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(true);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(true);
+			btnContinuar.setEnabled(false);
+			btnSair.setEnabled(true);
+
+			nlinha = 0;
+			fileChooser = new JFileChooser();
+			int returnValue = fileChooser.showOpenDialog(null);
+			if (returnValue == JFileChooser.APPROVE_OPTION) {
+				AbriCodigoAssemly(fileChooser.getSelectedFile());
 			}
 
 			statusBar1.setText("Mensagem: Arquivo a ser aberto");
+		}
+
+		void AbriCodigoAssemly(File selectedFile) {
+
+			rowDataInstrucao.removeAllElements();
+			nlinha = 0;
+			Apagar ApagarNovo = new Apagar();
+			ApagarNovo.ApagaTudo();
+			try {
+				fstream = new FileInputStream(selectedFile);
+				in = new DataInputStream(fstream);
+				br = new BufferedReader(new InputStreamReader(in));
+				String strLine;
+
+				while ((strLine = br.readLine()) != null) {
+					nlinha++;
+					int posicao = 0;
+					int posicaoLc = 0;
+					boolean isInstruction = false;
+					String comentario = "";
+					rowLinhaInstrucao = new Vector<String>(); // representa cada linha da tabela
+
+					linha = strLine.split(" "); // separa a linha pra cada espaco que existe
+
+					for (String l : linha) {
+						// se é o primeiro item, verifica se é uma linha ou uma instrucao
+						if (posicao == 0) {
+							for (int i = 0; i < Linguagem.length; i++) {
+								if (Linguagem[i].equals(l)) {
+									isInstruction = true;
+								}
+							}
+							// se for uma instrucao, deixa o espaco na tabela da linha em branco
+							if (isInstruction) {
+								rowLinhaInstrucao.add("");
+								rowLinhaInstrucao.add(l);
+								posicao++;
+							} else {
+								rowLinhaInstrucao.add(l);
+							}
+						} else {
+							if (l.contains(",")) {
+								argumento = l.split(",");
+								for (String a : argumento) {
+									rowLinhaInstrucao.add(a);
+								}
+								posicao++;
+							} else if (l.contains(";")) {
+								comentario = "";
+								if (posicao == 1) {
+									rowLinhaInstrucao.add("");
+									rowLinhaInstrucao.add("");
+									rowLinhaInstrucao.add("");
+
+									linhaComentario = strLine.split(";");
+									for (String lc : linhaComentario) {
+										if (posicaoLc != 0)
+											comentario = comentario + lc;
+
+										posicaoLc++;
+									}
+									rowLinhaInstrucao.add(comentario);
+								}
+								if (posicao == 2) {
+									rowLinhaInstrucao.add("");
+									rowLinhaInstrucao.add("");
+
+									linhaComentario = strLine.split(";");
+									for (String lc : linhaComentario) {
+										if (posicaoLc != 0)
+											comentario = comentario + lc;
+
+										posicaoLc++;
+									}
+									rowLinhaInstrucao.add(comentario);
+								}
+								if (posicao == 3) {
+									rowLinhaInstrucao.add("");
+
+									linhaComentario = strLine.split(";");
+									for (String lc : linhaComentario) {
+										if (posicaoLc != 0)
+											comentario = comentario + lc;
+
+										posicaoLc++;
+									}
+									rowLinhaInstrucao.add(comentario);
+								}
+								if (posicao == 4) {
+									linhaComentario = strLine.split(";");
+									for (String lc : linhaComentario) {
+										if (posicaoLc != 0)
+											comentario = comentario + lc;
+
+										posicaoLc++;
+									}
+									rowLinhaInstrucao.add(comentario);
+								}
+							} else {
+								rowLinhaInstrucao.add(l);
+							}
+
+						}
+
+						posicao++;
+					}
+
+					rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os
+																	// itens
+					// System.out.println(rowDataInstrucao);
+					// System.out.println("Linha = " + strLine + " | posicao = " + posicao);
+				}
+
+				in.close();
+			} catch (Exception e1) { // Catch exception if any
+				System.err.println("Error: " + e1.getMessage());
+			}
+
+			InterfaceAbrir();
+
 		}
 
 		void InterfaceAbrir() {
@@ -581,6 +746,17 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class ExecutarAssembly implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(false);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(true);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(true);
+			btnContinuar.setEnabled(false);
+			btnSair.setEnabled(true);
+
 			ChamadasCall = new Vector<Integer>();
 			ExecucaoCompilador EC = new ExecucaoCompilador();
 
@@ -597,6 +773,16 @@ public class MaquinaVirtual extends JFrame {
 
 				// Finaliza o programa
 				if (instrucao.equals("HLT")) {
+					btnAbrirCodigo.setEnabled(true);
+					btnExecutarCodigo.setEnabled(false);
+					btnNovoSalvarExecutar.setEnabled(false);
+					bntAbrirCodigoGerado.setEnabled(false);
+					btnAbrirAssembly.setEnabled(true);
+					btnExecutarAssembly.setEnabled(true);
+					btnApagar.setEnabled(true);
+					btnDeBug.setEnabled(true);
+					btnContinuar.setEnabled(false);
+					btnSair.setEnabled(true);
 					System.out.println("HTL");
 					break;
 
@@ -609,7 +795,7 @@ public class MaquinaVirtual extends JFrame {
 							if ((instrucao.equals("CALL"))) {
 								ChamadasCall.add(LinhaAtual);
 							}
-							
+
 							if (instrucao.equals("JMPF")) {
 								if (M.get(TopoPilha) == 0) {
 									LinhaAtual = t;
@@ -621,7 +807,6 @@ public class MaquinaVirtual extends JFrame {
 							}
 						}
 					}
-
 
 				} else if (instrucao.equals("RETURN")) {
 
@@ -641,6 +826,23 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class Apagar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
+			// InterfaceAbrir();
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(false);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(false);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(false);
+			btnContinuar.setEnabled(false);
+			btnSair.setEnabled(true);
+			ApagaTudo();
+
+			statusBar1.setText("Mensagem: Limpeza Geral");
+		}
+
+		void ApagaTudo() {
 			InterfaceAbrir();
 			tabelaInstrucoes.removeAll();
 			barraRolagemInstrucoes.removeAll();
@@ -714,7 +916,6 @@ public class MaquinaVirtual extends JFrame {
 			texBreakPoint.removeAll();
 			textErroSintatico.removeAll();
 
-			statusBar1.setText("Mensagem: Limpeza Geral");
 		}
 
 		void InterfaceAbrir() {
@@ -726,6 +927,11 @@ public class MaquinaVirtual extends JFrame {
 			columnNamesInstrucao.addElement("Comentario");
 			columnNamesPilha.addElement("Endereco");
 			columnNamesPilha.addElement("Valor1");
+			columnNamesInstrucaoLOCAL.addElement("Linha");
+			columnNamesInstrucaoLOCAL.addElement("Codigo");
+			columnNamesSintaticoLOCAL.addElement("Linha");
+			columnNamesSintaticoLOCAL.addElement("Lexema");
+			columnNamesSintaticoLOCAL.addElement("Simbolo");
 
 			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
 			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
@@ -764,12 +970,36 @@ public class MaquinaVirtual extends JFrame {
 			scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
 			pnlAmostraDados.add(scrollableTextBreakPoint);
+
+			tabelaInstrucaoLOCAL = new JTable(rowDataInstrucaoLOCAL, columnNamesInstrucaoLOCAL);
+			barraRolagemInstrucaoLOCAL = new JScrollPane(tabelaInstrucaoLOCAL);
+//			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
+//			tabelaInstrucao2.setFillsViewportHeight(false);
+			tabelaInstrucaoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+			tabelaSintaticoLOCAL = new JTable(rowDataSintaticoLOCAL, columnNamesSintaticoLOCAL);
+			barraRolagemSintaticoLOCAL = new JScrollPane(tabelaSintaticoLOCAL);
+//			tabelaSintaticoLOCAL.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
+//			tabelaSintaticoLOCAL.setFillsViewportHeight(false);
+			tabelaSintaticoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			pnlPilha.add(barraRolagemSintaticoLOCAL);
+
 		}
 	}
 
 	protected class DeBug implements ActionListener {
 
 		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(false);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(false);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(true);
+			btnContinuar.setEnabled(true);
+			btnSair.setEnabled(true);
 			ChamadasCall = new Vector<Integer>();
 		}
 
@@ -780,6 +1010,16 @@ public class MaquinaVirtual extends JFrame {
 		int LinhaAtual = -1;
 
 		public void actionPerformed(ActionEvent e) {
+			btnAbrirCodigo.setEnabled(true);
+			btnExecutarCodigo.setEnabled(false);
+			btnNovoSalvarExecutar.setEnabled(false);
+			bntAbrirCodigoGerado.setEnabled(false);
+			btnAbrirAssembly.setEnabled(true);
+			btnExecutarAssembly.setEnabled(false);
+			btnApagar.setEnabled(true);
+			btnDeBug.setEnabled(true);
+			btnContinuar.setEnabled(true);
+			btnSair.setEnabled(true);
 			if (LinhaAtual != -999) {
 				int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
 				ExecucaoCompilador EC = new ExecucaoCompilador();
@@ -790,7 +1030,9 @@ public class MaquinaVirtual extends JFrame {
 
 			if (LinhaAtual != -999) {
 				statusBar1.setText("Mensagem: Fim das Linhas");
+
 			}
+
 		}
 
 		public int CompiladorLinhaLinha(int LinhaAtual, int totalLinhasCodigo, ExecucaoCompilador EC) {
@@ -804,6 +1046,16 @@ public class MaquinaVirtual extends JFrame {
 
 			// Finaliza o programa
 			if (instrucao.equals("HLT")) {
+				btnAbrirCodigo.setEnabled(true);
+				btnExecutarCodigo.setEnabled(false);
+				btnNovoSalvarExecutar.setEnabled(false);
+				bntAbrirCodigoGerado.setEnabled(false);
+				btnAbrirAssembly.setEnabled(true);
+				btnExecutarAssembly.setEnabled(true);
+				btnApagar.setEnabled(true);
+				btnDeBug.setEnabled(true);
+				btnContinuar.setEnabled(false);
+				btnSair.setEnabled(true);
 				System.out.println("HTL");
 				// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
 				// Futuramente remover esses comandos desses IFs do
@@ -820,7 +1072,7 @@ public class MaquinaVirtual extends JFrame {
 						if ((instrucao.equals("CALL"))) {
 							ChamadasCall.add(LinhaAtual);
 						}
-						
+
 						if (instrucao.equals("JMPF")) {
 							if (M.get(TopoPilha) == 0) {
 								LinhaAtual = t;
