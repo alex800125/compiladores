@@ -18,12 +18,11 @@ public class GeradorCodigo {
 
 	public void createCode(String expressionPosFix) {
 		String[] aux = expressionPosFix.split(" ");
-		
 
 		for (int a = 0; a < aux.length; a++) {
-			
+
 			debugCode();
-			
+
 			if (aux[a].contains("p")) {
 
 				String[] value = aux[a].split("p");
@@ -33,7 +32,7 @@ public class GeradorCodigo {
 
 				String[] value = aux[a].split("funcao");
 				code = code.concat(Constantes.CALL + " ").concat(Constantes.LABEL + value[1]).concat("\r\n");
-				
+
 			} else if (aux[a].equals(Constantes.MAIS_SINAL)) {
 				code = code.concat(Constantes.ADD).concat("\r\n");
 			} else if (aux[a].equals(Constantes.MENOS_SINAL)) {
@@ -65,11 +64,11 @@ public class GeradorCodigo {
 			} else if (aux[a].equals(Constantes.NAO)) {
 				code = code.concat(Constantes.NEG).concat("\r\n");
 			} else {
-				if(aux[a].equals(Constantes.VERDADEIRO)) {
+				if (aux[a].equals(Constantes.VERDADEIRO)) {
 					code = code.concat(Constantes.LDC).concat(" 1").concat("\r\n");
-				} else if(aux[a].equals(Constantes.FALSO)) {
+				} else if (aux[a].equals(Constantes.FALSO)) {
 					code = code.concat(Constantes.LDC).concat(" 0").concat("\r\n");
-				} else if(aux[a].equals("")){
+				} else if (aux[a].equals("")) {
 					// não faz nada
 				} else {
 					code = code.concat(Constantes.LDC + " ").concat(aux[a]).concat("\r\n");
@@ -83,27 +82,25 @@ public class GeradorCodigo {
 			code = code.concat(command + " ").concat(variableInMemory + " ").concat(countVariable + "\r\n");
 			variableInMemory = variableInMemory + countVariable;
 			variableAlloc.add(countVariable);
-		}
-		else {		
-			
+		} else {
+
 			if (countVariable == 0) {
 				code = code.concat(command + "\r\n");
 			} else {
 				int position = variableAlloc.size() - 1;
 				int countVariableToDalloc = variableAlloc.get(position);
-				
+
 				variableInMemory = variableInMemory - countVariableToDalloc;
 				code = code.concat(command + " ").concat(variableInMemory + " ").concat(countVariableToDalloc + "\r\n");
-				variableAlloc.remove(position);	
-			}		
-				
-			
+				variableAlloc.remove(position);
+			}
+
 		}
 	}
-	
+
 	public void createFile() {
 		try {
-			File directory = new File(MaquinaVirtual.NomeDoArquivoTXT+ "code.txt");
+			File directory = new File("code.txt");
 			directory.createNewFile();
 
 			FileWriter file = new FileWriter(directory);

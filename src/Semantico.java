@@ -12,9 +12,9 @@ public class Semantico {
 	private TabelaSimbolos tabelaDeSimbolos;
 
 	private ArrayList<Token> functionTokenList = new ArrayList<Token>();
-	private int lineWithoutReturn;
-	private int line;
-	private boolean error;
+	private int LinhaSemRetorno;
+	private int linha;
+	private boolean erro;
 
 	public Semantico() {
 		tabelaDeSimbolos = new TabelaSimbolos();
@@ -131,7 +131,8 @@ public class Semantico {
 	}
 
 	public boolean searchVariableOrFunction(Token token) throws excecaoSemantico {
-		if (!(tabelaDeSimbolos.procurarVariavel(token.getLexema()) || tabelaDeSimbolos.procurarFuncao(token.getLexema()))) {
+		if (!(tabelaDeSimbolos.procurarVariavel(token.getLexema())
+				|| tabelaDeSimbolos.procurarFuncao(token.getLexema()))) {
 			throw new excecaoSemantico(
 					"A variável ou função " + token.getLexema() + " não está definida.\nLinha: " + token.getLinha());
 		} else {
@@ -175,7 +176,7 @@ public class Semantico {
 
 			String parcel = expression.get(a).getLexema();
 			String simbolo = expression.get(a).getSimbolo();
-			this.line = expression.get(a).getLinha();
+			this.linha = expression.get(a).getLinha();
 
 			if (Constantes.numero.equals(simbolo) || Constantes.identificador.equals(simbolo)
 					|| Constantes.verdadeiro.equals(simbolo) || Constantes.falso.equals(simbolo)) {
@@ -257,7 +258,7 @@ public class Semantico {
 		for (int j = 0; j < expressionList.size(); j++) {
 			String parcel = expressionList.get(j);
 //			System.out.println("parcel: " + parcel);
-			
+
 			if (!(verificaOperador(parcel)) && !(isUnaryOperator(parcel))) {
 				if (Constantes.INTEIRO.equals(tabelaDeSimbolos.procurarTipoVariavelOuProcedimento(parcel))) {
 					System.out.println("parcel: " + parcel);
@@ -302,9 +303,10 @@ public class Semantico {
 	private boolean verificaOperador(String parcel) {
 
 		if (Constantes.MULTIPLICACAO_SINAL.equals(parcel) || Constantes.DIVISAO_SINAL.equals(parcel)
-				|| Constantes.MAIS_SINAL.equals(parcel) || Constantes.MENOS_SINAL.equals(parcel) || Constantes.MAIOR_SINAL.equals(parcel)
-				|| Constantes.MENOR_SINAL.equals(parcel) || Constantes.MAIOR_IGUAL_SINAL.equals(parcel)
-				|| Constantes.MENOR_IGUAL_SINAL.equals(parcel) || Constantes.IGUAL_SINAL.equals(parcel) || Constantes.DIFERENTE_SINAL.equals(parcel)
+				|| Constantes.MAIS_SINAL.equals(parcel) || Constantes.MENOS_SINAL.equals(parcel)
+				|| Constantes.MAIOR_SINAL.equals(parcel) || Constantes.MENOR_SINAL.equals(parcel)
+				|| Constantes.MAIOR_IGUAL_SINAL.equals(parcel) || Constantes.MENOR_IGUAL_SINAL.equals(parcel)
+				|| Constantes.IGUAL_SINAL.equals(parcel) || Constantes.DIFERENTE_SINAL.equals(parcel)
 				|| Constantes.E_SINAL.equals(parcel) || Constantes.OU_SINAL.equals(parcel)) {
 
 			return true;
@@ -324,8 +326,7 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações aritméticas devem envolver variáveis inteiras.\n" + "Linha: "
-								+ line);
+						"Operações aritméticas devem envolver variáveis inteiras.\n" + "Linha: " + linha);
 			} else if (verificaOperadorRelacional(operator)) {
 				if (firstType == "0" && secondType == "0") {
 					return "1";
@@ -333,14 +334,14 @@ public class Semantico {
 
 				throw new excecaoSemantico(
 						"Operações relacionais (!= | = | < | <= | > | >=) devem envolver variáveis inteiras.\n"
-								+ "Linha: " + line);
+								+ "Linha: " + linha);
 			} else {
 				if (firstType == "1" && secondType == "1") {
 					return "1";
 				}
 
 				throw new excecaoSemantico(
-						"Operações lógicas (e | ou) devem envolver variáveis booleanas.\n" + "Linha: " + line);
+						"Operações lógicas (e | ou) devem envolver variáveis booleanas.\n" + "Linha: " + linha);
 			}
 		} else {
 			if (verificaOperadorUnarioMatematico(operator)) {
@@ -349,8 +350,8 @@ public class Semantico {
 				}
 
 				throw new excecaoSemantico(
-						"Operações envolvendo operadores unários (+ | -) devem ser com variáveis inteiras.\n" + "Linha: "
-								+ line);
+						"Operações envolvendo operadores unários (+ | -) devem ser com variáveis inteiras.\n"
+								+ "Linha: " + linha);
 			} else {
 				if (firstType == "1") {
 					return "1";
@@ -358,7 +359,7 @@ public class Semantico {
 
 				throw new excecaoSemantico(
 						"Operações envolvendo operador unário (NÃO) devem ser com variáveis booleanas.\n" + "Linha: "
-								+ line);
+								+ linha);
 			}
 		}
 	}
@@ -426,7 +427,7 @@ public class Semantico {
 		return -1;
 	}
 
-	public void whoCallsMe(String tipo, String quemChamou) throws excecaoSemantico {
+	public void quemMeChamou(String tipo, String quemChamou) throws excecaoSemantico {
 		System.out.println("tipo = " + tipo + " | quemChamou = " + quemChamou);
 		if (Constantes.SE.equals(quemChamou) || Constantes.ENQUANTO.equals(quemChamou)) {
 			if (!(Constantes.BOOLEANO.equals(tipo))) {
@@ -452,35 +453,35 @@ public class Semantico {
 	// Formata a expressão para usar na geração de código
 	public String formatarExpressao(String expressao) {
 		String[] aux = expressao.split(" ");
-		String newExpression = "";
-		int auxPosition;
+		String novaExpressao = "";
+		int auxPosicao;
 
 		for (int i = 0; i < aux.length; i++) {
 			if (!tabelaDeSimbolos.procurarFuncao(aux[i])) {
-				auxPosition = tabelaDeSimbolos.procurarPosicaoVariavel(aux[i]);
+				auxPosicao = tabelaDeSimbolos.procurarPosicaoVariavel(aux[i]);
 
-				if (auxPosition != -1) {
-					newExpression = newExpression.concat("p" + auxPosition + " ");
+				if (auxPosicao != -1) {
+					novaExpressao = novaExpressao.concat("p" + auxPosicao + " ");
 				} else {
-					newExpression = newExpression.concat(aux[i] + " ");
+					novaExpressao = novaExpressao.concat(aux[i] + " ");
 				}
 			} else {
 				int labelResult = tabelaDeSimbolos.procurarFuncaoLabel(aux[i]);
-				newExpression = newExpression.concat("funcao" + labelResult + " ");
+				novaExpressao = novaExpressao.concat("funcao" + labelResult + " ");
 			}
 
 		}
 
-		return newExpression;
+		return novaExpressao;
 	}
 
 	/* Métodos envolvendo o retorno de função */
 
-	public void insertTokenOnFunctionList(Token token) {
+	public void inserirTokenListaFuncao(Token token) {
 		functionTokenList.add(token);
 	}
 
-	public void verifyFunctionList(String label) {
+	public void verificarListaFuncao(String label) {
 		Token auxToken = null;
 
 		boolean conditionalThenReturn = false;
@@ -501,7 +502,7 @@ public class Semantico {
 						auxToken = functionTokenList.get(i + 1);
 					}
 				} else {
-					lineWithoutReturn = functionTokenList.get(i).getLinha();
+					LinhaSemRetorno = functionTokenList.get(i).getLinha();
 				}
 				thenPosition = i;
 			} else if (Constantes.senao.equals(functionTokenList.get(i).getSimbolo())
@@ -513,7 +514,7 @@ public class Semantico {
 						auxToken = functionTokenList.get(i + 1);
 					}
 				} else {
-					lineWithoutReturn = functionTokenList.get(i).getLinha();
+					LinhaSemRetorno = functionTokenList.get(i).getLinha();
 					elsePosition = i;
 				}
 
@@ -528,7 +529,7 @@ public class Semantico {
 
 	public boolean thisFunctionHasReturn(String nameOfFunction) throws excecaoSemantico {
 		int aux = 0;
-
+		System.out.println("functionTokenList.size() = " + functionTokenList.size());
 		for (int i = 0; i < functionTokenList.size(); i++) {
 			if (nameOfFunction.equals(functionTokenList.get(i).getLexema())) {
 				aux++;
@@ -538,11 +539,11 @@ public class Semantico {
 			}
 		}
 
-		error = true;
-		if (lineWithoutReturn != 0)
-			line = lineWithoutReturn;
+		erro = true;
+		if (LinhaSemRetorno != 0)
+			linha = LinhaSemRetorno;
 
-		throw new excecaoSemantico("Nem todos os caminhos possíveis da função possuem retorno." + "\nLinha: " + line);
+		throw new excecaoSemantico("Nem todos os caminhos possíveis da função possuem retorno." + "\nLinha: " + linha);
 	}
 
 	private void removeIf(int start, int end, boolean functionReturn, Token tokenFunction) {
@@ -567,15 +568,15 @@ public class Semantico {
 	//
 
 	public void setLine(int line) {
-		this.line = line;
+		this.linha = line;
 	}
 
 	public int getLine() {
-		return line;
+		return linha;
 	}
 
 	public boolean hasError() {
-		return error;
+		return erro;
 	}
 
 	// Debug Tabela de Simbolos

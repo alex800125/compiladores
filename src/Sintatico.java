@@ -78,7 +78,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 								montarTabelas();
 								// Seta a cor como verde, que significa que tudo ocorreu bem
-								MaquinaVirtual.CorDoFundo  = Color.GREEN;
+								MaquinaVirtual.CorDoFundo = Color.GREEN;
 
 								MostarMensagem("Fim do programa, sucesso");
 
@@ -107,8 +107,8 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			MostarMensagem(String.valueOf(e));
 
 		}
-		//dispose(); // close window
-		//setVisible(false); // hide window
+		// dispose(); // close window
+		// setVisible(false); // hide window
 		System.out.println("Fim do sintatico");
 	}
 
@@ -291,13 +291,13 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		geradorCodigo.createCode(newExpression);
 
 		String type = semantico.returnTypeOfExpression(aux);
-		semantico.whoCallsMe(type, attributionToken.getLexema());
+		semantico.quemMeChamou(type, attributionToken.getLexema());
 
 		expressao.clear();
 
 		if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)
 				&& (nameOfFunction.get(nameOfFunction.size() - 1)).equals(attributionToken.getLexema())) {
-			semantico.insertTokenOnFunctionList(attributionToken);
+			semantico.inserirTokenListaFuncao(attributionToken);
 		}
 
 		if (nameOfFunction.size() > 0) {
@@ -402,7 +402,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		geradorCodigo.createCode(newExpression);
 
 		String type = semantico.returnTypeOfExpression(aux);
-		semantico.whoCallsMe(type, Constantes.ENQUANTO);
+		semantico.quemMeChamou(type, Constantes.ENQUANTO);
 		expressao.clear();
 
 		if (token.getSimbolo().equals(Constantes.faca)) {
@@ -425,7 +425,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		auxLabel++;
 		if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)) {
-			semantico.insertTokenOnFunctionList(
+			semantico.inserirTokenListaFuncao(
 					new Token(token.getSimbolo(), token.getLexema() + auxLabel, token.getLinha()));
 		}
 
@@ -438,7 +438,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		geradorCodigo.createCode(newExpression);
 
 		String type = semantico.returnTypeOfExpression(aux);
-		semantico.whoCallsMe(type, Constantes.SE);
+		semantico.quemMeChamou(type, Constantes.SE);
 		expressao.clear();
 
 		if (token.getSimbolo().equals(Constantes.entao)) {
@@ -447,7 +447,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			label++;
 
 			if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)) {
-				semantico.insertTokenOnFunctionList(
+				semantico.inserirTokenListaFuncao(
 						new Token(token.getSimbolo(), token.getLexema() + auxLabel, token.getLinha()));
 			}
 
@@ -461,7 +461,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 				geradorCodigo.createCode(Constantes.LABEL + auxrot1, Constantes.NULL, Constantes.EMPTY);
 
 				if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)) {
-					semantico.insertTokenOnFunctionList(
+					semantico.inserirTokenListaFuncao(
 							new Token(token.getSimbolo(), token.getLexema() + auxLabel, token.getLinha()));
 				}
 
@@ -475,7 +475,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			throw new excecaoSintatico(Constantes.entao, token.getSimbolo(), token.getLinha());
 		}
 		if (flagListaFuncoes.get(flagListaFuncoes.size() - 1)) {
-			semantico.verifyFunctionList(String.valueOf(auxLabel));
+			semantico.verificarListaFuncao(String.valueOf(auxLabel));
 		}
 		auxLabel--;
 	}
@@ -539,9 +539,9 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 				if (token.getSimbolo().equals(Constantes.inteiro) || token.getSimbolo().equals(Constantes.booleano)) {
 					if (token.getSimbolo().equals(Constantes.inteiro)) {
-						semantico.insertTypeOnFunction(Constantes.inteiro);
+						semantico.insertTypeOnFunction(Constantes.INTEIRO);
 					} else {
-						semantico.insertTypeOnFunction(Constantes.booleano);
+						semantico.insertTypeOnFunction(Constantes.BOOLEANO);
 					}
 					getToken();
 
@@ -570,10 +570,10 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
 			posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
-			geradorCodigo.createCode(Constantes.RETURNF, -1);
+			geradorCodigo.createCode(Constantes.RETURN, -1);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		} else {
-			geradorCodigo.createCode(Constantes.RETURNF, 0);
+			geradorCodigo.createCode(Constantes.RETURN, 0);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		}
 		semantico.clearFunctionList();
@@ -687,68 +687,66 @@ public class Sintatico /* extends MaquinaVirtia */ {
 	}
 
 	public void TabelaSintatico() {
-/*
-		rowDataSintatico = new Vector<Vector>();
-		columnNamesSintatico = new Vector<String>();
-
-		for (int i = 0; i < vetorTokens.size(); i++) {
-			rowLinhaSintatico = new Vector<String>();
-
-			rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
-			rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()));
-			rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLexema()));
-
-			rowDataSintatico.addElement(rowLinhaSintatico);
-
-		}
-
-		columnNamesSintatico.addElement("Linha");
-		columnNamesSintatico.addElement("Lexema");
-		columnNamesSintatico.addElement("Simbolo");
-
-		tabelaSintatico = new JTable(rowDataSintatico, columnNamesSintatico);
-		barraRolagemSintatico = new JScrollPane(tabelaSintatico);
-//		tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
-//		tabelaSintatico.setFillsViewportHeight(false);
-		tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		pnlPilha.add(barraRolagemSintatico);
-*/
+		/*
+		 * rowDataSintatico = new Vector<Vector>(); columnNamesSintatico = new
+		 * Vector<String>();
+		 * 
+		 * for (int i = 0; i < vetorTokens.size(); i++) { rowLinhaSintatico = new
+		 * Vector<String>();
+		 * 
+		 * rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
+		 * rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()))
+		 * ;
+		 * rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLexema()));
+		 * 
+		 * rowDataSintatico.addElement(rowLinhaSintatico);
+		 * 
+		 * }
+		 * 
+		 * columnNamesSintatico.addElement("Linha");
+		 * columnNamesSintatico.addElement("Lexema");
+		 * columnNamesSintatico.addElement("Simbolo");
+		 * 
+		 * tabelaSintatico = new JTable(rowDataSintatico, columnNamesSintatico);
+		 * barraRolagemSintatico = new JScrollPane(tabelaSintatico); //
+		 * tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.
+		 * getPreferredSize()); // tabelaSintatico.setFillsViewportHeight(false);
+		 * tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		 * pnlPilha.add(barraRolagemSintatico);
+		 */
 	}
 
 	public void TabelaInstrucoes2() throws IOException {
-/*
-		rowDataInstrucao2 = new Vector<Vector>();
-		columnNamesInstrucao2 = new Vector<String>();
-
-		String strLine2;
-
-		int nlinha2 = 0;
-
-		while ((strLine2 = br2.readLine()) != null) {
-			nlinha2++;
-
-			rowLinhaInstrucao2 = new Vector<String>();
-			rowLinhaInstrucao2.addElement(String.valueOf(nlinha2));
-
-			rowLinhaInstrucao2.addElement(String.valueOf(strLine2));
-
-			rowDataInstrucao2.addElement(rowLinhaInstrucao2);
-		}
-
-		columnNamesInstrucao2.addElement("Linha");
-		columnNamesInstrucao2.addElement("Codigo");
-
-		tabelaInstrucao2 = new JTable(rowDataInstrucao2, columnNamesInstrucao2);
-		barraRolagemInstrucao2 = new JScrollPane(tabelaInstrucao2);
-//		tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
-//		tabelaInstrucao2.setFillsViewportHeight(false);
-		tabelaInstrucao2.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-		if (vetorTokens.size() != 0) {
-			tabelaInstrucao2.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
-		}
-		pnlTabela.add(barraRolagemInstrucao2);
-		*/
+		/*
+		 * rowDataInstrucao2 = new Vector<Vector>(); columnNamesInstrucao2 = new
+		 * Vector<String>();
+		 * 
+		 * String strLine2;
+		 * 
+		 * int nlinha2 = 0;
+		 * 
+		 * while ((strLine2 = br2.readLine()) != null) { nlinha2++;
+		 * 
+		 * rowLinhaInstrucao2 = new Vector<String>();
+		 * rowLinhaInstrucao2.addElement(String.valueOf(nlinha2));
+		 * 
+		 * rowLinhaInstrucao2.addElement(String.valueOf(strLine2));
+		 * 
+		 * rowDataInstrucao2.addElement(rowLinhaInstrucao2); }
+		 * 
+		 * columnNamesInstrucao2.addElement("Linha");
+		 * columnNamesInstrucao2.addElement("Codigo");
+		 * 
+		 * tabelaInstrucao2 = new JTable(rowDataInstrucao2, columnNamesInstrucao2);
+		 * barraRolagemInstrucao2 = new JScrollPane(tabelaInstrucao2); //
+		 * tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.
+		 * getPreferredSize()); // tabelaInstrucao2.setFillsViewportHeight(false);
+		 * tabelaInstrucao2.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		 * 
+		 * if (vetorTokens.size() != 0) { tabelaInstrucao2.addRowSelectionInterval(0,
+		 * vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1); }
+		 * pnlTabela.add(barraRolagemInstrucao2);
+		 */
 	}
-	
+
 }

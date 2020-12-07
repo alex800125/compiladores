@@ -12,20 +12,16 @@ import Excecoes.excecaoSintatico;
 public class MaquinaVirtual extends JFrame {
 	protected static final long serialVersionUID = 1L;
 
-	protected JButton btnAbrir = new JButton("Abrir"), // carregar arquivo
-			btnExecutar = new JButton("Executar"), // Executa
-			btnApagar = new JButton("Apagar"), // apagar escritas
-			btnDeBug = new JButton("DeBug"), // Escrever debug
-			btnContinuar = new JButton("Continuar"), // proxima instruaao
-			//btnAnalisador = new JButton("Analisador Do Codigo"), // proxima instruaao
-			btnSair = new JButton("Sair"),
-			btnNovoAbrir = new JButton("Novo Abrir"),
-			btnNovoExecutar = new JButton("Novo Executar"),
-			btnNovoSalvarExecutar = new JButton("Novo Salvar Executar");
-	
+	protected JButton btnAbrirAssembly = new JButton("Abrir Assembly"), // carregar arquivo
+			btnExecutarAssembly = new JButton("Executar Assembly"), // Executa
+			btnApagar = new JButton("Limpar Tela"), // apagar escritas
+			btnDeBug = new JButton("Debug"), // Escrever debug
+			btnContinuar = new JButton("Continuar"), // proxima instrucao
+			btnSair = new JButton("Sair"), // Sair
+			btnAbrirCodigo = new JButton("Abrir Codigo"), btnExecutarCodigo = new JButton("Executar Codigo");
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
-	//VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
+	// VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	protected JTable tabelaInstrucoes;
 	protected JScrollPane barraRolagemInstrucoes;
 	protected JTable tabelaPilha;
@@ -40,12 +36,13 @@ public class MaquinaVirtual extends JFrame {
 	protected JScrollPane barraRolagemInstrucaoLOCAL;
 	protected JTable tabelaSintaticoLOCAL;
 	protected JScrollPane barraRolagemSintaticoLOCAL;
-	//VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
-	//Variavekl
+
+	// Variaveis usadas na MAQUINA VIRTUAL
 	protected String[] Linguagem = { "LDC", "LDV", "ADD", "SUB", "MULT", "DIVI", "INV", "AND", "OR", "NEG", "CME",
 			"CMA", "CEQ", "CDIF", "CMEQ", "CMAQ", "START", "HLT", "STR", "JMP", "JMPF", "NULL", "RD", "PRN", "ALLOC",
 			"DALLOC", "CALL", "RETURN" };
-	//Uso Global
+
+	// Uso Global
 	public static String strLine;
 	public static int returnValue;
 	public static JFileChooser fileChooser;
@@ -67,14 +64,10 @@ public class MaquinaVirtual extends JFrame {
 	public static Vector<Token> vetorTokens;
 	public static String ErroDoTryCath;
 	public static Color CorDoFundo;
-	public static String NomeDoArquivoTXT;
-	
-	//Uso Global
-	
-	
+
 	protected int S;
 	protected int Ji;
-	//VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
+	// VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	protected Vector<String> rowLinhaInstrucao = new Vector<String>();
 	protected Vector<Vector> rowDataInstrucao = new Vector<Vector>();
 	protected Vector<String> columnNamesInstrucao = new Vector<String>();
@@ -96,10 +89,8 @@ public class MaquinaVirtual extends JFrame {
 	protected Vector<String> rowLinhaSintaticoLOCAL = new Vector<String>();
 	protected Vector<Vector> rowDataSintaticoLOCAL = new Vector<Vector>();
 	protected Vector<String> columnNamesSintaticoLOCAL = new Vector<String>();
-	//VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
-	
-	
-	
+	// VECTORES USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
+
 	protected Vector<Integer> M = new Vector<Integer>(); // pilha
 	protected Vector<Integer> ChamadasCall = new Vector<Integer>(); // pilha
 
@@ -118,14 +109,14 @@ public class MaquinaVirtual extends JFrame {
 
 		try {
 			Image btnAbrirImg = ImageIO.read(getClass().getResource("resources/abrir.jpg"));
-			btnAbrir.setIcon(new ImageIcon(btnAbrirImg));
+			btnAbrirAssembly.setIcon(new ImageIcon(btnAbrirImg));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Arquivo abrir.jpg nao foi encontrado", "Arquivo de imagem ausente",
 					JOptionPane.WARNING_MESSAGE);
 		}
 		try {
 			Image btnExecutarImg = ImageIO.read(getClass().getResource("resources/cores.jpg"));
-			btnExecutar.setIcon(new ImageIcon(btnExecutarImg));
+			btnExecutarAssembly.setIcon(new ImageIcon(btnExecutarImg));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Arquivo Executar.jpg nao foi encontrado", "Arquivo de imagem ausente",
 					JOptionPane.WARNING_MESSAGE);
@@ -163,44 +154,44 @@ public class MaquinaVirtual extends JFrame {
 					JOptionPane.WARNING_MESSAGE);
 		}
 
-		//Interface grafica
-		btnAbrir.addActionListener(new Abrir());
-		btnExecutar.addActionListener(new Executar());
+		// Adicionando ações de click Botões superiores
+		btnAbrirCodigo.addActionListener(new AbrirCodigo());
+		btnExecutarCodigo.addActionListener(new ExecutarCodigo());
+		btnAbrirAssembly.addActionListener(new AbrirAssembly());
+		btnExecutarAssembly.addActionListener(new ExecutarAssembly());
 		btnApagar.addActionListener(new Apagar());
 		btnDeBug.addActionListener(new DeBug());
 		btnContinuar.addActionListener(new Continuar());
-		//btnAnalisador.addActionListener(new AnalisadorChamada());
 		btnSair.addActionListener(new Sair());
-		btnNovoAbrir.addActionListener(new NovoAbrir());
-		btnNovoExecutar.addActionListener(new NovoExecutar());
-		btnNovoSalvarExecutar.addActionListener(new NovoSalvarExecutar());
-		//Interface grafica
+
+		// Grid Superior, onde fica os botões
 		JPanel pnlBotoes = new JPanel();
 		FlowLayout flwBotoes = new FlowLayout();
 		pnlBotoes.setLayout(flwBotoes);
-		//Interface grafica
-		pnlBotoes.add(btnAbrir);
-		pnlBotoes.add(btnExecutar);
+
+		// Adicionando botões ao grid superior
+		pnlBotoes.add(btnAbrirCodigo);
+		pnlBotoes.add(btnExecutarCodigo);
+		pnlBotoes.add(btnAbrirAssembly);
+		pnlBotoes.add(btnExecutarAssembly);
 		pnlBotoes.add(btnApagar);
 		pnlBotoes.add(btnDeBug);
 		pnlBotoes.add(btnContinuar);
-		//pnlBotoes.add(btnAnalisador);
+		// pnlBotoes.add(btnAnalisador);
 		pnlBotoes.add(btnSair);
-		pnlBotoes.add(btnNovoAbrir);
-		pnlBotoes.add(btnNovoExecutar);
-		pnlBotoes.add(btnNovoSalvarExecutar);
-		//Interface grafica
+
+		// Interface grafica
 		JPanel pnlStatus = new JPanel();
 		GridLayout grdStatus = new GridLayout(1, 2);
 		pnlStatus.setLayout(grdStatus);
 		pnlStatus.add(statusBar1);
 		pnlStatus.add(statusBar2);
-		//Interface grafica
+		// Interface grafica
 		Container cntForm = this.getContentPane();
 		cntForm.setLayout(new BorderLayout());
 		cntForm.add(pnlBotoes, BorderLayout.NORTH);
 		cntForm.add(pnlStatus, BorderLayout.SOUTH);
-		//Interface grafica
+		// Interface grafica
 		GridLayout grdTabela = new GridLayout(0, 1); // tentar arrumar setsize
 		pnlTabela.setLayout(grdTabela);
 		pnlAmostraDados.setLayout(grdTabela);
@@ -210,7 +201,7 @@ public class MaquinaVirtual extends JFrame {
 		cntForm.add(pnlAmostraDados, BorderLayout.WEST);
 		cntForm.add(pnlPilha, BorderLayout.EAST);
 		cntForm.add(pnlPartedeBaixo, BorderLayout.SOUTH);
-		
+
 		this.addWindowListener(new FechamentoDeJanela());
 
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
@@ -232,7 +223,7 @@ public class MaquinaVirtual extends JFrame {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			 statusBar2.setText("Coordenada: " + e.getX() + "," + e.getY());
+			statusBar2.setText("Coordenada: " + e.getX() + "," + e.getY());
 		}
 
 		@Override
@@ -261,12 +252,10 @@ public class MaquinaVirtual extends JFrame {
 
 		}
 	}
-	protected class NovoAbrir implements ActionListener {
+
+	protected class AbrirCodigo implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			Apagar NovoApagar = new Apagar();
-			NovoApagar.ApagaTudo();
-			fileChooser = new JFileChooser();
-			returnValue = fileChooser.showOpenDialog(null);
+
 			InicializadorArquivo();
 			try {
 				TabelaInstrucoes2();
@@ -274,18 +263,18 @@ public class MaquinaVirtual extends JFrame {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			
+
 			statusBar1.setText("Mensagem: Novo Abrir");
 		}
+
 		public void InicializadorArquivo() {
 
 			// System.out.println("InicializadorArquivo");
-			//returnValue = fileChooser.showOpenDialog(null);
+			fileChooser = new JFileChooser();
 
+			returnValue = fileChooser.showOpenDialog(null);
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				NomeDoArquivoTXT = fileChooser.getSelectedFile().toString();
-				System.out.println("AAAAA "+NomeDoArquivoTXT);
+
 				selectedFile = fileChooser.getSelectedFile();
 
 				try {
@@ -298,42 +287,41 @@ public class MaquinaVirtual extends JFrame {
 					fstreamLOCAL = new FileInputStream(selectedFile);
 					inLOCAL = new DataInputStream(fstreamLOCAL);
 					brLOCAL = new BufferedReader(new InputStreamReader(inLOCAL));
-					nlinha++;//optativo
+					nlinha++;// optativo
 					strLine = br.readLine();
-					
+
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
 			}
 
 		}
+
 		public void TabelaInstrucoes2() throws IOException {
 
 			rowDataInstrucaoLOCAL = new Vector<Vector>();
 			columnNamesInstrucaoLOCAL = new Vector<String>();
-			rowDataInstrucao= new Vector<Vector>();
+			rowDataInstrucao = new Vector<Vector>();
 			columnNamesInstrucao = new Vector<String>();
-
 
 			nlinhaLOCAL = 0;
 
 			while ((strLineLOCAL = brLOCAL.readLine()) != null) {
 				nlinhaLOCAL++;
-				
+
 				rowLinhaInstrucaoLOCAL = new Vector<String>();
 				rowLinhaInstrucaoLOCAL.addElement(String.valueOf(nlinhaLOCAL));
 
 				rowLinhaInstrucaoLOCAL.addElement(String.valueOf(strLineLOCAL));
-				
+
 				rowDataInstrucaoLOCAL.addElement(rowLinhaInstrucaoLOCAL);
-				
-				rowLinhaInstrucao= new Vector<String>();
+
+				rowLinhaInstrucao = new Vector<String>();
 				rowLinhaInstrucao.addElement(String.valueOf(nlinhaLOCAL));
 
 				rowLinhaInstrucao.addElement(String.valueOf(strLineLOCAL));
-				
+
 				rowDataInstrucao.addElement(rowLinhaInstrucao);
-				
 
 			}
 
@@ -342,47 +330,41 @@ public class MaquinaVirtual extends JFrame {
 			columnNamesInstrucao.addElement("Linha");
 			columnNamesInstrucao.addElement("Codigo");
 
-
-
 			tabelaInstrucaoLOCAL = new JTable(rowDataInstrucaoLOCAL, columnNamesInstrucaoLOCAL);
 			barraRolagemInstrucaoLOCAL = new JScrollPane(tabelaInstrucaoLOCAL);
-//			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
-//			tabelaInstrucao2.setFillsViewportHeight(false);
 			tabelaInstrucaoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			
+
 			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
 			barraRolagemInstrucoes = new JScrollPane(tabelaInstrucoes);
-//			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
-//			tabelaInstrucao2.setFillsViewportHeight(false);
 			tabelaInstrucoes.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			
 
-
-			
-			
-			
 			pnlTabela.add(barraRolagemInstrucoes);
 		}
-		
+
 	}
-	protected class NovoExecutar implements ActionListener {
+
+	protected class ExecutarCodigo implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(e);
-			
-			
+
 			Sintatico SINOVO = new Sintatico();
 			try {
-				//dispose(); // close window
-				//setVisible(false); // hide window
 				SINOVO.analisadorSintatico();
-				
+
 			} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
 				System.out.println("Erro = " + e1);
 			}
 			TabelaSintatico();
-			
-			
+
+			MostarMensagem(ErroDoTryCath);
+			if (vetorTokens.size() != 0) {
+				tabelaInstrucaoLOCAL.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
+			}
+			textErroSintatico.setBackground(CorDoFundo);
+
+			pnlTabela.add(barraRolagemInstrucaoLOCAL);
+			pnlTabela.remove(barraRolagemInstrucoes);
 		}
+
 		public void TabelaSintatico() {
 
 			rowDataSintaticoLOCAL = new Vector<Vector>();
@@ -409,106 +391,20 @@ public class MaquinaVirtual extends JFrame {
 //			tabelaSintaticoLOCAL.setFillsViewportHeight(false);
 			tabelaSintaticoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			pnlPilha.add(barraRolagemSintaticoLOCAL);
-			
-			MostarMensagem(ErroDoTryCath);
-			if (vetorTokens.size() != 0) {
-				tabelaInstrucaoLOCAL.addRowSelectionInterval(0, vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1);
-			}
-			textErroSintatico.setBackground(CorDoFundo);
-			
-			
-			pnlTabela.add(barraRolagemInstrucaoLOCAL);
-			pnlTabela.remove(barraRolagemInstrucoes);
+
 		}
+
 		public void MostarMensagem(String mensagem) {
-			//ErroDoTryCath = String.valueOf(mensagem);
+			// ErroDoTryCath = String.valueOf(mensagem);
 			JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
 			scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
 			pnlPartedeBaixo.add(scrollableTextErroSintatico);
 		}
-		
-		
-		
-			
 	}
-	protected class NovoSalvarExecutar implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			if(barraRolagemInstrucaoLOCAL != null)
-			{
-			String LinhaDaTabela =(String) tabelaInstrucaoLOCAL.getModel().getValueAt(0, 1);
-			for (int LinhaAtual = 1; LinhaAtual < tabelaInstrucaoLOCAL.getRowCount(); LinhaAtual++) 
-			{
-				//LinhaDaTabela = (String) tabelaInstrucaoLOCAL.getModel().getValueAt(LinhaAtual, 1);
-				//String atributo_1 = (String) tabelaSintaticoLOCAL.getModel().getValueAt(LinhaAtual, 2);
-				//String atributo_2 = (String) tabelaSintaticoLOCAL.getModel().getValueAt(LinhaAtual, 3);
-				
-				LinhaDaTabela = LinhaDaTabela.concat((String) tabelaInstrucaoLOCAL.getModel().getValueAt(LinhaAtual, 1) + "\r\n");
-				
-			}
-			System.out.println(LinhaDaTabela);
-			createFile(LinhaDaTabela);
-			Apagar ApagarNovo = new Apagar();
-			ApagarNovo.ApagaTudo();
-			NovoAbrir NovoExAbrir = new NovoAbrir();
-			NovoExAbrir.InicializadorArquivo();
-			try {
-				NovoExAbrir.TabelaInstrucoes2();
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			NovoExecutar NovoExExcutar = new NovoExecutar();
-			//NovoExExcutar.actionPerformed(;);
-			//NovoExExcutar.
-			Sintatico SINOVO = new Sintatico();
-			try {
-				//dispose(); // close window
-				//setVisible(false); // hide window
-				SINOVO.analisadorSintatico();
-				
-			} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
-				System.out.println("Erro = " + e1);
-			}
-			NovoExExcutar.TabelaSintatico();
-			}
-			
-		}
-		public void createFile(String code) {
-			try {
-				File directory = new File(NomeDoArquivoTXT);
-				directory.createNewFile();
 
-				FileWriter file = new FileWriter(directory);
-				file.write(code);
-				file.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	/*
-	protected class AnalisadorChamada implements ActionListener {
-		public void actionPerformed(ActionEvent e) {
-			Sintatico SI = new Sintatico();
-			try {
-				dispose(); // close window
-				setVisible(false); // hide window
-				SI.analisadorSintatico();
-				
-			} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
-				System.out.println("Erro = " + e1);
-			}
-			//setVisible(false);
-			
-			statusBar1.setText("Mensagem: Analisador Do Codigo");
-		}
-	}
-	*/
-
-	protected class Abrir implements ActionListener {
+	protected class AbrirAssembly implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			String[] linha;
 			String[] argumento;
@@ -620,10 +516,8 @@ public class MaquinaVirtual extends JFrame {
 							posicao++;
 						}
 
-						rowDataInstrucao.addElement(rowLinhaInstrucao); // adicionar ao Data da tabela a linha com os
-																		// itens
-						// System.out.println(rowDataInstrucao);
-						// System.out.println("Linha = " + strLine + " | posicao = " + posicao);
+						// adicionar ao Data da tabela a linha com os itens
+						rowDataInstrucao.addElement(rowLinhaInstrucao);
 					}
 
 					in.close();
@@ -644,8 +538,8 @@ public class MaquinaVirtual extends JFrame {
 			columnNamesInstrucao.addElement("Atributo #1");
 			columnNamesInstrucao.addElement("Atributo #2");
 			columnNamesInstrucao.addElement("Comentario");
-			columnNamesPilha.addElement("Endereco");
-			columnNamesPilha.addElement("Valor1");
+			columnNamesPilha.addElement("Posicao");
+			columnNamesPilha.addElement("Valor");
 
 			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
 			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
@@ -663,7 +557,6 @@ public class MaquinaVirtual extends JFrame {
 			pnlPilha.add(barraRolagemPilha);
 
 			// Entrada opcional
-
 			JScrollPane scrollableTextEntrada = new JScrollPane(textEntrada);
 			scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -671,7 +564,6 @@ public class MaquinaVirtual extends JFrame {
 			pnlAmostraDados.add(scrollableTextEntrada);
 
 			// saida
-
 			JScrollPane scrollableTextSaida = new JScrollPane(texSaida);
 			scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -687,7 +579,7 @@ public class MaquinaVirtual extends JFrame {
 		}
 	}
 
-	protected class Executar implements ActionListener {
+	protected class ExecutarAssembly implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			ChamadasCall = new Vector<Integer>();
 			ExecucaoCompilador EC = new ExecucaoCompilador();
@@ -700,16 +592,12 @@ public class MaquinaVirtual extends JFrame {
 				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 2);
 				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 3);
 
-				//System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
-				//		+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
-				System.out.println(instrucao +" " + atributo_1 +" " + atributo_2 +" " +  TopoPilha );
+				System.out.println("instrucao: " + instrucao + " | atributo_1: " + atributo_1 + " | atributo_2: "
+						+ atributo_2 + " --------- TopoPilha: " + TopoPilha);
 
 				// Finaliza o programa
 				if (instrucao.equals("HLT")) {
 					System.out.println("HTL");
-					// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
-					// Futuramente remover esses comandos desses IFs do
-					// ExecucaoCompilador.InstrucaoLinha
 					break;
 
 				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
@@ -718,7 +606,6 @@ public class MaquinaVirtual extends JFrame {
 						String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
 
 						if (atributo_1.equals(linha)) {
-//							System.out.println("Linha " + linha + " | N = " + i);
 							if ((instrucao.equals("CALL"))) {
 								ChamadasCall.add(LinhaAtual);
 							}
@@ -726,11 +613,16 @@ public class MaquinaVirtual extends JFrame {
 						}
 					}
 
+					if (instrucao.equals("JMPF")) {
+						M.remove(TopoPilha);
+						TopoPilha = TopoPilha - 1;
+					}
+
 				} else if (instrucao.equals("RETURN")) {
-					
-					LinhaAtual = ChamadasCall.get((ChamadasCall.size()-1));
-					ChamadasCall.remove((ChamadasCall.size()-1));
-					//i = valorReturn;
+
+					LinhaAtual = ChamadasCall.get((ChamadasCall.size() - 1));
+					ChamadasCall.remove((ChamadasCall.size() - 1));
+					// i = valorReturn;
 				} else {
 					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
 				}
@@ -744,13 +636,6 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class Apagar implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			//InterfaceAbrir();
-			ApagaTudo();
-
-			
-			statusBar1.setText("Mensagem: Limpeza Geral");
-		}
-		void ApagaTudo() {
 			InterfaceAbrir();
 			tabelaInstrucoes.removeAll();
 			barraRolagemInstrucoes.removeAll();
@@ -762,38 +647,36 @@ public class MaquinaVirtual extends JFrame {
 			rowLinhaPilha.removeAllElements();
 			rowDataPilha.removeAllElements();
 			columnNamesPilha.removeAllElements();
-			
+
 			textEntrada.removeAll();
 			texSaida.removeAll();
 			texBreakPoint.removeAll();
-			
+
 			pnlTabela.removeAll();
 			pnlAmostraDados.removeAll();
 			pnlPilha.removeAll();
-			
+
 			M.removeAllElements();
 			ChamadasCall.removeAllElements();
 			nlinha = 0;
-			S= 0;
-			Ji= 0;
+			S = 0;
+			Ji = 0;
 
-
-			
 			tabelaInstrucoes.removeAll();
 			barraRolagemInstrucoes.removeAll();
 			tabelaPilha.removeAll();
 			barraRolagemPilha.removeAll();
-			//tabelaLexema.removeAll();
-			//barraRolagemLexema.removeAll();
-			//tabelaSintatico.removeAll();
-			//barraRolagemSintatico.removeAll();
-			//tabelaInstrucao2.removeAll();
-			//barraRolagemInstrucao2.removeAll();
+			// tabelaLexema.removeAll();
+			// barraRolagemLexema.removeAll();
+			// tabelaSintatico.removeAll();
+			// barraRolagemSintatico.removeAll();
+			// tabelaInstrucao2.removeAll();
+			// barraRolagemInstrucao2.removeAll();
 			tabelaInstrucaoLOCAL.removeAll();
 			barraRolagemInstrucaoLOCAL.removeAll();
 			tabelaSintaticoLOCAL.removeAll();
 			barraRolagemSintaticoLOCAL.removeAll();
-			
+
 			rowLinhaInstrucao.removeAllElements();
 			rowDataInstrucao.removeAllElements();
 			columnNamesInstrucao.removeAllElements();
@@ -815,8 +698,7 @@ public class MaquinaVirtual extends JFrame {
 			rowLinhaSintaticoLOCAL.removeAllElements();
 			rowDataSintaticoLOCAL.removeAllElements();
 			columnNamesSintaticoLOCAL.removeAllElements();
-			
-			
+
 			pnlTabela.removeAll();
 			pnlAmostraDados.removeAll();
 			pnlPilha.removeAll();
@@ -827,7 +709,9 @@ public class MaquinaVirtual extends JFrame {
 			texBreakPoint.removeAll();
 			textErroSintatico.removeAll();
 
+			statusBar1.setText("Mensagem: Limpeza Geral");
 		}
+
 		void InterfaceAbrir() {
 			// Adiciona os campos da tabela
 			columnNamesInstrucao.addElement("Linha");
@@ -837,13 +721,6 @@ public class MaquinaVirtual extends JFrame {
 			columnNamesInstrucao.addElement("Comentario");
 			columnNamesPilha.addElement("Endereco");
 			columnNamesPilha.addElement("Valor1");
-			columnNamesInstrucaoLOCAL.addElement("Linha");
-			columnNamesInstrucaoLOCAL.addElement("Codigo");
-			columnNamesSintaticoLOCAL.addElement("Linha");
-			columnNamesSintaticoLOCAL.addElement("Lexema");
-			columnNamesSintaticoLOCAL.addElement("Simbolo");
-			
-
 
 			// Cria a tabela e insere as colunas e os Dados previamente preenchidos
 			tabelaInstrucoes = new JTable(rowDataInstrucao, columnNamesInstrucao);
@@ -882,106 +759,88 @@ public class MaquinaVirtual extends JFrame {
 			scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
 			pnlAmostraDados.add(scrollableTextBreakPoint);
-			
-
-
-			tabelaInstrucaoLOCAL = new JTable(rowDataInstrucaoLOCAL, columnNamesInstrucaoLOCAL);
-			barraRolagemInstrucaoLOCAL = new JScrollPane(tabelaInstrucaoLOCAL);
-//			tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.getPreferredSize());
-//			tabelaInstrucao2.setFillsViewportHeight(false);
-			tabelaInstrucaoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-
-			tabelaSintaticoLOCAL = new JTable(rowDataSintaticoLOCAL, columnNamesSintaticoLOCAL);
-			barraRolagemSintaticoLOCAL = new JScrollPane(tabelaSintaticoLOCAL);
-//			tabelaSintaticoLOCAL.setPreferredScrollableViewportSize(tabelaSintatico.getPreferredSize());
-//			tabelaSintaticoLOCAL.setFillsViewportHeight(false);
-			tabelaSintaticoLOCAL.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			pnlPilha.add(barraRolagemSintaticoLOCAL);
-			
-			
 		}
 	}
 
 	protected class DeBug implements ActionListener {
 
-		public void actionPerformed(ActionEvent e) 
-		{
+		public void actionPerformed(ActionEvent e) {
 			ChamadasCall = new Vector<Integer>();
 		}
-		
+
 	}
 
 	protected class Continuar implements ActionListener {
 		int TopoPilha;
 		int LinhaAtual = -1;
-		public void actionPerformed(ActionEvent e) 
-		{
-			if(LinhaAtual != -999)
-			{
-			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
-			ExecucaoCompilador EC = new ExecucaoCompilador();
-			tabelaInstrucoes.setRowSelectionInterval((LinhaAtual)+1, (LinhaAtual)+1);
-			LinhaAtual = CompiladorLinhaLinha(LinhaAtual+1, totalLinhasCodigo, EC);
-			
+
+		public void actionPerformed(ActionEvent e) {
+			if (LinhaAtual != -999) {
+				int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
+				ExecucaoCompilador EC = new ExecucaoCompilador();
+				tabelaInstrucoes.setRowSelectionInterval((LinhaAtual) + 1, (LinhaAtual) + 1);
+				LinhaAtual = CompiladorLinhaLinha(LinhaAtual + 1, totalLinhasCodigo, EC);
+
 			}
-			
-			if(LinhaAtual != -999)
-			{
+
+			if (LinhaAtual != -999) {
 				statusBar1.setText("Mensagem: Fim das Linhas");
 			}
 		}
-		public int CompiladorLinhaLinha(int LinhaAtual, int totalLinhasCodigo, ExecucaoCompilador EC) 
-		{
 
-				String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 1);
-				String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 2);
-				String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 3);
+		public int CompiladorLinhaLinha(int LinhaAtual, int totalLinhasCodigo, ExecucaoCompilador EC) {
 
-				//System.out.println("linha = " + (i + 1) + " | instrucao = " + instrucao + " | atributo_1 = "
-				//		+ atributo_1 + " | atributo_2 = " + atributo_2 + " | TopoPilha = " + TopoPilha);
-				System.out.println(instrucao +" " + atributo_1 +" " + atributo_2 +" " +  TopoPilha );
+			String instrucao = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 1);
+			String atributo_1 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 2);
+			String atributo_2 = (String) tabelaInstrucoes.getModel().getValueAt(LinhaAtual, 3);
 
-				// Finaliza o programa
-				if (instrucao.equals("HLT")) {
-					System.out.println("HTL");
-					// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
-					// Futuramente remover esses comandos desses IFs do
-					// ExecucaoCompilador.InstrucaoLinha
-					return -999;
-					//break;
+			System.out.println("instrucao: " + instrucao + " | atributo_1: " + atributo_1 + " | atributo_2: "
+					+ atributo_2 + " --------- TopoPilha: " + TopoPilha);
 
-				} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
+			// Finaliza o programa
+			if (instrucao.equals("HLT")) {
+				System.out.println("HTL");
+				// Ver o que deve ser feito quando isso acontece (acho que finaliza o programa)
+				// Futuramente remover esses comandos desses IFs do
+				// ExecucaoCompilador.InstrucaoLinha
+				return -999;
+				// break;
 
-					for (int t = 0; t < totalLinhasCodigo; t++) {
-						String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
+			} else if (instrucao.equals("JMP") || instrucao.equals("JMPF") || (instrucao.equals("CALL"))) {
 
-						if (atributo_1.equals(linha)) {
+				for (int t = 0; t < totalLinhasCodigo; t++) {
+					String linha = (String) tabelaInstrucoes.getModel().getValueAt(t, 0);
+
+					if (atributo_1.equals(linha)) {
 //							System.out.println("Linha " + linha + " | N = " + i);
-							if ((instrucao.equals("CALL"))) {
-								ChamadasCall.add(LinhaAtual);
-							}
-							LinhaAtual = t;
+						if ((instrucao.equals("CALL"))) {
+							ChamadasCall.add(LinhaAtual);
 						}
+						LinhaAtual = t;
 					}
-
-				} else if (instrucao.equals("RETURN")) {
-					
-					LinhaAtual = ChamadasCall.get((ChamadasCall.size()-1));
-					ChamadasCall.remove((ChamadasCall.size()-1));
-					//i = valorReturn;
-				} else {
-					TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
 				}
-				System.out.println(M);
-			
+
+				if (instrucao.equals("JMPF")) {
+					M.remove(TopoPilha);
+					TopoPilha = TopoPilha - 1;
+				}
+
+			} else if (instrucao.equals("RETURN")) {
+
+				LinhaAtual = ChamadasCall.get((ChamadasCall.size() - 1));
+				ChamadasCall.remove((ChamadasCall.size() - 1));
+				// i = valorReturn;
+			} else {
+				TopoPilha = EC.InstrucaoLinha(instrucao, atributo_1, atributo_2, TopoPilha, 0);
+			}
+			System.out.println(M);
 
 			EC.AtualizarPilha(TopoPilha);
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 			return LinhaAtual;
-				
+
 		}
-		
+
 	}
 
 	protected class Sair implements ActionListener {
@@ -1072,7 +931,7 @@ public class MaquinaVirtual extends JFrame {
 				break;
 
 			case "NEG":
-				valor = -1 * (int) M.get(TopoPilha);
+				valor = 1 - M.get(TopoPilha);
 				M.set(TopoPilha, valor);
 				break;
 
@@ -1205,8 +1064,9 @@ public class MaquinaVirtual extends JFrame {
 			columnNamesPilha = new Vector<String>();
 			pnlPilha.remove(barraRolagemPilha);
 			for (int i = 0; i < M.size(); i++) {
-				rowLinhaPilha = new Vector<String>(); // limpa o vector, nao sei se eh o mais correto, pode afetar a
-														// memoria fisica
+				// limpa o vector, nao sei se eh o mais correto, pode afetar a
+				// memoria fisica
+				rowLinhaPilha = new Vector<String>();
 				rowLinhaPilha.addElement(String.valueOf(i));
 				rowLinhaPilha.addElement(String.valueOf(M.get(i)));
 				rowDataPilha.addElement(rowLinhaPilha);

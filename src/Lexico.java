@@ -74,7 +74,7 @@ public class Lexico {
 
 	private final char trataComentariosConsomeEspaco(char caracter) throws excecaoLexico, IOException {
 		int linha = nlinha;
-		while (caracter == '{' || caracter == ' ' || caracter == '/') {
+		while (caracter == '{' || caracter == ' ' || caracter == '/' || caracter == '	') {
 
 			if (Character.isWhitespace(caracter)) {
 				countCaracter++;
@@ -600,6 +600,16 @@ public class Lexico {
 			MLexama.add(lexema);
 			MSimbolo.add(Constantes.atribuicao);
 			token = new Token(Constantes.atribuicao, lexema, nlinha);
+			break;
+		case "verdadeiro":
+			MLexama.add(lexema);
+			MSimbolo.add(Constantes.verdadeiro);
+			token = new Token(Constantes.verdadeiro, lexema, nlinha);
+			break;
+		case "falso":
+			MLexama.add(lexema);
+			MSimbolo.add(Constantes.falso);
+			token = new Token(Constantes.falso, lexema, nlinha);
 			break;
 		default:
 			MLexama.add(lexema);

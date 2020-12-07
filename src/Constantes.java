@@ -131,7 +131,6 @@ public final class Constantes {
 	public static final String NEG = "NEG";
 	public static final String LDC = "LDC";
 	public static final String RETURN = "RETURN";
-	public static final String RETURNF = "RETURNF";
 	public static final String START = "START";
 	public static final String HLT = "HLT";
 	public static final String JMP = "JMP";
