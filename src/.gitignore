@@ -73,3 +73,10 @@
 /SintaticoNOVO.class
 /MaquinaVirtual$NovoSalvarExecutar.class
 /MaquinaVirtual$AbrirCodigoGerado.class
+/MaquinaVirtual$AbrirAssembly.class
+/MaquinaVirtual$AbrirCodigo.class
+/MaquinaVirtual$ExecutarAssembly.class
+/MaquinaVirtual$ExecutarCodigo.class
+/MaquinaVirtual$AbreVariosTestes.class
+/MaquinaVirtual$AbreVariosTestesAssembly.class
+/MaquinaVirtual$AbreVariosTestesCompilador.class

@@ -5,6 +5,7 @@ import javax.imageio.*;
 import java.io.*;
 import java.util.*;
 import java.awt.GridLayout;
+import java.util.concurrent.TimeUnit;
 
 import Excecoes.excecaoSemantico;
 import Excecoes.excecaoSintatico;
@@ -20,7 +21,9 @@ public class MaquinaVirtual extends JFrame {
 			btnSair = new JButton("Sair"), // Sair
 			btnAbrirCodigo = new JButton("Abrir Codigo"), btnExecutarCodigo = new JButton("Executar Codigo"),
 			btnNovoSalvarExecutar = new JButton(" Salvar e Executar"),
-			bntAbrirCodigoGerado = new JButton("Abrir Codigo Gerado");
+			bntAbrirCodigoGerado = new JButton("Abrir Codigo Gerado"),
+			bntAbreVariosTestesCompilador = new JButton("Abre varios testes de Compilador"),
+			bntAbreVariosTestesAssembly = new JButton("Abre varios testes de Assembly");
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
 	// VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
@@ -67,10 +70,14 @@ public class MaquinaVirtual extends JFrame {
 	public static String ErroDoTryCath;
 	public static Color CorDoFundo;
 	public static String NomeDoArquivoTXT;
+	public static JScrollPane scrollableTextErroSintatico;
 	protected String[] linha;
 	protected String[] argumento;
 	protected String[] linhaComentario;
 	protected JFileChooser fileChooserParaAssembly;
+	protected File[] files;
+	
+	protected int PosicaoFunção;
 
 	protected int S;
 	protected int Ji;
@@ -110,6 +117,11 @@ public class MaquinaVirtual extends JFrame {
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
 	protected JTextArea textErroSintatico = new JTextArea(5, 5);
+	
+	protected JMenuBar MenuDeCima;
+	protected JMenu Menu;
+	protected JMenuItem AbreVariosTestesCompilador;
+	protected JMenuItem AbreVariosTestesAssembly;
 
 	public MaquinaVirtual() {
 		super("Construcao Compiladores");
@@ -172,6 +184,8 @@ public class MaquinaVirtual extends JFrame {
 		btnSair.addActionListener(new Sair());
 		btnNovoSalvarExecutar.addActionListener(new NovoSalvarExecutar());
 		bntAbrirCodigoGerado.addActionListener(new AbrirCodigoGerado());
+		bntAbreVariosTestesCompilador.addActionListener(new AbreVariosTestesCompilador());
+		bntAbreVariosTestesAssembly.addActionListener(new AbreVariosTestesAssembly());
 
 		// Grid Superior, onde fica os botões
 		JPanel pnlBotoes = new JPanel();
@@ -190,6 +204,8 @@ public class MaquinaVirtual extends JFrame {
 		pnlBotoes.add(btnContinuar);
 		// pnlBotoes.add(btnAnalisador);
 		pnlBotoes.add(btnSair);
+		//pnlBotoes.add(bntAbreVariosTestesCompilador);
+		//pnlBotoes.add(bntAbreVariosTestesAssembly);
 
 		// Interface grafica
 		JPanel pnlStatus = new JPanel();
@@ -207,16 +223,29 @@ public class MaquinaVirtual extends JFrame {
 		pnlTabela.setLayout(grdTabela);
 		pnlAmostraDados.setLayout(grdTabela);
 		pnlPilha.setLayout(grdTabela);
-		pnlPartedeBaixo.setLayout(grdTabela);
 		cntForm.add(pnlTabela, BorderLayout.CENTER);
 		cntForm.add(pnlAmostraDados, BorderLayout.WEST);
 		cntForm.add(pnlPilha, BorderLayout.EAST);
+
+		pnlPartedeBaixo.setLayout(grdStatus);
 		cntForm.add(pnlPartedeBaixo, BorderLayout.SOUTH);
 
 		this.addWindowListener(new FechamentoDeJanela());
 
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
+		
+		MenuDeCima = new JMenuBar();
+		Menu  = new JMenu("Menu Adicional");
+		AbreVariosTestesCompilador = new JMenuItem("Abre Varios Testes Compilador");
+		AbreVariosTestesAssembly = new JMenuItem("Abre Varios Testes Assembly");
+		Menu.add(AbreVariosTestesCompilador);
+		Menu.add(AbreVariosTestesAssembly);
+		MenuDeCima.add(Menu);
+		
+		setJMenuBar(MenuDeCima);
+		AbreVariosTestesCompilador.addActionListener(new AbreVariosTestesCompilador());
+		AbreVariosTestesAssembly.addActionListener(new AbreVariosTestesAssembly());
 
 		btnAbrirCodigo.setEnabled(true);
 		btnExecutarCodigo.setEnabled(false);
@@ -276,6 +305,68 @@ public class MaquinaVirtual extends JFrame {
 		}
 	}
 
+	protected class AbreVariosTestesCompilador implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			AbrirCodigo AbrirCodigoChamada = new AbrirCodigo();
+			ExecutarCodigo ExecutarCodigoChamada = new ExecutarCodigo();
+			Apagar NovoApagar = new Apagar();
+			NovoApagar.ApagaTudo();
+			fileChooser = new JFileChooser();
+			fileChooser.setMultiSelectionEnabled(true);
+			fileChooser.showOpenDialog(null);
+			files = fileChooser.getSelectedFiles();
+			// AbrirCodigoChamada.InicializadorArquivo(files[0]);
+			for (int i = 0; i < files.length; i++) {
+				AbrirCodigoChamada.InicializadorArquivo(files[i]);
+				NomeDoArquivoTXT = files[i].toString();
+				try {
+					AbrirCodigoChamada.TabelaInstrucoes2();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				Sintatico SINOVO = new Sintatico();
+				try {
+					// dispose(); // close window
+					// setVisible(false); // hide window
+					SINOVO.analisadorSintatico();
+
+				} catch (excecaoSintatico | IOException | excecaoSemantico e1) {
+					System.out.println("Erro = " + e1);
+				}
+				ExecutarCodigoChamada.TabelaSintatico();
+				if (CorDoFundo == Color.GREEN) {
+					tabelaSintaticoLOCAL.setGridColor(Color.GREEN);
+					tabelaInstrucaoLOCAL.setGridColor(Color.GREEN);
+				} else {
+					tabelaSintaticoLOCAL.setGridColor(Color.RED);
+					tabelaInstrucaoLOCAL.setGridColor(Color.RED);
+				}
+
+			}
+			pnlPartedeBaixo.removeAll();
+		}
+	}
+
+	protected class AbreVariosTestesAssembly implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			Apagar NovoApagar = new Apagar();
+			NovoApagar.ApagaTudo();
+			AbrirAssembly AbrirAssemblyChamada = new AbrirAssembly();
+			ExecutarAssembly ExecutarAssemblyChamada = new ExecutarAssembly();
+			for (int i = 0; i < files.length; i++) {
+				fileChooserParaAssembly = new JFileChooser();
+				NomeDoArquivoTXT = files[i].toString();
+				fileChooserParaAssembly
+				.setSelectedFile(new File(NomeDoArquivoTXT.replace(".txt", "") + " " + "CodigoGerado.txt"));
+				AbrirAssemblyChamada.AbriCodigoAssemly(fileChooserParaAssembly.getSelectedFile());
+				ExecutarAssemblyChamada.ExecutaOExecuta();
+				
+
+			}
+		}
+	}
+
 	protected class AbrirCodigo implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			btnAbrirCodigo.setEnabled(true);
@@ -293,7 +384,7 @@ public class MaquinaVirtual extends JFrame {
 			NovoApagar.ApagaTudo();
 			fileChooser = new JFileChooser();
 			returnValue = fileChooser.showOpenDialog(null);
-			InicializadorArquivo();
+			InicializadorArquivo(fileChooser.getSelectedFile());
 			try {
 				TabelaInstrucoes2();
 			} catch (IOException e1) {
@@ -304,15 +395,12 @@ public class MaquinaVirtual extends JFrame {
 			statusBar1.setText("Mensagem: Novo Abrir");
 		}
 
-		public void InicializadorArquivo() {
-
-			// System.out.println("InicializadorArquivo");
-			// returnValue = fileChooser.showOpenDialog(null);
+		public void InicializadorArquivo(File selectedFile) {
 
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
 				NomeDoArquivoTXT = fileChooser.getSelectedFile().toString();
 
-				selectedFile = fileChooser.getSelectedFile();
+				// selectedFile = fileChooser.getSelectedFile();
 
 				try {
 					fstream = new FileInputStream(selectedFile);
@@ -465,11 +553,11 @@ public class MaquinaVirtual extends JFrame {
 		}
 
 		public void MostarMensagem(String mensagem) {
-			// ErroDoTryCath = String.valueOf(mensagem);
-			JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
+			textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
+			scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
 			scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
+
 			pnlPartedeBaixo.add(scrollableTextErroSintatico);
 		}
 	}
@@ -488,7 +576,7 @@ public class MaquinaVirtual extends JFrame {
 				createFile(LinhaDaTabela);
 
 				ApagarNovo.ApagaTudo();
-				AbrirCodigoChamada.InicializadorArquivo();
+				AbrirCodigoChamada.InicializadorArquivo(fileChooser.getSelectedFile());
 				try {
 					AbrirCodigoChamada.TabelaInstrucoes2();
 				} catch (IOException e2) {
@@ -577,7 +665,7 @@ public class MaquinaVirtual extends JFrame {
 		}
 
 		void AbriCodigoAssemly(File selectedFile) {
-
+			PosicaoFunção = 0;
 			rowDataInstrucao.removeAllElements();
 			nlinha = 0;
 			Apagar ApagarNovo = new Apagar();
@@ -757,9 +845,15 @@ public class MaquinaVirtual extends JFrame {
 			btnContinuar.setEnabled(false);
 			btnSair.setEnabled(true);
 
+			
+			 ExecutaOExecuta();
+			
+			statusBar1.setText("Mensagem: Arquivo a ser Executado");
+		}
+		void ExecutaOExecuta()
+		{
 			ChamadasCall = new Vector<Integer>();
 			ExecucaoCompilador EC = new ExecucaoCompilador();
-
 			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
 			int TopoPilha = 0;
 
@@ -820,7 +914,6 @@ public class MaquinaVirtual extends JFrame {
 			}
 
 			EC.AtualizarPilha(TopoPilha);
-			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
 	}
 
