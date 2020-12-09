@@ -17,6 +17,7 @@ public class GeradorCodigo {
 	}
 
 	public void criarCodigo(String expressaoPosFix) {
+		System.out.println("----------- criarCodigo expressaoPosFix = " + expressaoPosFix);
 		String[] aux = expressaoPosFix.split(" ");
 
 		for (int a = 0; a < aux.length; a++) {
@@ -31,7 +32,8 @@ public class GeradorCodigo {
 			} else if (aux[a].contains("funcao")) {
 
 				String[] value = aux[a].split("funcao");
-				codigoGerado = codigoGerado.concat(Constantes.CALL + " ").concat(Constantes.LABEL + value[1]).concat("\r\n");
+				codigoGerado = codigoGerado.concat(Constantes.CALL + " ").concat(Constantes.LABEL + value[1])
+						.concat("\r\n");
 
 			} else if (aux[a].equals(Constantes.MAIS_SINAL)) {
 				codigoGerado = codigoGerado.concat(Constantes.ADD).concat("\r\n");
@@ -78,12 +80,13 @@ public class GeradorCodigo {
 	}
 
 	public void criarCodigo(String comando, int countVariavel) {
+//		System.out.println("----------- criarCodigo comando = " + comando);
 		if (Constantes.ALLOC.equals(comando)) {
-			codigoGerado = codigoGerado.concat(comando + " ").concat(variableInMemory + " ").concat(countVariavel + "\r\n");
+			codigoGerado = codigoGerado.concat(comando + " ").concat(variableInMemory + " ")
+					.concat(countVariavel + "\r\n");
 			variableInMemory = variableInMemory + countVariavel;
 			variableAlloc.add(countVariavel);
 		} else {
-
 			if (countVariavel == 0) {
 				codigoGerado = codigoGerado.concat(comando + "\r\n");
 			} else {
@@ -91,8 +94,10 @@ public class GeradorCodigo {
 				int countVariavelDalloc = variableAlloc.get(posicao);
 
 				variableInMemory = variableInMemory - countVariavelDalloc;
-				codigoGerado = codigoGerado.concat(comando + " ").concat(variableInMemory + " ").concat(countVariavelDalloc + "\r\n");
+				codigoGerado = codigoGerado.concat(comando + " ").concat(variableInMemory + " ")
+						.concat(countVariavelDalloc + "\r\n");
 				variableAlloc.remove(posicao);
+
 			}
 
 		}
@@ -100,7 +105,7 @@ public class GeradorCodigo {
 
 	public void gerarArquivo() {
 		try {
-			File path = new File(MaquinaVirtual.NomeDoArquivoTXT.replace(".txt", "")+ " " +"CodigoGerado.txt");
+			File path = new File(MaquinaVirtual.NomeDoArquivoTXT.replace(".txt", "") + " " + "CodigoGerado.txt");
 			path.createNewFile();
 
 			FileWriter arquivo = new FileWriter(path);

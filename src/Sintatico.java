@@ -52,6 +52,11 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			getToken();
 			if (token.getSimbolo().equals(Constantes.programa)) {
 				geradorCodigo.criarCodigo(Constantes.START, Constantes.EMPTY, Constantes.EMPTY);
+
+				variaveisAlocadas.add(1);
+				posicao++;
+				geradorCodigo.criarCodigo(Constantes.ALLOC, variaveisAlocadas.get(variaveisAlocadas.size() - 1));
+
 				getToken();
 				if (token.getSimbolo().equals(Constantes.identificador)) {
 					semantico.inserePrograma(token);
@@ -66,12 +71,17 @@ public class Sintatico /* extends MaquinaVirtia */ {
 							token = lexico.AnalisadorLexico();
 							if (token.getSimbolo().equals(Constantes.eof)) {
 
+								System.out.println("analisaBloco variableOfAlloc = " + variaveisAlocadas.size()
+										+ " | flagProcedureList = " + flagListaProcedimento.size()
+										+ " | flagListaFuncoes = " + flagListaFuncoes.size());
+
+								posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
+								geradorCodigo.criarCodigo(Constantes.DALLOC, -1);
+								variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
+
 								geradorCodigo.criarCodigo(Constantes.HLT, Constantes.EMPTY, Constantes.EMPTY);
 								geradorCodigo.gerarArquivo();
 
-								System.out.println("FIM DO CODIGO - cleanTableLevel - Debug:");
-//								semantico.debugTable();
-								System.out.println("Fim - Debug");
 								semantico.limparTabela();
 
 								System.out.println("Fim do programa, sucesso");
@@ -120,7 +130,8 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		analisaComandos();
 
 		System.out.println("analisaBloco variableOfAlloc = " + variaveisAlocadas.size() + " | flagProcedureList = "
-				+ flagListaProcedimento.size());
+				+ flagListaProcedimento.size() + " | flagListaFuncoes = " + flagListaFuncoes.size());
+
 		if (variaveisAlocadas.size() > 0 && (!flagListaProcedimento.get(flagListaProcedimento.size() - 1))
 				&& (!flagListaFuncoes.get(flagListaFuncoes.size() - 1))) {
 			if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
@@ -167,6 +178,8 @@ public class Sintatico /* extends MaquinaVirtia */ {
 				semantico.inserirVariavel(token, posicao);
 				countVariable++;
 				posicao++;
+				System.out.println("analisaVariaveis posicao = " + posicao + " | variaveisAlocadas.size() = "
+						+ variaveisAlocadas.size());
 
 				getToken();
 				if (token.getSimbolo().equals(Constantes.virgula) || token.getSimbolo().equals(Constantes.doispontos)) {
@@ -285,9 +298,11 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		getToken();
 		analisaExpressao();
 
+		System.out.println("------ analisaAtribuicao expressao = " + expressao);
 		String aux = semantico.expressaoToPostfix(expressao);
 
 		String newExpression = semantico.formatarExpressao(aux);
+		System.out.println("------ analisaAtribuicao");
 		geradorCodigo.criarCodigo(newExpression);
 
 		String type = semantico.retornaTipoDaExpressao(aux);
@@ -399,6 +414,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		String aux = semantico.expressaoToPostfix(expressao);
 
 		String novaExpressao = semantico.formatarExpressao(aux);
+		System.out.println("------ analisaEnquanto");
 		geradorCodigo.criarCodigo(novaExpressao);
 
 		String tipo = semantico.retornaTipoDaExpressao(aux);
@@ -435,6 +451,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 		String aux = semantico.expressaoToPostfix(expressao);
 
 		String newExpression = semantico.formatarExpressao(aux);
+		System.out.println("------ analisaSe");
 		geradorCodigo.criarCodigo(newExpression);
 
 		String type = semantico.retornaTipoDaExpressao(aux);
@@ -507,6 +524,8 @@ public class Sintatico /* extends MaquinaVirtia */ {
 
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
 			posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
+			System.out.println("analisaDeclaracaoProcedimento posicao = " + posicao + " | variaveisAlocadas.size() = "
+					+ variaveisAlocadas.size());
 			geradorCodigo.criarCodigo(Constantes.DALLOC, -1);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		} else {
@@ -560,22 +579,21 @@ public class Sintatico /* extends MaquinaVirtia */ {
 			throw new excecaoSintatico(Constantes.identificador, token.getSimbolo(), token.getLinha());
 		}
 
-		System.out.println("analisaDeclaracaoFuncao - cleanTableLevel - Debug:");
-//		semantico.debugTable();
-		System.out.println("Fim - Debug");
 		semantico.limparTabela();
 		flagListaFuncoes.remove(flagListaFuncoes.size() - 1);
 		semantico.verificaSeAFuncaoTemRetorno(nameOfFunction.get(nameOfFunction.size() - 1));
 		nameOfFunction.remove(nameOfFunction.size() - 1);
 
+		geradorCodigo.criarCodigo(Constantes.STR, "0", Constantes.EMPTY);
+
 		if (variaveisAlocadas.get(variaveisAlocadas.size() - 1) > 0) {
 			posicao = posicao - variaveisAlocadas.get(variaveisAlocadas.size() - 1);
-			geradorCodigo.criarCodigo(Constantes.RETURN, -1);
-			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
-		} else {
-			geradorCodigo.criarCodigo(Constantes.RETURN, 0);
+			geradorCodigo.criarCodigo(Constantes.DALLOC, -1);
 			variaveisAlocadas.remove(variaveisAlocadas.size() - 1);
 		}
+
+		geradorCodigo.criarCodigo(Constantes.RETURN, Constantes.EMPTY, Constantes.EMPTY);
+
 		semantico.limparListaFuncao();
 	}
 
@@ -668,85 +686,19 @@ public class Sintatico /* extends MaquinaVirtia */ {
 	// ----------------------------------------------------------------------------
 
 	private void montarTabelas() throws IOException {
-		// TabelaInstrucoes2();
-		// TabelaSintatico();
 		MaquinaVirtual.vetorTokens = this.vetorTokens;
 	}
 
 	public void MostarMensagem(String mensagem) {
 		MaquinaVirtual.ErroDoTryCath = String.valueOf(mensagem);
-		/*
-		 * JScrollPane scrollableTextErroSintatico = new JScrollPane(textErroSintatico);
-		 * scrollableTextErroSintatico.setHorizontalScrollBarPolicy(JScrollPane.
-		 * HORIZONTAL_SCROLLBAR_ALWAYS);
-		 * scrollableTextErroSintatico.setVerticalScrollBarPolicy(JScrollPane.
-		 * VERTICAL_SCROLLBAR_ALWAYS);
-		 * textErroSintatico.setText(String.valueOf(mensagem)); // colocar codigo aqui
-		 * pnlPartedeBaixo.add(scrollableTextErroSintatico);
-		 */
 	}
 
 	public void TabelaSintatico() {
-		/*
-		 * rowDataSintatico = new Vector<Vector>(); columnNamesSintatico = new
-		 * Vector<String>();
-		 * 
-		 * for (int i = 0; i < vetorTokens.size(); i++) { rowLinhaSintatico = new
-		 * Vector<String>();
-		 * 
-		 * rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLinha()));
-		 * rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getSimbolo()))
-		 * ;
-		 * rowLinhaSintatico.addElement(String.valueOf(vetorTokens.get(i).getLexema()));
-		 * 
-		 * rowDataSintatico.addElement(rowLinhaSintatico);
-		 * 
-		 * }
-		 * 
-		 * columnNamesSintatico.addElement("Linha");
-		 * columnNamesSintatico.addElement("Lexema");
-		 * columnNamesSintatico.addElement("Simbolo");
-		 * 
-		 * tabelaSintatico = new JTable(rowDataSintatico, columnNamesSintatico);
-		 * barraRolagemSintatico = new JScrollPane(tabelaSintatico); //
-		 * tabelaSintatico.setPreferredScrollableViewportSize(tabelaSintatico.
-		 * getPreferredSize()); // tabelaSintatico.setFillsViewportHeight(false);
-		 * tabelaSintatico.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		 * pnlPilha.add(barraRolagemSintatico);
-		 */
+
 	}
 
 	public void TabelaInstrucoes2() throws IOException {
-		/*
-		 * rowDataInstrucao2 = new Vector<Vector>(); columnNamesInstrucao2 = new
-		 * Vector<String>();
-		 * 
-		 * String strLine2;
-		 * 
-		 * int nlinha2 = 0;
-		 * 
-		 * while ((strLine2 = br2.readLine()) != null) { nlinha2++;
-		 * 
-		 * rowLinhaInstrucao2 = new Vector<String>();
-		 * rowLinhaInstrucao2.addElement(String.valueOf(nlinha2));
-		 * 
-		 * rowLinhaInstrucao2.addElement(String.valueOf(strLine2));
-		 * 
-		 * rowDataInstrucao2.addElement(rowLinhaInstrucao2); }
-		 * 
-		 * columnNamesInstrucao2.addElement("Linha");
-		 * columnNamesInstrucao2.addElement("Codigo");
-		 * 
-		 * tabelaInstrucao2 = new JTable(rowDataInstrucao2, columnNamesInstrucao2);
-		 * barraRolagemInstrucao2 = new JScrollPane(tabelaInstrucao2); //
-		 * tabelaInstrucao2.setPreferredScrollableViewportSize(tabelaInstrucao2.
-		 * getPreferredSize()); // tabelaInstrucao2.setFillsViewportHeight(false);
-		 * tabelaInstrucao2.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		 * 
-		 * if (vetorTokens.size() != 0) { tabelaInstrucao2.addRowSelectionInterval(0,
-		 * vetorTokens.get(vetorTokens.size() - 1).getLinha() - 1); }
-		 * pnlTabela.add(barraRolagemInstrucao2);
-		 */
+
 	}
 
 }

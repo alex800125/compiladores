@@ -34,7 +34,7 @@ public class Lexico {
 
 	public Token AnalisadorLexico() throws IOException {
 
-		System.out.println("AnalisadorEntrada nlinha = " + nlinha);
+//		System.out.println("AnalisadorEntrada nlinha = " + nlinha);
 		Token token = null;
 		char caracter = ' ';
 

@@ -76,7 +76,7 @@ public class MaquinaVirtual extends JFrame {
 	protected String[] linhaComentario;
 	protected JFileChooser fileChooserParaAssembly;
 	protected File[] files;
-	
+
 	protected int PosicaoFunção;
 
 	protected int S;
@@ -117,7 +117,7 @@ public class MaquinaVirtual extends JFrame {
 	protected JTextArea texSaida = new JTextArea(10, 10);
 	protected JTextArea texBreakPoint = new JTextArea(10, 10);
 	protected JTextArea textErroSintatico = new JTextArea(5, 5);
-	
+
 	protected JMenuBar MenuDeCima;
 	protected JMenu Menu;
 	protected JMenuItem AbreVariosTestesCompilador;
@@ -204,8 +204,8 @@ public class MaquinaVirtual extends JFrame {
 		pnlBotoes.add(btnContinuar);
 		// pnlBotoes.add(btnAnalisador);
 		pnlBotoes.add(btnSair);
-		//pnlBotoes.add(bntAbreVariosTestesCompilador);
-		//pnlBotoes.add(bntAbreVariosTestesAssembly);
+		// pnlBotoes.add(bntAbreVariosTestesCompilador);
+		// pnlBotoes.add(bntAbreVariosTestesAssembly);
 
 		// Interface grafica
 		JPanel pnlStatus = new JPanel();
@@ -234,15 +234,15 @@ public class MaquinaVirtual extends JFrame {
 
 		this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 		this.setVisible(true);
-		
+
 		MenuDeCima = new JMenuBar();
-		Menu  = new JMenu("Menu Adicional");
+		Menu = new JMenu("Menu Adicional");
 		AbreVariosTestesCompilador = new JMenuItem("Abre Varios Testes Compilador");
 		AbreVariosTestesAssembly = new JMenuItem("Abre Varios Testes Assembly");
 		Menu.add(AbreVariosTestesCompilador);
 		Menu.add(AbreVariosTestesAssembly);
 		MenuDeCima.add(Menu);
-		
+
 		setJMenuBar(MenuDeCima);
 		AbreVariosTestesCompilador.addActionListener(new AbreVariosTestesCompilador());
 		AbreVariosTestesAssembly.addActionListener(new AbreVariosTestesAssembly());
@@ -358,10 +358,9 @@ public class MaquinaVirtual extends JFrame {
 				fileChooserParaAssembly = new JFileChooser();
 				NomeDoArquivoTXT = files[i].toString();
 				fileChooserParaAssembly
-				.setSelectedFile(new File(NomeDoArquivoTXT.replace(".txt", "") + " " + "CodigoGerado.txt"));
+						.setSelectedFile(new File(NomeDoArquivoTXT.replace(".txt", "") + " " + "CodigoGerado.txt"));
 				AbrirAssemblyChamada.AbriCodigoAssemly(fileChooserParaAssembly.getSelectedFile());
 				ExecutarAssemblyChamada.ExecutaOExecuta();
-				
 
 			}
 		}
@@ -845,13 +844,12 @@ public class MaquinaVirtual extends JFrame {
 			btnContinuar.setEnabled(false);
 			btnSair.setEnabled(true);
 
-			
-			 ExecutaOExecuta();
-			
+			ExecutaOExecuta();
+
 			statusBar1.setText("Mensagem: Arquivo a ser Executado");
 		}
-		void ExecutaOExecuta()
-		{
+
+		void ExecutaOExecuta() {
 			ChamadasCall = new Vector<Integer>();
 			ExecucaoCompilador EC = new ExecucaoCompilador();
 			int totalLinhasCodigo = tabelaInstrucoes.getRowCount();
@@ -1211,6 +1209,7 @@ public class MaquinaVirtual extends JFrame {
 
 	protected class ExecucaoCompilador {
 		boolean isNumber = false;
+		int aux;
 
 		public int InstrucaoLinha(String Instrucao, String PrimeiroAtributo, String SegundoAtributo, int TopoPilha,
 				int linhaJump) {
@@ -1386,19 +1385,20 @@ public class MaquinaVirtual extends JFrame {
 				break;
 
 			case "ALLOC":
-
-				for (int k = 0; k <= Integer.parseInt(SegundoAtributo) - 1; k++) {
+				aux = Integer.parseInt(PrimeiroAtributo);
+				for (int k = Integer.parseInt(SegundoAtributo) - 1; k >= 0; k--) {
 					TopoPilha = TopoPilha + 1;
-					M.add(TopoPilha, -999); // atualmente -999 é referente a lixo;
+					M.insertElementAt(-999, aux); // atualmente -999 é referente a lixo;
+					aux++;
 				}
 				break;
 
 			case "DALLOC":
-				for (int k = Integer.parseInt(SegundoAtributo) - 1; k >= 0; k--) {
+				aux = (Integer.parseInt(PrimeiroAtributo) + Integer.parseInt(SegundoAtributo)) - 1;
 
-					valor = (int) M.get(TopoPilha);
-					M.set((Integer.parseInt(PrimeiroAtributo) + k), valor);
-					M.remove(TopoPilha);
+				for (int k = Integer.parseInt(SegundoAtributo); k > 0; k--) {
+					M.removeElementAt(aux);
+					aux--;
 					TopoPilha = TopoPilha - 1;
 				}
 				break;

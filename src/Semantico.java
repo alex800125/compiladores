@@ -260,10 +260,10 @@ public class Semantico {
 //			System.out.println("parcel: " + parcel);
 
 			if (!(verificaOperador(parcel)) && !(eOperadorUnario(parcel))) {
-				if (Constantes.INTEIRO.equals(tabelaDeSimbolos.procurarTipoVariavelOuProcedimento(parcel))) {
+				if (Constantes.INTEIRO.equals(tabelaDeSimbolos.procurarTipoVariavelOuFuncao(parcel))) {
 					System.out.println("parcel: " + parcel);
 					ListaExpressoes.set(j, "0");
-				} else if (Constantes.BOOLEANO.equals(tabelaDeSimbolos.procurarTipoVariavelOuProcedimento(parcel))) {
+				} else if (Constantes.BOOLEANO.equals(tabelaDeSimbolos.procurarTipoVariavelOuFuncao(parcel))) {
 					ListaExpressoes.set(j, "1");
 				} else if (Constantes.VERDADEIRO.equals(parcel) || Constantes.FALSO.equals(parcel)) {
 					ListaExpressoes.set(j, "1");
@@ -435,7 +435,7 @@ public class Semantico {
 						"A condição presente no '" + quemChamou.toUpperCase() + "' deveria resultar num tipo booleano");
 			}
 		} else {
-			String tipoQuemChamou = tabelaDeSimbolos.procurarTipoVariavelOuProcedimento(quemChamou);
+			String tipoQuemChamou = tabelaDeSimbolos.procurarTipoVariavelOuFuncao(quemChamou);
 
 			if (!(tipo.equals(tipoQuemChamou))) {
 				throw new excecaoSemantico("Não é possível realizar a atribuição de uma expressão do tipo " + tipo
@@ -467,7 +467,7 @@ public class Semantico {
 				}
 			} else {
 				int labelResult = tabelaDeSimbolos.procurarFuncaoLabel(aux[i]);
-				novaExpressao = novaExpressao.concat("funcao" + labelResult + " ");
+				novaExpressao = novaExpressao.concat("funcao" + labelResult + " p0 ");
 			}
 
 		}
