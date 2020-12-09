@@ -149,7 +149,7 @@ public class TabelaSimbolos {
 		return -1;
 	}
 
-	public String procurarTipoVariavelOuProcedimento(String lexema) {
+	public String procurarTipoVariavelOuFuncao(String lexema) {
 		for (int i = (pilhaSimbolos.size() - 1); i >= 0; i--) {
 			if (pilhaSimbolos.get(i) instanceof Variavel || pilhaSimbolos.get(i) instanceof Funcao) {
 				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
