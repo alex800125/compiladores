@@ -26,6 +26,7 @@ public class MaquinaVirtual extends JFrame {
 			bntAbreVariosTestesAssembly = new JButton("Abre varios testes de Assembly");
 
 	protected JLabel statusBar1 = new JLabel("Mensagem:"), statusBar2 = new JLabel("Coordenada:");
+	protected JLabel JEntrada = new JLabel("ENTRADA:"), JSaida = new JLabel("SAIDA:"), JBreakPoint = new JLabel("BreakPoint");
 	// VARIVEIS USADAS PARA COMPLEMENTAR A INTERFACE DAS TABELAS
 	protected JTable tabelaInstrucoes;
 	protected JScrollPane barraRolagemInstrucoes;
@@ -813,6 +814,7 @@ public class MaquinaVirtual extends JFrame {
 			scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			textEntrada.setText("Entrada"); // colocar codigo aqui
+			pnlAmostraDados.add(JEntrada);
 			pnlAmostraDados.add(scrollableTextEntrada);
 
 			// saida
@@ -820,6 +822,7 @@ public class MaquinaVirtual extends JFrame {
 			scrollableTextSaida.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextSaida.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			texSaida.setText("Saida"); // colocar codigo aqui
+			pnlAmostraDados.add(JSaida);
 			pnlAmostraDados.add(scrollableTextSaida);
 
 			// break
@@ -827,6 +830,7 @@ public class MaquinaVirtual extends JFrame {
 			scrollableTextBreakPoint.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextBreakPoint.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			texBreakPoint.setText("BreakPoint"); // colocar codigo aquui
+			pnlAmostraDados.add(JBreakPoint);
 			pnlAmostraDados.add(scrollableTextBreakPoint);
 		}
 	}
@@ -1045,6 +1049,7 @@ public class MaquinaVirtual extends JFrame {
 			scrollableTextEntrada.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 			scrollableTextEntrada.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			textEntrada.setText("Entrada"); // colocar codigo aqui
+			
 			pnlAmostraDados.add(scrollableTextEntrada);
 
 			// saida
