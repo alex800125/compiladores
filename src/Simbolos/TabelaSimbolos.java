@@ -67,9 +67,9 @@ public class TabelaSimbolos {
 
 		}
 
-		for (int j = i; j >= 0; j--) {
-			if ((pilhaSimbolos.get(i) instanceof Procedimento) || (pilhaSimbolos.get(i) instanceof Funcao)) {
-				if (lexema.equals(pilhaSimbolos.get(i).getLexema())) {
+		for (int j = (pilhaSimbolos.size() - 1); j >= 0; j--) {
+			if ((pilhaSimbolos.get(j) instanceof Procedimento) || (pilhaSimbolos.get(j) instanceof Funcao)) {
+				if (lexema.equals(pilhaSimbolos.get(j).getLexema())) {
 					return true;
 				}
 			}

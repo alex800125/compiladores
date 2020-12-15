@@ -379,6 +379,7 @@ public class Sintatico /* extends MaquinaVirtia */ {
 				if (eFuncao) {
 					int resultadoLabel = semantico.procurarFuncaoLabel(token);
 					geradorCodigo.criarCodigo(Constantes.CALL, Constantes.LABEL + resultadoLabel, Constantes.EMPTY);
+					geradorCodigo.criarCodigo(Constantes.LDV,"0", Constantes.EMPTY);
 				} else {
 					// LDV de Variável para o PRN
 					String positionOfVariable = semantico.posicaoVariavel(token.getLexema());
